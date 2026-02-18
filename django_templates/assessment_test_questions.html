@@ -1,0 +1,551 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saralash testi - Savollar</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .test-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .test-header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .timer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .timer i {
+            font-size: 28px;
+        }
+        
+        .timer.warning {
+            color: #f5576c;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        .progress-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .progress-bar-container {
+            width: 200px;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+        
+        .question-counter {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .question-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        
+        .question-card.active {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .question-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .question-text {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .answer-option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .answer-option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .answer-option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+        
+        .answer-radio {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #667eea;
+            border-radius: 50%;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .answer-option.selected .answer-radio::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 14px;
+            height: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+        }
+        
+        .answer-text {
+            font-size: 16px;
+            color: #333;
+            flex: 1;
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-prev {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-prev:hover:not(:disabled) {
+            background: #e0e0e0;
+        }
+        
+        .btn-next {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            margin-left: auto;
+        }
+        
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            margin-left: auto;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .question-grid {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .question-grid h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .grid-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            gap: 10px;
+        }
+        
+        .grid-item {
+            aspect-ratio: 1;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+        
+        .grid-item:hover {
+            border-color: #667eea;
+        }
+        
+        .grid-item.answered {
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            border-color: #667eea;
+        }
+        
+        .grid-item.current {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .warning-message {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .warning-message i {
+            font-size: 24px;
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <!-- Title -->
+        <div style="background: white; border-radius: 12px; padding: 15px 30px; margin-bottom: 15px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); text-align: center;">
+            <h1 style="margin: 0; font-size: 24px; color: #667eea; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">SARALASH TESTI</h1>
+        </div>
+        
+        <!-- Header with Timer -->
+        <div class="test-header">
+            <div class="progress-info">
+                <div class="question-counter">
+                    Savol: <span id="currentQuestion">1</span> / {{ total_questions }}
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+            </div>
+            <div class="timer" id="timer">
+                <i class="fas fa-clock"></i>
+                <span id="timerDisplay">{{ assessment_test.time_limit }}:00</span>
+            </div>
+        </div>
+        
+        <!-- Warning -->
+        <div class="warning-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>Diqqat!</strong> Sahifani yangilasangiz yoki chiqsangiz, test qaytadan boshlanadi!
+            </div>
+        </div>
+        
+        <!-- Questions -->
+        <div id="questionsContainer">
+            {% for question in questions %}
+            <div class="question-card {% if forloop.first %}active{% endif %}" data-question-id="{{ question.id }}" data-index="{{ forloop.counter0 }}">
+                <div class="question-number">Savol {{ forloop.counter }}</div>
+                <div class="question-text">{{ question.text }}</div>
+                
+                <div class="answers">
+                    {% for answer in question.answers.all %}
+                    <div class="answer-option" onclick="selectAnswer({{ question.id }}, {{ answer.id }}, this)">
+                        <div class="answer-radio"></div>
+                        <div class="answer-text">{{ answer.text }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="navigation-buttons">
+                    {% if not forloop.first %}
+                    <button class="btn btn-prev" onclick="previousQuestion()">
+                        <i class="fas fa-arrow-left"></i> Oldingi
+                    </button>
+                    {% endif %}
+                    
+                    {% if forloop.last %}
+                    <button class="btn btn-submit" onclick="submitTest()">
+                        <i class="fas fa-check"></i> Testni yakunlash
+                    </button>
+                    {% else %}
+                    <button class="btn btn-next" onclick="nextQuestion()">
+                        Keyingi <i class="fas fa-arrow-right"></i>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Question Grid -->
+        <div class="question-grid">
+            <h3><i class="fas fa-th"></i> Barcha savollar</h3>
+            <div class="grid-items" id="questionGrid">
+                {% for question in questions %}
+                <div class="grid-item {% if forloop.first %}current{% endif %}" 
+                     onclick="jumpToQuestion({{ forloop.counter0 }})"
+                     data-index="{{ forloop.counter0 }}">
+                    {{ forloop.counter }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentQuestionIndex = 0;
+        const totalQuestions = {{ total_questions }};
+        const timeLimit = {{ time_limit_seconds }};
+        let remainingTime = timeLimit;
+        let userAnswers = {};
+        const startTime = Date.now();
+        
+        // Prevent page refresh/close
+        window.addEventListener('beforeunload', function (e) {
+            e.preventDefault();
+            e.returnValue = '';
+        });
+        
+        // Timer
+        const timerInterval = setInterval(() => {
+            remainingTime--;
+            
+            const minutes = Math.floor(remainingTime / 60);
+            const seconds = remainingTime % 60;
+            document.getElementById('timerDisplay').textContent = 
+                minutes + ':' + String(seconds).padStart(2, '0');
+            
+            // Warning when 5 minutes left
+            if (remainingTime <= 300) {
+                document.getElementById('timer').classList.add('warning');
+            }
+            
+            // Auto submit when time runs out
+            if (remainingTime <= 0) {
+                clearInterval(timerInterval);
+                alert('⏰ Vaqt tugadi! Test avtomatik yakunlanmoqda...');
+                submitTest();
+            }
+        }, 1000);
+        
+        // Update progress
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            
+            // Update grid
+            document.querySelectorAll('.grid-item').forEach((item, index) => {
+                item.classList.remove('current');
+                if (index === currentQuestionIndex) {
+                    item.classList.add('current');
+                }
+            });
+        }
+        
+        // Select answer
+        function selectAnswer(questionId, answerId, element) {
+            // Remove selection from siblings
+            element.parentElement.querySelectorAll('.answer-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selection
+            element.classList.add('selected');
+            
+            // Store answer
+            userAnswers[questionId] = answerId;
+            
+            // Update grid
+            const gridItem = document.querySelector(`.grid-item[data-index="${currentQuestionIndex}"]`);
+            if (gridItem) {
+                gridItem.classList.add('answered');
+            }
+        }
+        
+        // Navigation
+        function showQuestion(index) {
+            document.querySelectorAll('.question-card').forEach((card, i) => {
+                card.classList.remove('active');
+                if (i === index) {
+                    card.classList.add('active');
+                }
+            });
+            currentQuestionIndex = index;
+            updateProgress();
+        }
+        
+        function nextQuestion() {
+            if (currentQuestionIndex < totalQuestions - 1) {
+                showQuestion(currentQuestionIndex + 1);
+            }
+        }
+        
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                showQuestion(currentQuestionIndex - 1);
+            }
+        }
+        
+        function jumpToQuestion(index) {
+            showQuestion(index);
+        }
+        
+        // Submit test
+        async function submitTest() {
+            const answeredCount = Object.keys(userAnswers).length;
+            const unanswered = totalQuestions - answeredCount;
+            
+            let confirmMessage = 'Testni yakunlashga ishonchingiz komilmi?\n\n';
+            confirmMessage += `✅ Javob berilgan: ${answeredCount}\n`;
+            if (unanswered > 0) {
+                confirmMessage += `❌ Javob berilmagan: ${unanswered} (xato deb hisoblanadi)`;
+            }
+            
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+            
+            clearInterval(timerInterval);
+            
+            const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+            
+            try {
+                const response = await fetch('{% url "main:submit_assessment_test" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        answers: userAnswers,
+                        time_taken: timeTaken
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    let message = `🎉 Test yakunlandi!\n\n`;
+                    message += `📊 Natija: ${data.percentage}%\n`;
+                    message += `✅ To'g'ri: ${data.correct_answers}/${data.total_questions}\n\n`;
+                    
+                    if (data.passed) {
+                        message += `🌟 Tabriklaymiz! Siz "iqtidorli talaba" maqomiga ega bo'ldingiz!`;
+                    } else {
+                        message += `❌ Afsuski, siz testdan o'ta olmadingiz.\n`;
+                        message += `⏰ 1 soatdan keyin qayta urinib ko'rishingiz mumkin.`;
+                    }
+                    
+                    alert(message);
+                    window.location.href = '{% url "main:assessment_test" %}';
+                } else {
+                    alert('❌ Xatolik: ' + (data.error || 'Noma\'lum xatolik'));
+                }
+            } catch (error) {
+                console.error('Submit error:', error);
+                alert('❌ Testni yuborishda xatolik yuz berdi!');
+            }
+        }
+        
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>

@@ -1,0 +1,383 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Saralash testi{% endblock %}
+
+{% block extra_head %}
+<style>
+        .assessment-container {
+            max-width: 900px;
+            margin: 100px auto 50px;
+            padding: 20px;
+        }
+        
+        .assessment-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .assessment-header h1 {
+            font-size: 36px;
+            margin: 0 0 15px 0;
+            font-weight: 700;
+        }
+        
+        .assessment-header p {
+            font-size: 18px;
+            opacity: 0.95;
+            margin: 0;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .info-card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .info-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+        }
+        
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .info-list i {
+            color: #667eea;
+            font-size: 20px;
+            width: 30px;
+        }
+        
+        .status-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .status-card.success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .status-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 22px;
+        }
+        
+        .status-card p {
+            margin: 0;
+            font-size: 18px;
+            opacity: 0.95;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn-primary {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            flex: 1;
+            background: #f0f0f0;
+            color: #333;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .timer-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .timer-warning i {
+            font-size: 24px;
+            color: #ffc107;
+        }
+        
+        .timer-warning strong {
+            font-size: 18px;
+            color: #856404;
+        }
+        
+        #waitTimer {
+            font-size: 24px;
+            font-weight: 700;
+            color: #764ba2;
+            margin-top: 10px;
+        }
+        
+        .result-summary {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .result-summary h4 {
+            margin: 0 0 15px 0;
+            color: #333;
+        }
+        
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="assessment-container">
+        <!-- Header -->
+        <div class="assessment-header">
+            <h1><i class="fas fa-graduation-cap"></i> Saralash testi</h1>
+            <p>Iqtidorli talaba maqomiga ega bo'lish uchun testdan o'ting!</p>
+        </div>
+        
+        {% if not assessment_test %}
+        <!-- Test mavjud emas -->
+        <div class="info-card" style="text-align: center; padding: 60px 30px;">
+            <div style="font-size: 64px; color: #e0e0e0; margin-bottom: 20px;">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <h2 style="color: #666; margin-bottom: 10px;">Test mavjud emas</h2>
+            <p style="color: #999; margin-bottom: 30px;">Saralash testi hozircha tizimga qo'shilmagan</p>
+            <a href="{% url 'main:home' %}" class="btn-secondary" style="display: inline-flex; text-decoration: none;">
+                <i class="fas fa-home"></i> Bosh sahifaga qaytish
+            </a>
+        </div>
+        {% else %}
+        
+        <!-- Status Card -->
+        {% if last_result %}
+            {% if last_result.passed %}
+                <div class="status-card success">
+                    <h3><i class="fas fa-star"></i> Siz iqtidorli talaba maqomiga ega bo'ldingiz!</h3>
+                    <p>Test natijasi: {{ last_result.percentage|floatformat:1 }}%</p>
+                </div>
+            {% else %}
+                <div class="status-card">
+                    <h3><i class="fas fa-info-circle"></i> Hozirgi statusingiz: {{ user.status|capfirst }}</h3>
+                    <p>Oxirgi test natijasi: {{ last_result.percentage|floatformat:1 }}%</p>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="status-card">
+                <h3><i class="fas fa-user"></i> Hozirgi statusingiz: {{ user.status|capfirst }}</h3>
+                <p>Siz hali saralash testini topshirmadingiz</p>
+            </div>
+        {% endif %}
+        
+        <!-- Test Info -->
+        <div class="info-card">
+            <h2><i class="fas fa-info-circle"></i> Test haqida ma'lumot</h2>
+            <p style="margin-bottom: 20px; color: #666; line-height: 1.6;">{{ assessment_test.description }}</p>
+            
+            <ul class="info-list">
+                <li>
+                    <i class="fas fa-clock"></i>
+                    <strong>Vaqt limiti:</strong> {{ assessment_test.time_limit }} daqiqa
+                </li>
+                <li>
+                    <i class="fas fa-chart-line"></i>
+                    <strong>O'tish foizi:</strong> {{ assessment_test.pass_percentage }}%
+                </li>
+                <li>
+                    <i class="fas fa-redo"></i>
+                    <strong>Qayta urinish:</strong> {{ assessment_test.retry_delay_hours }} soatdan keyin
+                </li>
+                <li>
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Muhim:</strong> Sahifani yangilasangiz yoki chiqsangiz, test qaytadan boshlanadi!
+                </li>
+                <li>
+                    <i class="fas fa-hourglass-end"></i>
+                    <strong>Vaqt tugashi:</strong> Belgilangan javoblar qabul qilinadi, qolganlari xato hisoblanadi
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Last Result -->
+        {% if last_result %}
+        <div class="info-card">
+            <h2><i class="fas fa-chart-bar"></i> Oxirgi test natijasi</h2>
+            <div class="result-summary">
+                <h4>{{ last_result.submitted_at|date:"d.m.Y H:i" }}da topshirilgan</h4>
+                <div class="result-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ last_result.percentage|floatformat:1 }}%</div>
+                        <div class="stat-label">Natija</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ last_result.correct_answers }}</div>
+                        <div class="stat-label">To'g'ri javoblar</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ last_result.total_questions }}</div>
+                        <div class="stat-label">Jami savollar</div>
+                    </div>
+                    {% if last_result.time_taken %}
+                    <div class="stat-item">
+                        <div class="stat-value">{{ last_result.time_taken|floatformat:0 }}s</div>
+                        <div class="stat-label">Sarflangan vaqt</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Wait Timer -->
+        {% if not can_attempt and wait_time %}
+        <div class="timer-warning">
+            <i class="fas fa-clock"></i>
+            <div>
+                <strong>Keyingi urinish uchun kutish vaqti:</strong>
+                <div id="waitTimer">{{ wait_time.hours }}:{{ wait_time.minutes|stringformat:"02d" }}:00</div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            {% if can_attempt %}
+                <a href="{% url 'main:start_assessment_test' %}" class="btn-primary" onclick="return confirmStart()">
+                    <i class="fas fa-play"></i> Testni boshlash
+                </a>
+            {% else %}
+                <button class="btn-primary" disabled>
+                    <i class="fas fa-lock"></i> Testni boshlash ({{ wait_time.hours }}:{{ wait_time.minutes|stringformat:"02d" }} kutish)
+                </button>
+            {% endif %}
+            <a href="{% url 'main:profile' %}" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Profilga qaytish
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function confirmStart() {
+            return confirm('⚠️ OGOHLANTIRILISH!\n\nTestni boshlaganingizdan keyin:\n• Sahifani yangilasangiz, test qaytadan boshlanadi\n• Vaqt tugasa, belgilangan javoblar qabul qilinadi\n• Belgilanmagan javoblar xato hisoblanadi\n\nTestni boshlashni xohlaysizmi?');
+        }
+        
+        {% if not can_attempt and wait_time %}
+        // Countdown timer
+        let remainingSeconds = {{ wait_time.seconds }};
+        const timerElement = document.getElementById('waitTimer');
+        
+        setInterval(() => {
+            if (remainingSeconds > 0) {
+                remainingSeconds--;
+                const hours = Math.floor(remainingSeconds / 3600);
+                const minutes = Math.floor((remainingSeconds % 3600) / 60);
+                const seconds = remainingSeconds % 60;
+                
+                timerElement.textContent = 
+                    hours + ':' + 
+                    String(minutes).padStart(2, '0') + ':' + 
+                    String(seconds).padStart(2, '0');
+            } else {
+                window.location.reload();
+            }
+        }, 1000);
+        {% endif %}
+    </script>
+{% endblock %}

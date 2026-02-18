@@ -1,0 +1,613 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Yosh Tadqiqotchi - Ilmiy imkoniyatlar platformasi{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Elegant Themes inspired animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+/* Typing animation */
+#typingText {
+    display: inline-block;
+    min-width: 420px;
+    text-align: left;
+}
+
+@media (max-width: 768px) {
+    #typingText {
+        min-width: 280px;
+    }
+}
+
+/* Enhanced card hover */
+.elegant-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.elegant-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.elegant-card:hover::before {
+    left: 100%;
+}
+
+.elegant-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg) !important;
+}
+
+/* Gradient blob background */
+.gradient-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    animation: float 8s ease-in-out infinite;
+}
+
+.blob-1 {
+    width: 500px;
+    height: 500px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    top: -200px;
+    right: -200px;
+    animation-delay: 0s;
+}
+
+.blob-2 {
+    width: 400px;
+    height: 400px;
+    background: linear-gradient(135deg, #d946ef, #8b5cf6);
+    bottom: -150px;
+    left: -150px;
+    animation-delay: 2s;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section - Elegant Themes Style -->
+<section class="hero-section fade-in" style="position: relative; overflow: hidden; min-height: 85vh; display: flex; align-items: center; background: #0a0a0f;">
+    <!-- Animated gradient blobs -->
+    <div class="gradient-blob blob-1"></div>
+    <div class="gradient-blob blob-2"></div>
+    
+    <div style="position: relative; z-index: 2; width: 100%; max-width: 1400px; margin: 0 auto; padding: 80px 40px;">
+        <!-- Badge -->
+        <div class="fade-in delay-100" style="text-align: center; margin-bottom: 32px;">
+            <a href="{% url 'main:service' %}" style="display: inline-flex; align-items: center; gap: 12px; padding: 12px 24px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 999px; text-decoration: none; transition: all 0.3s; backdrop-filter: blur(10px);">
+                <span style="padding: 4px 12px; background: #8b5cf6; color: white; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;">YANGI</span>
+                <span style="color: #e0e0e0; font-size: 15px; font-weight: 500;">Maqola tahririyati xizmati ishga tushdi</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" stroke-width="2.5">
+                    <path d="m9 18 6-6-6-6"/>
+                </svg>
+            </a>
+        </div>
+        
+        <!-- Main Heading -->
+        <h1 class="fade-in delay-200" style="text-align: center; font-size: clamp(42px, 5vw, 72px); font-weight: 800; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.02em;">
+            <span style="background: linear-gradient(135deg, #8b5cf6, #d946ef); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: block;">Yosh tadqiqotchilar</span>
+            <span style="color: #e0e0e0; display: block; margin-top: 8px;">uchun</span>
+            <span id="typingText" style="background: linear-gradient(135deg, #6366f1, #8b5cf6, #d946ef); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;"></span>
+        </h1>
+        
+        <!-- Description -->
+        <p class="fade-in delay-300" style="text-align: center; font-size: 20px; line-height: 1.7; color: #b0b0b0; max-width: 800px; margin: 0 auto 48px; font-weight: 400;">
+            Xalqaro olimpiadalar, nufuzli stipendiyalar va professional kurslar - barchasi bir platformada. Ilmiy faoliyatingizni yangi bosqichga olib chiqing.
+        </p>
+        
+        <!-- CTA Buttons -->
+        <div class="fade-in delay-400" style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 64px; flex-wrap: wrap;">
+            {% if user.is_authenticated %}
+            <a href="{% url 'main:courses' %}" class="btn-primary" style="padding: 18px 40px; font-size: 17px; font-weight: 600; border-radius: 12px; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3); transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 10px;">
+                <span>Boshlash</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+            {% else %}
+            <a href="{% url 'main:login' %}" class="btn-primary" style="padding: 18px 40px; font-size: 17px; font-weight: 600; border-radius: 12px; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3); transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 10px;">
+                <span>Boshlash</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+            {% endif %}
+            
+            
+        </div>
+        
+        <!-- Features -->
+        <div class="fade-in delay-500" style="display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; max-width: 900px; margin: 0 auto;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 48px; height: 48px; background: rgba(139, 92, 246, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-check" style="color: #8b5cf6; font-size: 20px;"></i>
+                </div>
+                <span style="color: #b0b0b0; font-size: 15px; font-weight: 500;">Professional tahrir xizmati</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 48px; height: 48px; background: rgba(139, 92, 246, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-check" style="color: #8b5cf6; font-size: 20px;"></i>
+                </div>
+                <span style="color: #b0b0b0; font-size: 15px; font-weight: 500;">Ekspert ko'rib chiqishi</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 48px; height: 48px; background: rgba(139, 92, 246, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-check" style="color: #8b5cf6; font-size: 20px;"></i>
+                </div>
+                <span style="color: #b0b0b0; font-size: 15px; font-weight: 500;">Tezkor onlayn jarayon</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistika Section - Elegant Style -->
+<section id="features" class="section section-1 scroll-section" style="padding: 100px 40px; position: relative; overflow: hidden;">
+    <div style="max-width: 1400px; margin: 0 auto;">
+        <div class="fade-in" style="text-align: center; margin-bottom: 48px;">
+            <div class="badge" style="margin-bottom: 20px;">
+                <i class="fas fa-trophy"></i> Yoshlar Uchun Imkoniyatlar
+            </div>
+            
+            <h2 style="font-size: clamp(28px, 3.5vw, 42px); font-weight: 800; line-height: 1.2; margin-bottom: 20px; letter-spacing: -0.02em; color: var(--text-primary);">
+                Xalqaro fan olimpiadalari va nifuzli stipendiyalar
+            </h2>
+            
+            <p style="font-size: 16px; line-height: 1.6; color: var(--text-secondary); max-width: 700px; margin: 0 auto;">
+                Talabalar va yosh tadqiqotchilar uchun eng yaxshi imkoniyatlar
+            </p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+            <!-- Olympiads Card -->
+            <a href="{% url 'main:olimpiadalar' %}" class="elegant-card fade-in delay-100" style="padding: 28px; cursor: pointer; text-decoration: none; position: relative; overflow: hidden; background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: 16px; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
+                <div style="position: relative; z-index: 1;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                        <div style="font-size: 42px; font-weight: 800; background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ olympiad_count|default:0 }}</div>
+                        <div style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary)); border-radius: 12px; box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                                <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary);">Xalqaro Fan Olimpiadalari</div>
+                    <div style="font-size: 13px; color: var(--text-muted);">Faol olimpiadalar va tanlovlar</div>
+                </div>
+            </a>
+            
+            <!-- Scholarships Card -->
+            <a href="{% url 'main:davlat_stipendiyalari' %}" class="elegant-card fade-in delay-200" style="padding: 28px; cursor: pointer; text-decoration: none; position: relative; overflow: hidden; background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: 16px; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
+                <div style="position: relative; z-index: 1;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                        <div style="font-size: 42px; font-weight: 800; background: linear-gradient(135deg, #EC4899, #DB2777); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ scholarship_count|default:0 }}</div>
+                        <div style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: linear-gradient(135deg, #EC4899, #DB2777); border-radius: 12px; box-shadow: 0 8px 24px rgba(236, 72, 153, 0.4);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                                <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary);">Imtiyozli Stipendiyalar</div>
+                    <div style="font-size: 13px; color: var(--text-muted);">Davlat va universitet dasturlari</div>
+                </div>
+            </a>
+            
+            <!-- Courses Card -->
+            <a href="{% url 'main:courses' %}" class="elegant-card fade-in delay-300" style="padding: 28px; cursor: pointer; text-decoration: none; position: relative; overflow: hidden; background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: 16px; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
+                <div style="position: relative; z-index: 1;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                        <div style="font-size: 42px; font-weight: 800; background: linear-gradient(135deg, var(--accent-secondary), #3B82F6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ course_count|default:0 }}</div>
+                        <div style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: linear-gradient(135deg, var(--accent-secondary), #3B82F6); border-radius: 12px; box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                                <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary);">Online Kurslar</div>
+                    <div style="font-size: 13px; color: var(--text-muted);">Professional treyninglar</div>
+                </div>
+                </a>
+                
+                <a href="{% url 'main:service' %}" class="elegant-card fade-in delay-400" style="padding: 28px; cursor: pointer; text-decoration: none; position: relative; overflow: hidden; background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: 16px; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
+                    <div style="position: relative; z-index: 1;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                            <div style="font-size: 42px; font-weight: 800; background: linear-gradient(135deg, #A855F7, #9333EA); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ article_count|default:0 }}</div>
+                            <div style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: linear-gradient(135deg, #A855F7, #9333EA); border-radius: 12px; box-shadow: 0 8px 24px rgba(168, 85, 247, 0.4);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                                    <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary);">Ilmiy Nashrlar</div>
+                        <div style="font-size: 13px; color: var(--text-muted);">Maqola tahririyati</div>
+                    </div>
+                </a>
+            </div>
+    </div>
+</section>
+
+<!-- E'lonlar Section - Elegant Style -->
+<section class="section section-2 scroll-section" style="padding: 100px 40px;">
+    <div style="text-align: center; margin-bottom: 64px;">
+        <div class="badge fade-in" style="margin-bottom: 20px;">
+            <i class="fas fa-bullhorn"></i> E'lonlar
+        </div>
+        <h2 class="fade-in delay-100" style="font-size: clamp(36px, 4vw, 52px); font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; color: var(--text-primary); margin-bottom: 16px;">Faol tanlovlar va e'lonlari</h2>
+        <p class="fade-in delay-200" style="font-size: 18px; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+            Eng so'nggi stipendiyalar, olimpiadalar va ilmiy tadbirlar haqida xabardor bo'ling
+        </p>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 32px; max-width: 1400px; margin: 0 auto;">
+        {% for announcement in announcements %}
+        <div class="elegant-card fade-in delay-{{ forloop.counter }}00" style="overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: 16px;">
+            {% if announcement.image or announcement.image_url %}
+            <div style="position: relative; height: 280px; overflow: hidden;">
+                <img src="{{ announcement.get_image_url }}" alt="{{ announcement.title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s;">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding: 24px;">
+                    <div style="font-size: 14px; font-weight: 700; color: white; letter-spacing: 2px; opacity: 0.9;">E'LON</div>
+                </div>
+            </div>
+            {% else %}
+            <div style="padding: 48px; text-align: center; background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary)); position: relative; overflow: hidden;">
+                <div style="position: absolute; inset: 0; background: radial-gradient(circle at top left, rgba(255,255,255,0.2), transparent 60%);"></div>
+                <svg viewBox="0 0 120 120" style="width: 120px; height: 120px; margin: 0 auto 16px;">
+                    <rect x="30" y="48" width="60" height="54" rx="6" fill="white" opacity="0.9"/>
+                    <rect x="33" y="51" width="54" height="21" rx="5" fill="#E0F2FE"/>
+                    <circle cx="48" cy="60" r="5" fill="var(--accent-secondary)"/>
+                    <circle cx="72" cy="60" r="5" fill="var(--accent-secondary)"/>
+                    <path d="M48 72 Q60 78 72 72" stroke="var(--accent-secondary)" stroke-width="2" fill="none"/>
+                    <circle cx="60" cy="42" r="4" fill="var(--accent-tertiary)"/>
+                    <line x1="60" y1="46" x2="60" y2="48" stroke="#94A3B8" stroke-width="2"/>
+                </svg>
+                <div style="font-size: 14px; font-weight: 700; color: white; letter-spacing: 2px;">E'LON</div>
+            </div>
+            {% endif %}
+            <div style="padding: 32px;">
+                <div class="badge" style="margin-bottom: 16px; background: rgba(139, 92, 246, 0.1); color: var(--accent-primary); border: 1px solid var(--border-color);">
+                    👤 {{ announcement.author }}
+                </div>
+                <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; line-height: 1.4; color: var(--text-primary);">
+                    {{ announcement.title }}
+                </h3>
+                <p style="font-size: 15px; line-height: 1.7; margin-bottom: 20px; color: var(--text-secondary);">
+                    {{ announcement.short_text|truncatewords:15 }}
+                </p>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-muted);">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" opacity="0.5">
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                        {{ announcement.date|date:"d-F, Y" }}-yil
+                    </div>
+                </div>
+                <a href="{% url 'main:announcement_detail' announcement.pk %}" class="btn-gradient" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                    Batafsil
+                </a>
+                
+            </div>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+            <div style="font-size: 48px; margin-bottom: 16px;">📢</div>
+            <h3 class="subtitle" style="font-size: 24px; margin-bottom: 12px;">Hozircha e'lon yo'q</h3>
+            <p class="text-muted">Yangi e'lonlar tez orada qo'shiladi</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Olimpiadalar Section - Elegant Style -->
+<section class="section section-3 scroll-section" style="padding: 100px 40px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.03), rgba(217, 70, 239, 0.03));">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; max-width: 1400px; margin: 0 auto;">
+        <div class="fade-in" style="position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div style="border-radius: 24px; overflow: hidden; aspect-ratio: 1; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(217, 70, 239, 0.1)); border: 1px solid var(--border-color);">
+                <img src="{% static 'assets/features-showcase-1.png' %}" alt="Talaba" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div style="border-radius: 24px; overflow: hidden; aspect-ratio: 1; background: linear-gradient(135deg, rgba(217, 70, 239, 0.1), rgba(236, 72, 153, 0.1)); margin-top: 40px; border: 1px solid var(--border-color);">
+                <img src="{% static 'assets/features-showcase-2.png' %}" alt="Talaba" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div style="position: absolute; top: 20%; left: -20px; width: 72px; height: 72px; background: var(--bg-card); border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(139, 92, 246, 0.2); font-size: 28px; border: 1px solid var(--border-color);">
+                📖
+            </div>
+            <div style="position: absolute; bottom: 10%; right: -20px; width: 72px; height: 72px; background: var(--bg-card); border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(217, 70, 239, 0.2); font-size: 28px; border: 1px solid var(--border-color);">
+                🎓
+            </div>
+        </div>
+        
+        <div class="fade-in delay-200">
+            <div class="badge" style="margin-bottom: 20px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                Fan Olimpiadalari
+            </div>
+            <h2 style="font-size: clamp(28px, 3.5vw, 42px); font-weight: 800; line-height: 1.3; margin-bottom: 20px; color: var(--text-primary);">
+                Xalqaro va respublika darajasidagi tanlovlar g'oliblari
+            </h2>
+            <p style="font-size: 16px; line-height: 1.7; color: var(--text-secondary);">
+                Stipendiya imkoniyatlarini ko'rib chiqing va akademik muvaffaqiyatingiz sari qadam qo'ying.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Talabalar Section - Elegant Style -->
+<section class="section section-2 scroll-section" style="padding: 100px 40px;">
+    <div style="text-align: center; margin-bottom: 64px;">
+        <div class="badge fade-in" style="margin-bottom: 20px;">
+            <i class="fas fa-users"></i> Talabalar
+        </div>
+        <h2 class="fade-in delay-100" style="font-size: clamp(32px, 4vw, 48px); font-weight: 800; color: var(--text-primary); margin-bottom: 16px;">Bizning iqtidorli talabalarimiz</h2>
+        <p class="fade-in delay-200" style="font-size: 16px; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+            Muvaffaqiyatli talabalar va ularning yutuqlari
+        </p>
+    </div>
+    
+    <div style="display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; padding: 20px 0; max-width: 1400px; margin: 0 auto;">
+        {% for student in talented_students %}
+        <div class="elegant-card fade-in delay-{{ forloop.counter }}00" style="flex: 0 0 350px; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden;">
+            <div style="width: 100%; height: 300px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(217, 70, 239, 0.1)); position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                {% if student.profile_image %}
+                <img src="{{ student.profile_image.url }}" alt="{{ student.get_full_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                <svg width="120" height="120" viewBox="0 0 24 24" fill="white" opacity="0.5">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+                {% endif %}
+                <div class="student-info-button" style="position: absolute; bottom: 16px; right: 16px; width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary)); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; box-shadow: 0 4px 16px rgba(139, 92, 246, 0.5); z-index: 10;">
+                    +
+                </div>
+                <div class="student-info-popup" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.95); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; z-index: 20;">
+                    <div style="width: 64px; height: 64px; background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                    </div>
+                    <div style="color: white; font-size: 18px; font-weight: 600; margin-bottom: 20px; text-align: center;">
+                        {{ student.get_full_name }}
+                    </div>
+                    <div style="width: 100%; max-width: 250px;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                            </svg>
+                            <span style="color: white; font-size: 14px;">{{ student.email }}</span>
+                        </div>
+                        {% if student.phone_number %}
+                        <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                            </svg>
+                            <span style="color: white; font-size: 14px;">{{ student.phone_number }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div onclick="this.parentElement.style.display='none'" style="position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div style="padding: 20px; text-align: center;">
+                <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary);">{{ student.get_full_name }}</div>
+                <div style="font-size: 13px; color: var(--text-muted);">{{ student.region|default:"O'zbekiston" }}</div>
+            </div>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+            <div style="font-size: 48px; margin-bottom: 16px;">👨‍🎓</div>
+            <h3 class="subtitle" style="font-size: 24px; margin-bottom: 12px;">Hozircha iqtidorli talabalar yo'q</h3>
+            <p class="text-muted">Iqtidorli talabalar tez orada qo'shiladi</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Sinovchilar Section - Elegant Style -->
+<section class="section section-1 scroll-section" style="padding: 80px 40px;">
+    <div style="text-align: center; margin-bottom: 48px;">
+        <div class="badge fade-in">
+            <i class="fas fa-comments"></i> Sinovchilar
+        </div>
+        <h2 class="fade-in delay-100" style="font-size: clamp(28px, 3.5vw, 42px); font-weight: 800; color: var(--text-primary); margin-bottom: 12px;">Bizning sinovchilarimizning fikrlari</h2>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center; max-width: 1400px; margin: 0 auto;">
+        <div class="fade-in" style="position: relative;">
+            <div style="width: 300px; height: 300px; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(217, 70, 239, 0.1)); position: relative; border: 6px dashed rgba(139, 92, 246, 0.3); padding: 6px;">
+                <img src="{% static 'assets/user.png' %}" alt="Mitchel Starc" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+            </div>
+            <div style="position: absolute; top: 30px; left: -15px; width: 48px; height: 48px; background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);">
+                🎓
+            </div>
+            <div style="position: absolute; bottom: 60px; left: -20px; width: 48px; height: 48px; background: #F59E0B; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3);">
+                💡
+            </div>
+            <div style="position: absolute; bottom: 30px; right: -15px; width: 48px; height: 48px; background: transparent; border: 2px solid var(--accent-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent-primary); font-size: 20px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                </svg>
+            </div>
+            <div style="position: absolute; top: 55%; right: -30px; width: 48px; height: 48px; background: #EF4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px; box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);">
+                01
+            </div>
+        </div>
+        
+        <div class="fade-in delay-200">
+            <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">Anvar Baoyev</h2>
+            <h3 style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">Magistr</h3>
+            <p style="font-size: 16px; line-height: 1.7; font-style: italic; margin-bottom: 20px; color: var(--text-secondary);">
+                "Bu platforma orqali o'zimga mos stipendiyani topdim va ariza topshirish jarayoni juda oson bo'ldi. Barcha ma'lumotlar aniq va tushunarli berilgan. Haqiqatan ham iqtidorli talabalar uchun katta imkoniyat!"
+            </p>
+
+            <div style="display: flex; gap: 4px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#FCD34D">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#FCD34D">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#FCD34D">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#E5E7EB">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#E5E7EB">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    // Typing effect with gradient animation
+    const words = [
+        "katta imkoniyatlar!",
+        "stipendiyalar va grantlar!",
+        "xalqaro dasturlar!",
+        "Scopus sari qadam!",
+        "OAK tayyorgarligi!",
+        "ilmiy yuksalish!",
+        "nufuzli nashrlar!",
+        "maqola ekspertizasi!",
+        "global muvaffaqiyat!",
+        "yorqin kelajak!"
+    ];
+    
+    const typingText = document.getElementById('typingText');
+    let wordIndex = 0;
+    let charIndex = 0;
+    
+    function type() {
+        const currentWord = words[wordIndex];
+        
+        if (charIndex < currentWord.length) {
+            typingText.textContent += currentWord.charAt(charIndex);
+            charIndex++;
+            setTimeout(type, 80);
+        } else {
+            setTimeout(() => {
+                typingText.style.opacity = '0';
+                setTimeout(() => {
+                    typingText.textContent = '';
+                    charIndex = 0;
+                    wordIndex = (wordIndex + 1) % words.length;
+                    typingText.style.opacity = '1';
+                    type();
+                }, 500);
+            }, 2500);
+        }
+    }
+    
+    type();
+    
+    // Enhanced scroll animation observer
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -80px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    // Observe all fade-in elements
+    const fadeElements = document.querySelectorAll('.fade-in, .slide-up, .scale-in');
+    fadeElements.forEach(element => {
+        observer.observe(element);
+    });
+    
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    
+    // Add hover effect to cards
+    document.querySelectorAll('.elegant-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px) scale(1.02)';
+            this.style.borderColor = 'var(--accent-primary)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+            this.style.borderColor = 'var(--border-color)';
+        });
+    });
+    
+    // Student info popup toggle
+    document.querySelectorAll('.student-info-button').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const popup = this.nextElementSibling;
+            popup.style.display = popup.style.display === 'flex' ? 'none' : 'flex';
+        });
+    });
+})();
+</script>
+{% endblock %}

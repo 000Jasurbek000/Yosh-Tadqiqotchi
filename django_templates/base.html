@@ -1,0 +1,327 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Yosh Tadqiqotchi{% endblock %}</title>
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'styles.css' %}" />
+  <link rel="icon" href="{% static 'assets/favico.png' %}" type="image/png" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <!-- Header -->
+  <!-- Top Bar -->
+  <div class="header-top-bar">
+    <div class="contact-links">
+      <a href="mailto:u.m.xalikova@buxdu.uz">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        <span>u.m.xalikova@buxdu.uz</span>
+      </a>
+      <a href="tel:+998973056220">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .70 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.70A2 2 0 0 1 22 16.92z"/></svg>
+        <span>(97)305-62-20</span>
+      </a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;" class="text-muted">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+      <span>Buxoro sh. M.Iqbol ko'chasi 11-uy</span>
+    </div>
+  </div>
+
+  <!-- Main Navbar -->
+  <nav class="header-main-nav">
+    <div class="nav-container">
+      <a href="{% url 'main:home' %}" class="logo">
+        <img src="{% static 'assets/logo.png' %}" alt="Yosh Tadqiqotchi"/>
+      </a>
+
+      <div class="nav-links">
+        <a href="{% url 'main:home' %}">Bosh Sahifa</a>
+        <a href="{% url 'main:courses' %}">Online Kurslar</a>
+
+        <div class="dropdown">
+          <button>
+            <span>Iqtidorli Talabamisiz?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="dropdown-menu">
+            <a href="{% url 'main:iqtidorli_sorovnoma' %}">So'rovnoma</a>
+            <a href="{% url 'main:assessment_test' %}">Saralash testi</a>
+            <a href="{% url 'main:iqtidorli_baza' %}">Iqtidorli talabalar bazasi</a>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <button>
+            <span>Imtiyozli stipendiyalar</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="dropdown-menu">
+            <a href="{% url 'main:davlat_stipendiyalari' %}">Davlat stipendiyalari</a>
+            <a href="{% url 'main:buxdu_stipendiyalari' %}">BuxDU stipendiyalari</a>
+            <a href="{% url 'main:buxdu_stipendiya_bazasi' %}">BuxDU stipendiya sovrindorlari bazasi</a>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <button>
+            <span>Xalqaro grant va olimpiadalar</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="dropdown-menu">
+            <a href="{% url 'main:xalqaro_olimpiadalar' %}">Xalqaro fan olimpiadalari</a>
+            <a href="{% url 'main:respublika_olimpiadalar' %}">Respublika fan olimpiadalari</a>
+            <a href="{% url 'main:onlayn_olimpiadalar' %}">Onlayn fan olimpiadalari</a>
+            <a href="{% url 'main:buxdu_olimpiadalari' %}">BuxDU olimpiadalari</a>
+            <a href="{% url 'main:buxdu_olimpiada_goliblari' %}">BuxDU olimpiada g'oliblari</a>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <button>
+            <span>Ilmiy nashrlar va bazalar</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="dropdown-menu">
+            <a href="{% url 'main:mahalliy_oak_jurnallari' %}">Mahalliy OAK jurnallari</a>
+            <a href="{% url 'main:xalqaro_oak_jurnallari' %}">Xalqaro OAK jurnallari</a>
+            <a href="{% url 'main:xalqaro_konferensiyalar' %}">Xalqaro konferensiyalar</a>
+            <a href="{% url 'main:respublika_konferensiyalar' %}">Respublika konferensiyalar</a>
+            <a href="{% url 'main:dissertatsiyalar_banki' %}">Dissertatsiyalar banki</a>
+            <a href="{% url 'main:maqolalar_banki' %}">Maqolalar banki</a>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <button>
+            <span>Xizmatlar</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="dropdown-menu">
+            <a href="{% url 'main:service' %}">Maqola tahriri va tarjima xizmati</a>
+            <a href="{% url 'main:maqola_jurnal_tavsiyasi' %}">Maqola mazmuniga mos jurnalni tavsiya etish</a>
+            <a href="{% url 'main:ilmiy_nizomlar' %}">Ilmiy tadqiqotchilar uchun nizomlar</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <button id="theme-toggle" class="theme-toggle-btn" title="Rangni o'zgartirish">
+          <svg id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+            <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        
+        {% if user.is_authenticated %}
+        <!-- User Menu -->
+        <div class="user-menu-wrapper">
+          <button class="user-menu-trigger" id="user-menu-trigger">
+            <div class="user-avatar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <span class="user-name">{{ user.first_name|truncatewords:1 }} {{ user.last_name|first }}.</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="dropdown-arrow">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+          <div class="user-dropdown-menu" id="user-dropdown-menu">
+            <a href="{% url 'main:profile' %}" class="user-dropdown-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+              <span>Profil</span>
+            </a>
+            <a href="{% url 'main:settings' %}" class="user-dropdown-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/>
+              </svg>
+              <span>Sozlamalar</span>
+            </a>
+            <div class="user-dropdown-divider"></div>
+            <a href="{% url 'main:logout' %}" class="user-dropdown-item logout-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+              </svg>
+              <span>Chiqish</span>
+            </a>
+          </div>
+        </div>
+        {% else %}
+        <a href="{% url 'main:login' %}" id="auth-button" class="auth-btn">Tizimga kirish</a>
+        {% endif %}
+        
+        <button id="open-menu" class="mobile-menu-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-navlinks" class="mobile-menu">
+    <a href="{% url 'main:home' %}">Bosh Sahifa</a>
+    <a href="{% url 'main:courses' %}">Online Kurslar</a>
+    <a href="{% url 'main:assessment_test' %}">Iqtidorli Talabamisiz?</a>
+    <a href="{% url 'main:davlat_stipendiyalari' %}">Davlat stipendiyalari</a>
+    <a href="{% url 'main:buxdu_stipendiyalari' %}">BuxDU stipendiyalari</a>
+    <a href="{% url 'main:buxdu_stipendiya_bazasi' %}">BuxDU stipendiya sovrindorlari</a>
+    <a href="#">Xalqaro grant va olimpiadalar</a>
+    <a href="{% url 'main:buxdu_olimpiada_goliblari' %}">BuxDU olimpiada g'oliblari</a>
+    <a href="{% url 'main:buxdu_olimpiadalari' %}">BuxDU olimpiadalari</a>
+    <a href="{% url 'main:mahalliy_oak_jurnallari' %}">Mahalliy OAK jurnallari</a>
+    <a href="{% url 'main:xalqaro_oak_jurnallari' %}">Xalqaro OAK jurnallari</a>
+    <a href="{% url 'main:xalqaro_konferensiyalar' %}">Xalqaro konferensiyalar</a>
+    <a href="{% url 'main:respublika_konferensiyalar' %}">Respublika konferensiyalar</a>
+    <a href="{% url 'main:dissertatsiyalar_banki' %}">Dissertatsiyalar banki</a>
+    <a href="{% url 'main:maqolalar_banki' %}">Maqolalar banki</a>
+    <a href="{% url 'main:service' %}">Xizmatlar</a>
+    <a href="{% url 'main:maqola_jurnal_tavsiyasi' %}">Maqola mazmuniga mos jurnalni tavsiya etish</a>
+    <a href="{% url 'main:ilmiy_nizomlar' %}">Ilmiy tadqiqotchilar uchun nizomlar</a>
+    <a href="{% url 'main:login' %}" id="mobile-auth-button" class="auth-btn" style="margin-top: 16px;">Tizimga kirish</a>
+    <button id="close-menu" class="close-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+  </div>
+
+  {% block content %}{% endblock %}
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <div class="footer-grid">
+        <div class="footer-column footer-brand">
+          <div class="footer-logo-row">
+            <img src="{% static 'assets/favico.png' %}" alt="Yosh Tadqiqotchi" class="footer-logo" />
+            <span class="footer-brand-name">Yosh Tadqiqotchi Ta'lim Platformasi</span>
+          </div>
+          <p class="text-muted footer-brand-text">
+            Iqtidorli talabalar uchun imtiyozli stipendiyalar, fan olimpiadalari va ta'lim imkoniyatlari yagona platformada.
+          </p>
+        </div>
+
+        <div class="footer-column">
+          <h3 class="footer-title">Aloqa</h3>
+          <ul class="footer-list">
+            <li>
+              <a href="mailto:u.m.xalikova@buxdu.uz">
+                <i class="fas fa-envelope"></i>
+                u.m.xalikova@buxdu.uz
+              </a>
+            </li>
+            <li>
+              <a href="tel:+998973056220">
+                <i class="fas fa-phone"></i>
+                +998 (97) 305-62-20
+              </a>
+            </li>
+            <li>
+              <span>
+                <i class="fas fa-location-dot"></i>
+                Buxoro sh., M.Iqbol ko'chasi, 11-uy
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h3 class="footer-title">Tezkor linklar</h3>
+          <ul class="footer-list">
+            <li><a href="{% url 'main:home' %}">Bosh sahifa</a></li>
+            <li><a href="{% url 'main:davlat_stipendiyalari' %}">Imtiyozli stipendiyalar</a></li>
+            <li><a href="{% url 'main:home' %}#features">Kurslar</a></li>
+            <li><a href="{% url 'main:login' %}">Tizimga kirish</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h3 class="footer-title">Foydali</h3>
+          <ul class="footer-list">
+            <li>
+              <a href="https://buxdu.uz" target="_blank" rel="noopener">
+                Buxoro Davlat Universiteti
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                Platforma haqida
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="text-muted">
+          © 2026 Yosh Tadqiqotchi Ta'lim Platformasi. Barcha huquqlar himoyalangan.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'header.js' %}"></script>
+  
+  <!-- Scroll Animation Styles (Global) -->
+  <style>
+  .scroll-section {
+      opacity: 0;
+      transform: translateY(80px) scale(0.95);
+      transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .scroll-section.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+  }
+  
+  .scroll-section-delay-1 {
+      transition-delay: 0.1s;
+  }
+  
+  .scroll-section-delay-2 {
+      transition-delay: 0.2s;
+  }
+  
+  .scroll-section-delay-3 {
+      transition-delay: 0.3s;
+  }
+  </style>
+
+  <!-- Scroll Animation Script (Global) -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const observerOptions = {
+          threshold: 0.15,
+          rootMargin: '0px 0px -100px 0px'
+      };
+      
+      const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  entry.target.classList.add('visible');
+              }
+          });
+      }, observerOptions);
+      
+      const scrollSections = document.querySelectorAll('.scroll-section');
+      scrollSections.forEach(section => {
+          observer.observe(section);
+      });
+  });
+  </script>
+  
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

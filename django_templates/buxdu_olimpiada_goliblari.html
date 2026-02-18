@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}BuxDU olimpiada g'oliblari - Yosh Tadqiqotchi{% endblock %}
+
+{% block extra_head %}
+<style>
+.scroll-section {
+    opacity: 0;
+    transform: translateY(80px) scale(0.95);
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+.scroll-section.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Subpage Hero for BuxDU olimpiada g'oliblari -->
+    <section class="subpage-hero olimpiada-hero scroll-section">
+        <div class="subpage-hero-inner">
+            <div class="subpage-hero-text">
+                <div class="subpage-breadcrumb">
+                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <span>//</span>
+                    <span>Xalqaro grant va olimpiadalar</span>
+                    <span>//</span>
+                    <span>BuxDU olimpiada g'oliblari</span>
+                </div>
+                <h1 class="title subpage-title">BuxDU olimpiada g'oliblari</h1>
+                <p class="subtitle subpage-subtitle">
+                    BuxDU talabalari ishtirok etgan xalqaro va respublika fan olimpiadalarida qo'lga kiritilgan yutuqlar
+                    yilma-yil kesimida yagona bazada jamlangan.
+                </p>
+            </div>
+            <div class="subpage-hero-illustration">
+                <div class="subpage-hero-pill">
+                    <span class="badge" style="margin-bottom: 0;">
+                        <i class="fas fa-trophy"></i>
+                        <span>Olimpiada g'oliblari</span>
+                    </span>
+                </div>
+                <div class="subpage-hero-image-wrapper">
+                    <img src="{% static 'assets/features-showcase-3.png' %}" alt="BuxDU olimpiada g'oliblari" class="subpage-hero-image" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BuxDU olimpiada g'oliblari jadvali -->
+    <section class="stipendiya-table-section scroll-section">
+        <div class="stipendiya-container">
+            <div class="card stipendiya-table-card">
+                <div class="stipendiya-table-header">
+                    <h2 class="subtitle">Yillar kesimida olimpiada g'oliblari fayllari</h2>
+                    <p class="text-muted">
+                        Har bir satrda olimpiada nomi, fan yo'nalishi, o'quv yili va shu yil uchun BuxDU talabalarining g'oliblar
+                        ro'yxati jamlangan fayl havolasi ko'rsatiladi. Hozircha havolalar demo ko'rinishida.
+                    </p>
+                </div>
+                <div class="stipendiya-table-wrapper">
+                    <table class="stipendiya-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">T/r</th>
+                                <th>Olimpiada nomi</th>
+                                <th>Fan yo'nalishi</th>
+                                <th>O'quv yili</th>
+                                <th>Fayl nomi</th>
+                                <th style="text-align: right;">Yuklab olish</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for winner in winners %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ winner.olympiad_name }}</td>
+                                <td>{{ winner.subject }}</td>
+                                <td>{{ winner.academic_year }}</td>
+                                <td>{{ winner.file_name }}</td>
+                                <td class="stipendiya-table-action">
+                                    <a href="{{ winner.file.url }}" class="btn-gradient stipendiya-action-btn" download>Yuklab olish</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px 20px;">
+                                    <i class="fas fa-trophy" style="font-size: 48px; color: var(--text-muted); margin-bottom: 16px; display: block;"></i>
+                                    <p class="text-muted" style="font-size: 16px;">
+                                        Hozircha g'oliblar ro'yxati bo'sh
+                                    </p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => {
+        observer.observe(section);
+    });
+})();
+</script>
+{% endblock %}

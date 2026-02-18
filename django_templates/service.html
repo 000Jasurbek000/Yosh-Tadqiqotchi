@@ -1,0 +1,1219 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Maqola tahriri va tarjima xizmati - Yosh Tadqiqotchi{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Scroll Animation Styles */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .scroll-section {
+        opacity: 0;
+        transform: translateY(80px) scale(0.95);
+        transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .scroll-section.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    /* ====== SERVICE PAGE THEME VARIABLES ====== */
+    :root {
+      --bg-surface: rgba(17, 24, 39, 0.75);
+      --bg-surface-soft: rgba(15, 23, 42, 0.6);
+      --bg-elevated: rgba(15, 23, 42, 0.9);
+      --border-subtle: rgba(148, 163, 184, 0.35);
+      --accent: #8b5cf6;
+      --accent-soft: rgba(139, 92, 246, 0.18);
+      --accent-strong: #d946ef;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --text-strong: #f9fafb;
+      --shadow-soft: 0 18px 45px rgba(139, 92, 246, 0.2);
+      --glass-blur: 22px;
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --transition-fast: 0.22s ease-out;
+      --input-bg: rgba(15, 23, 42, 0.95);
+    }
+
+    [data-theme="light"] {
+      --bg-surface: rgba(255, 255, 255, 0.82);
+      --bg-surface-soft: rgba(248, 250, 252, 0.9);
+      --bg-elevated: rgba(255, 255, 255, 0.98);
+      --border-subtle: rgba(148, 163, 184, 0.4);
+      --accent: #8b5cf6;
+      --accent-soft: rgba(139, 92, 246, 0.15);
+      --accent-strong: #d946ef;
+      --text-main: #1f2933;
+      --text-muted: #6b7280;
+      --text-strong: #111827;
+      --shadow-soft: 0 20px 40px rgba(139, 92, 246, 0.12);
+      --glass-blur: 26px;
+      --input-bg: rgba(255, 255, 255, 0.96);
+    }
+
+    /* ====== SERVICE PAGE STYLES ====== */
+    
+    /* ====== LAYOUT ====== */
+    .grid-layout {
+      display: grid;
+      gap: 20px;
+      padding: 0 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .column-left,
+    .column-right {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    @media (min-width: 880px) {
+      .grid-layout {
+        grid-template-columns: minmax(0, 1.35fr) minmax(0, 1.1fr);
+        align-items: flex-start;
+      }
+    }
+
+    /* ====== GENERIC CARD ====== */
+    .card {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      box-shadow: var(--shadow-soft);
+      padding: 20px;
+      backdrop-filter: blur(var(--glass-blur));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0% 0%, rgba(148, 163, 184, 0.18), transparent 55%);
+      opacity: 0.55;
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+    }
+
+    .card-body {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-title {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .card-heading {
+      font-size: 18px;
+      color: var(--text-strong);
+      margin-bottom: 6px;
+    }
+
+    .card-subtext {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    /* ====== XIZMAT TANLASH ====== */
+    .service-options {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    @media (min-width: 620px) {
+      .service-options {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .service-card {
+      position: relative;
+    }
+
+    .service-input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .service-label {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-radius: var(--radius-lg);
+      padding: 12px 12px 11px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface-soft);
+      cursor: pointer;
+      transition: border-color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .service-label-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 14px;
+    }
+
+    .service-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .service-title {
+      font-size: 14px;
+      color: var(--text-strong);
+      font-weight: 600;
+    }
+
+    .service-pill {
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.6);
+      color: var(--text-muted);
+    }
+
+    [data-theme="light"] .service-pill {
+      background: rgba(248, 250, 252, 0.9);
+    }
+
+    .service-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .service-input:checked + .service-label {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(37, 99, 235, 0.04));
+      transform: translateY(-1px);
+      box-shadow: 0 14px 35px rgba(15, 23, 42, 0.55);
+    }
+
+    /* ====== FORM CONTROLS ====== */
+    .field-group {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 640px) {
+      .field-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .field-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    select,
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    textarea {
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      padding: 9px 11px;
+      font-size: 13px;
+      background: var(--input-bg);
+      color: var(--text-main);
+      outline: none;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), transform var(--transition-fast);
+    }
+
+    select:focus,
+    input:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.4);
+      transform: translateY(-0.5px);
+    }
+
+    select::placeholder,
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-muted);
+      opacity: 0.75;
+    }
+
+    /* ====== TARIFLAR ====== */
+    .tariff-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    @media (min-width: 520px) {
+      .tariff-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .tariff-card {
+      position: relative;
+      padding: 12px 12px 10px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface-soft);
+      cursor: pointer;
+      transition: border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+    }
+
+    .tariff-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.55);
+    }
+
+    .tariff-card.active {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.18), rgba(59, 130, 246, 0.09));
+      border-color: var(--accent);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.65);
+    }
+
+    .tariff-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-strong);
+    }
+
+    .tariff-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .tariff-multiplier {
+      font-size: 12px;
+      margin-top: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.78);
+      color: var(--accent-strong);
+    }
+
+    [data-theme="light"] .tariff-multiplier {
+      background: rgba(248, 250, 252, 0.95);
+    }
+
+    /* ====== UPLOAD ====== */
+    .upload-area {
+      margin-top: 10px;
+      border-radius: var(--radius-lg);
+      border: 1px dashed rgba(148, 163, 184, 0.75);
+      background: radial-gradient(circle at 0% 0%, rgba(148, 163, 184, 0.18), transparent 60%), var(--bg-surface-soft);
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .upload-area:hover {
+      border-color: var(--accent);
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.6);
+      transform: translateY(-1px);
+    }
+
+    .upload-area.dragover {
+      border-style: solid;
+      border-color: var(--accent);
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.18), rgba(56, 189, 248, 0.18));
+    }
+
+    .upload-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-soft);
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .upload-title {
+      font-size: 13px;
+      color: var(--text-strong);
+    }
+
+    .upload-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .upload-file-name {
+      font-size: 11px;
+      color: var(--accent-strong);
+      margin-top: 6px;
+      word-break: break-all;
+    }
+
+    .upload-input {
+      display: none;
+    }
+
+    /* ====== EXTRA OPTIONS ====== */
+    .extras-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    @media (min-width: 620px) {
+      .extras-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .extra-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .extra-item input[type="checkbox"] {
+      margin-top: 1px;
+      width: 14px;
+      height: 14px;
+      accent-color: var(--accent);
+    }
+
+    .extra-label-title {
+      color: var(--text-main);
+    }
+
+    .extra-label-note {
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    /* ====== SUMMARY PANEL ====== */
+    .summary-card {
+      margin-top: 6px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 12px;
+      padding: 4px 0;
+    }
+
+    .summary-label {
+      color: var(--text-muted);
+    }
+
+    .summary-value {
+      color: var(--text-main);
+      text-align: right;
+    }
+
+    .summary-options-list {
+      text-align: right;
+    }
+
+    .summary-options-list span {
+      display: inline-block;
+    }
+
+    .summary-total {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(148, 163, 184, 0.7);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .summary-total-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+
+    .summary-total-value {
+      font-size: 20px;
+      font-weight: 650;
+      color: var(--accent-strong);
+    }
+
+    .summary-total-value small {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-left: 4px;
+    }
+
+    .summary-badge {
+      margin-top: 4px;
+      font-size: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.86);
+      color: var(--text-muted);
+    }
+
+    [data-theme="light"] .summary-badge {
+      background: rgba(248, 250, 252, 0.95);
+    }
+
+    .summary-badge i {
+      color: var(--accent);
+    }
+
+    /* ====== PAYMENT INFO & CTA ====== */
+    .payment-methods {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .pay-pill {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pay-pill i {
+      color: var(--accent);
+    }
+
+    .payment-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .actions-row {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .btn-primary {
+      border-radius: 999px;
+      border: none;
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #ec4899, #6366f1);
+      color: #f9fafb;
+      cursor: pointer;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.75);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 22px 55px rgba(15, 23, 42, 0.9);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.75);
+    }
+
+    .btn-secondary {
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: transparent;
+      padding: 7px 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: border-color var(--transition-fast), color var(--transition-fast), background var(--transition-fast);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(15, 23, 42, 0.7);
+    }
+
+    [data-theme="light"] .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .hint-small {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ====== MISC ====== */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+  <section class="subpage-hero stipendiya-hero scroll-section">
+    <div class="subpage-hero-inner">
+      <div class="subpage-hero-text">
+        <div class="subpage-breadcrumb">
+          <a href="{% url 'main:home' %}">Bosh sahifa</a>
+          <span>//</span>
+          <a href="{% url 'main:service' %}">Xizmatlar</a>
+          <span>//</span>
+          <span>Maqola tahriri va tarjima</span>
+        </div>
+        <h1 class="title subpage-title">Maqola tahriri va tarjima xizmati</h1>
+        <p class="subtitle subpage-subtitle">
+          Maqolangizni OAK / Scopus / Google Scholar talablariga moslab tayyorlang.
+          Tahrirchi kamchiliklarni ko'rsatib beradi yoki maqolani professional tarzda tarjima qiladi.
+        </p>
+      </div>
+      <div class="subpage-hero-illustration">
+        <div class="subpage-hero-pill">
+          <span class="badge" style="margin-bottom: 0;">
+            <i class="fa-solid fa-pen-nib"></i>
+            <span>Ilmiy maqolalar uchun xizmatlar</span>
+          </span>
+        </div>
+        <div class="subpage-hero-image-wrapper">
+          <img src="{% static 'assets/hero-section-showcase.png' %}" alt="Maqola tahriri va tarjima xizmati" class="subpage-hero-image" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stipendiya-table-section scroll-section">
+    <div class="stipendiya-container">
+
+        <main class="grid-layout">
+            <!-- CHAP TOMON: 1-2 qadam -->
+            <section class="column-left" aria-label="1 va 2-qadam">
+                <article class="card" aria-labelledby="service-card-title">
+                    <div class="card-body">
+                        <p id="service-card-title" class="card-title">1-qadam</p>
+                        <h2 class="card-heading">Xizmat turini va standartni tanlang</h2>
+                        <p class="card-subtext">
+                            Avval qaysi xizmat kerakligini tanlang, so'ng nashriyot va maqola turini belgilang.
+                        </p>
+
+                        <!-- Xizmat tanlash -->
+                        <div class="service-options" aria-label="Xizmat turini tanlash">
+                            <div class="service-card">
+                                <input class="service-input" type="radio" name="serviceType"
+                                       id="service-edit" value="edit" checked />
+                                <label class="service-label" for="service-edit">
+                                    <div class="service-main">
+                                        <div>
+                                            <div class="service-label-icon">
+                                                <i class="fa-solid fa-highlighter"></i>
+                                            </div>
+                                        </div>
+                                        <span class="service-pill">Tahrir uchun tavsiyalar</span>
+                                    </div>
+                                    <div>
+                                        <p class="service-title">Tahrirlash</p>
+                                        <p class="service-desc">
+                                            Tahrirchi grammatik va uslubiy xatolarni ko'rsatib beradi, yaxshilash bo'yicha izohlar beradi.
+                                        </p>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="service-card">
+                                <input class="service-input" type="radio" name="serviceType"
+                                       id="service-translate" value="translate" />
+                                <label class="service-label" for="service-translate">
+                                    <div class="service-main">
+                                        <div>
+                                            <div class="service-label-icon">
+                                                <i class="fa-solid fa-language"></i>
+                                            </div>
+                                        </div>
+                                        <span class="service-pill">UZ ↔ EN, RU ↔ EN</span>
+                                    </div>
+                                    <div>
+                                        <p class="service-title">Tarjima</p>
+                                        <p class="service-desc">
+                                            Ilmiy uslubga mos, semantik jihatdan aniq va nashriyot talablariga mos tarjima xizmati.
+                                        </p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Selectlar -->
+                        <div class="field-group" aria-label="Maqola ma'lumotlari">
+                            <div class="field-row">
+                                <div class="field">
+                                    <label class="field-label" for="publisher-select">
+                                        Nashriyot / standart
+                                    </label>
+                                    <select id="publisher-select" aria-required="true">
+                                        <option value="oak">OAK</option>
+                                        <option value="scholar">Google Scholar</option>
+                                        <option value="scopus">Scopus</option>
+                                    </select>
+                                </div>
+                                <div class="field">
+                                    <label class="field-label" for="article-type">
+                                        Maqola turi
+                                    </label>
+                                    <select id="article-type">
+                                        <option value="maqola">Ilmiy maqola</option>
+                                        <option value="tezis">Konferensiya tezisi</option>
+                                        <option value="dissertatsiya">Dissertatsiya bo'limi</option>
+                                        <option value="boshqa">Boshqa</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Fayl yuklash -->
+                            <div class="field">
+                                <span class="field-label">Maqola faylini yuklash</span>
+                                <label id="upload-area" class="upload-area" for="file-input">
+                                    <div class="upload-icon">
+                                        <i class="fa-solid fa-file-arrow-up"></i>
+                                    </div>
+                                    <p class="upload-title">Drag &amp; drop yoki faylni tanlang</p>
+                                    <p class="upload-hint">Faqat .docx va .pdf fayllar qabul qilinadi</p>
+                                    <p id="upload-file-name" class="upload-file-name" aria-live="polite">
+                                        Fayl tanlanmagan
+                                    </p>
+                                    <input id="file-input" class="upload-input" type="file"
+                                           accept=".pdf,.docx,.doc" />
+                                </label>
+                            </div>
+
+                            <!-- Qo'shimcha opsiyalar -->
+                            <div class="field">
+                                <span class="field-label">Qo'shimcha opsiyalar (har biri +30 000 so'm)</span>
+                                <div class="extras-list">
+                                    <label class="extra-item">
+                                        <input type="checkbox" class="extra-option" value="plagiat" />
+                                        <span>
+                                            <span class="extra-label-title">Plagiat bo'yicha tavsiya</span><br />
+                                            <span class="extra-label-note">
+                                                O'xshashlik foizi va qisqartirish bo'yicha umumiy tavsiyalar.
+                                            </span>
+                                        </span>
+                                    </label>
+                                    <label class="extra-item">
+                                        <input type="checkbox" class="extra-option" value="annotatsiya" />
+                                        <span>
+                                            <span class="extra-label-title">
+                                                Annotatsiya va kalit so'zlarni yaxshilash
+                                            </span><br />
+                                            <span class="extra-label-note">
+                                                Qidiruv tizimlariga mos, aniq va ixcham matn.
+                                            </span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <div class="card-body">
+                        <p class="card-title">2-qadam</p>
+                        <h2 class="card-heading">Tarifni tanlang</h2>
+                        <p class="card-subtext">
+                            Muddat va chuqurlik bo'yicha sizga mos tarifni belgilang.
+                            Narx tarif ko'paytmasi (multiplier) orqali hisoblanadi.
+                        </p>
+
+                        <div class="tariff-grid" aria-label="Tariflarni tanlash">
+                            <button class="tariff-card active" type="button"
+                                    data-tariff="standart" data-multiplier="1.0">
+                                <div class="tariff-name">Standart</div>
+                                <div class="tariff-meta">3–5 ish kuni</div>
+                                <div class="tariff-multiplier">
+                                    <i class="fa-solid fa-gauge-simple"></i>
+                                    <span>Ko'paytma: x1.0</span>
+                                </div>
+                            </button>
+
+                            <button class="tariff-card" type="button"
+                                    data-tariff="tezkor" data-multiplier="1.5">
+                                <div class="tariff-name">Tezkor</div>
+                                <div class="tariff-meta">24–48 soat</div>
+                                <div class="tariff-multiplier">
+                                    <i class="fa-solid fa-bolt"></i>
+                                    <span>Ko'paytma: x1.5</span>
+                                </div>
+                            </button>
+
+                            <button class="tariff-card" type="button"
+                                    data-tariff="premium" data-multiplier="2.0">
+                                <div class="tariff-name">Premium</div>
+                                <div class="tariff-meta">12–24 soat + chuqur tahlil</div>
+                                <div class="tariff-multiplier">
+                                    <i class="fa-solid fa-star"></i>
+                                    <span>Ko'paytma: x2.0</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+            </section>
+
+            <!-- O'NG TOMON: 3-4 qadam -->
+            <section class="column-right" aria-label="3 va 4-qadam">
+                <article class="card summary-card" aria-live="polite">
+                    <div class="card-body">
+                        <p class="card-title">3-qadam</p>
+                        <h2 class="card-heading">Hisob-kitob paneli</h2>
+                        <p class="card-subtext">
+                            Tanlovlaringizga qarab jami narx avtomatik yangilanadi. Bu demo maqsadida
+                            shartli hisob-kitob bo'lib, real shartnomada o'zgarishi mumkin.
+                        </p>
+
+                        <div class="summary-row">
+                            <span class="summary-label">Xizmat turi</span>
+                            <span id="summary-service" class="summary-value">Tahrirlash</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Standart</span>
+                            <span id="summary-standard" class="summary-value">OAK</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Tarif</span>
+                            <span id="summary-tariff" class="summary-value">Standart (x1.0)</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Qo'shimcha opsiyalar</span>
+                            <span id="summary-options" class="summary-value summary-options-list">
+                                Yo'q
+                            </span>
+                        </div>
+
+                        <div class="summary-total">
+                            <div>
+                                <div class="summary-total-label">Jami narx</div>
+                                <div class="summary-badge">
+                                    <i class="fa-solid fa-scale-balanced"></i>
+                                    <span>Tarjima uchun +20% qo'llanadi</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div id="summary-total" class="summary-total-value">
+                                    120 000 <small>UZS</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <div class="card-body">
+                        <p class="card-title">4-qadam</p>
+                        <h2 class="card-heading">To'lov va buyurtma</h2>
+                        <p class="card-subtext">
+                            Hozircha to'lov onlayn amalga oshirilmaydi. Buyurtma qoldirilgach,
+                            siz bilan alohida bog'laniladi.
+                        </p>
+
+                        <div class="payment-methods" aria-label="To'lov usullari (demo)">
+                            <span class="pay-pill">
+                                <i class="fa-solid fa-qrcode"></i>
+                                Click
+                            </span>
+                            <span class="pay-pill">
+                                <i class="fa-solid fa-credit-card"></i>
+                                Payme
+                            </span>
+                            <span class="pay-pill">
+                                <i class="fa-solid fa-building-columns"></i>
+                                Paynet / bank orqali
+                            </span>
+                        </div>
+                        <p class="payment-note">
+                            To'lov hozircha saytda amalga oshirilmaydi, keyinchalik qo'shiladi.
+                        </p>
+
+                        <form id="order-form" aria-label="Buyurtma formasi">
+                            <div class="field-row" style="margin-top: 10px;">
+                                <div class="field">
+                                    <label class="field-label" for="full-name">
+                                        F.I.O (talaba / muallif)
+                                    </label>
+                                    <input id="full-name" type="text" required
+                                           placeholder="Familiya Ism Otasining ismi" />
+                                </div>
+                                <div class="field">
+                                    <label class="field-label" for="email">
+                                        Email
+                                    </label>
+                                    <input id="email" type="email" required
+                                           placeholder="example@university.uz" />
+                                </div>
+                            </div>
+
+                            <div class="field" style="margin-top: 8px;">
+                                <label class="field-label" for="notes">
+                                    Izoh (ixtiyoriy)
+                                </label>
+                                <textarea id="notes" rows="3"
+                                          placeholder="Maqola haqida qisqacha, maxsus talablar, muddatlar va h.k."></textarea>
+                            </div>
+
+                            <div class="actions-row">
+                                <button class="btn-primary" type="submit">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                    Buyurtmani yuborish
+                                </button>
+                                <button class="btn-secondary" type="button" id="resetFormBtn">
+                                    <i class="fa-solid fa-rotate-left"></i>
+                                    Tanlovlarni tiklash
+                                </button>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </article>
+            </section>
+        </div>
+      </div>
+  </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  (function() {
+    "use strict";
+
+    // ====== HELPER ======
+    function formatNumber(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
+
+    function getPublisherLabel(value) {
+      switch (value) {
+        case "oak": return "OAK";
+        case "scopus": return "Scopus";
+        case "ishi-wos": return "ISHI / Web of Science";
+        default: return value;
+      }
+    }
+
+    // ====== DOM ======
+    const serviceInputs = document.querySelectorAll('input[name="serviceType"]');
+    const publisherSelect = document.getElementById("publisher");
+    const tariffCards = document.querySelectorAll(".tariff-card");
+    const extraCheckboxes = document.querySelectorAll(".extra-option");
+
+    const summaryService = document.getElementById("summary-service");
+    const summaryStandard = document.getElementById("summary-standard");
+    const summaryTariff = document.getElementById("summary-tariff");
+    const summaryOptions = document.getElementById("summary-options");
+    const summaryTotal = document.getElementById("summary-total");
+
+    // ====== BASE PRICES (demo) ======
+    const basePrices = {
+      oak: 150000,
+      scopus: 250000,
+      "ishi-wos": 300000,
+    };
+    const extraOptionPrice = 30000;
+
+    // ====== SHOW/HIDE EXTRAS ======
+    const extrasContainer = document.querySelector(".extras-list");
+    function updateExtrasVisibility() {
+      if (!extrasContainer) return;
+      const serviceType = document.querySelector('input[name="serviceType"]:checked')?.value;
+      if (serviceType === "translate") {
+        extrasContainer.style.display = "none";
+        extraCheckboxes.forEach((el) => { el.checked = false; });
+      } else {
+        extrasContainer.style.display = "grid";
+      }
+    }
+
+    // ====== RECALCULATE ======
+    function recalc() {
+      const service = document.querySelector('input[name="serviceType"]:checked')?.value || "edit";
+      const publisher = publisherSelect?.value || "oak";
+      const activeTariffCard = document.querySelector(".tariff-card.active");
+      const tariffMultiplier = activeTariffCard
+        ? parseFloat(activeTariffCard.dataset.multiplier || 1.0)
+        : 1.0;
+      const tariffLabel = activeTariffCard?.querySelector(".tariff-name")?.textContent || "Standart";
+
+      const tariff = {
+        multiplier: tariffMultiplier,
+        label: tariffLabel
+      };
+
+      // Base price
+      let base = basePrices[publisher] || 0;
+
+      // Tarjima uchun +20%
+      if (service === "translate") {
+        base = Math.round(base * 1.2);
+      }
+
+      // Extras
+      const selectedExtras = Array.from(extraCheckboxes).filter((el) => el.checked);
+      const extrasCost = selectedExtras.length * extraOptionPrice;
+
+      // Total
+      const total = Math.round(base * tariff.multiplier + extrasCost);
+
+      // Summary text
+      if (summaryService) summaryService.textContent = service === "translate" ? "Tarjima" : "Tahrirlash";
+      if (summaryStandard) summaryStandard.textContent = getPublisherLabel(publisher);
+      if (summaryTariff) summaryTariff.textContent = tariff.label;
+
+      if (summaryOptions) {
+        if (selectedExtras.length === 0) {
+          summaryOptions.textContent = "Yo'q";
+        } else {
+          const names = selectedExtras.map((el) => {
+            switch (el.value) {
+              case "plagiat":
+                return "Plagiat bo'yicha tavsiya";
+              case "annotatsiya":
+                return "Annotatsiya va kalit so'zlar";
+              default:
+                return el.value;
+            }
+          });
+          summaryOptions.innerHTML = "<span>" + names.join("<br>") + "</span>";
+        }
+      }
+
+      if (summaryTotal) {
+        summaryTotal.innerHTML = formatNumber(total) + ' <small>UZS</small>';
+      }
+    }
+
+    // Listeners
+    serviceInputs.forEach((el) => {
+      el.addEventListener("change", () => {
+        updateExtrasVisibility();
+        recalc();
+      });
+    });
+
+    if (publisherSelect) {
+      publisherSelect.addEventListener("change", recalc);
+    }
+
+    tariffCards.forEach((card) => {
+      card.addEventListener("click", () => {
+        tariffCards.forEach((c) => c.classList.remove("active"));
+        card.classList.add("active");
+        recalc();
+      });
+    });
+
+    extraCheckboxes.forEach((el) => {
+      el.addEventListener("change", recalc);
+    });
+
+    // ====== UPLOAD (drag & drop) ======
+    const uploadArea = document.getElementById("upload-area");
+    const fileInput = document.getElementById("file-input");
+    const uploadFileName = document.getElementById("upload-file-name");
+
+    function setFileName(file) {
+      if (uploadFileName) {
+        uploadFileName.textContent = file ? file.name : "Fayl tanlanmagan";
+      }
+    }
+
+    if (uploadArea && fileInput) {
+      uploadArea.addEventListener("click", () => {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        setFileName(file);
+      });
+
+      ["dragenter", "dragover"].forEach((eventName) => {
+        uploadArea.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          uploadArea.classList.add("dragover");
+        });
+      });
+
+      ["dragleave", "drop"].forEach((eventName) => {
+        uploadArea.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          uploadArea.classList.remove("dragover");
+        });
+      });
+
+      uploadArea.addEventListener("drop", (e) => {
+        const dt = e.dataTransfer;
+        if (!dt || !dt.files || !dt.files.length) return;
+        const file = dt.files[0];
+        const allowed = [".pdf", ".docx", ".doc"];
+        const lower = file.name.toLowerCase();
+        const ok = allowed.some((ext) => lower.endsWith(ext));
+        if (!ok) {
+          alert("Faqat .pdf va .docx (.doc) fayllarni yuklash mumkin.");
+          return;
+        }
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+        setFileName(file);
+      });
+    }
+
+    // ====== FORM SUBMIT ======
+    const orderForm = document.getElementById("order-form");
+    const resetBtn = document.getElementById("resetFormBtn");
+
+    if (orderForm) {
+      orderForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        alert("Buyurtma qabul qilindi (demo). Keyinroq to'liq funksionallik qo'shiladi.");
+      });
+    }
+
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+        // Reset service
+        const editRadio = document.getElementById("service-edit");
+        const translateRadio = document.getElementById("service-translate");
+        if (editRadio) editRadio.checked = true;
+        if (translateRadio) translateRadio.checked = false;
+
+        // Reset selects
+        if (publisherSelect) publisherSelect.value = "oak";
+        const articleType = document.getElementById("article-type");
+        if (articleType) articleType.value = "maqola";
+
+        // Reset tariff
+        tariffCards.forEach((c) => c.classList.remove("active"));
+        const defaultTariff = document.querySelector(".tariff-card[data-tariff='standart']");
+        if (defaultTariff) defaultTariff.classList.add("active");
+
+        // Reset extras
+        extraCheckboxes.forEach((el) => {
+          el.checked = false;
+        });
+
+        // Reset upload
+        if (fileInput) fileInput.value = "";
+        setFileName(null);
+
+        // Reset form fields
+        if (orderForm) orderForm.reset();
+
+        updateExtrasVisibility();
+        recalc();
+      });
+    }
+
+    // Initial state
+    updateExtrasVisibility();
+    recalc();
+  })();
+  
+  // Scroll animation observer
+  (function() {
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => {
+        observer.observe(section);
+    });
+  })();
+</script>
+{% endblock %}

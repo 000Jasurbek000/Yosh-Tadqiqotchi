@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}BuxDU stipendiyalari - Yosh Tadqiqotchi{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Elegant Themes inspired animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.scroll-section {
+    opacity: 0;
+    transform: translateY(80px) scale(0.95);
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-section.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Enhanced table with purple theme */
+.stipendiya-table tr {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.stipendiya-table tbody tr:hover {
+    background: rgba(139, 92, 246, 0.05) !important;
+    transform: translateX(4px);
+}
+
+.stipendiya-table tbody tr::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(135deg, #8b5cf6, #d946ef);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.stipendiya-table tbody tr:hover::before {
+    opacity: 1;
+}
+
+.btn-gradient {
+    background: linear-gradient(135deg, #8b5cf6, #d946ef) !important;
+    border: none !important;
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.btn-gradient:hover {
+    background: linear-gradient(135deg, #7c3aed, #c026d3) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4) !important;
+}
+
+.stipendiya-table-card {
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 10px 40px rgba(139, 92, 246, 0.08) !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <section class="subpage-hero stipendiya-hero scroll-section">
+        <div class="subpage-hero-inner">
+            <div class="subpage-hero-text">
+                <div class="subpage-breadcrumb">
+                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <span>//</span>
+                    <span>Imtiyozli stipendiyalar</span>
+                    <span>//</span>
+                    <span>BuxDU stipendiyalari</span>
+                </div>
+                <h1 class="title subpage-title">BuxDU stipendiyalari</h1>
+                <p class="subtitle subpage-subtitle">
+                    Buxoro davlat universiteti qoshidagi Rektor stipendiyasi va Fitrat stipendiyasi uchun qisqacha ma'lumot,
+                    nizom fayllari va onlayn ariza havolalari.
+                </p>
+            </div>
+            <div class="subpage-hero-illustration">
+                <div class="subpage-hero-pill">
+                    <span class="badge" style="margin-bottom: 0;">
+                        <i class="fas fa-university"></i>
+                        <span>BuxDU ichki stipendiyalari</span>
+                    </span>
+                </div>
+                <div class="subpage-hero-image-wrapper">
+                    <img src="{% static 'assets/features-showcase-2.png' %}" alt="BuxDU stipendiyalari" class="subpage-hero-image" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stipendiya-table-section scroll-section">
+        <div class="stipendiya-container">
+            <div class="card stipendiya-table-card">
+                <div class="stipendiya-table-header">
+                    <h2 class="subtitle">BuxDU ichki stipendiyalari</h2>
+                    <p class="text-muted">
+                        Quyidagi kartalar orqali BuxDU Rektor stipendiyasi va Fitrat stipendiyasi bo'yicha qisqacha ma'lumot
+                        va tegishli hujjatlar bilan tanishishingiz mumkin.
+                    </p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                    {% for scholarship in scholarships %}
+                    <div class="card" style="padding: 20px 20px 22px;">
+                        <div class="badge" style="margin-bottom: 10px; word-wrap: break-word; white-space: normal;">
+                            <i class="fas fa-user-graduate"></i>
+                            {{ scholarship.name }}
+                        </div>
+                        <p class="text-body" style="font-size: 14px; margin-bottom: 14px; word-wrap: break-word; white-space: normal; overflow-wrap: break-word;">
+                            {{ scholarship.short_description }}
+                        </p>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            {% if scholarship.regulation_file %}
+                            <a href="{{ scholarship.regulation_file.url }}" class="btn-gradient stipendiya-action-btn" style="justify-content: flex-start;" download>
+                                <i class="fas fa-file-download"></i>
+                                Nizom faylini yuklab olish
+                            </a>
+                            {% endif %}
+                            {% if scholarship.application_link %}
+                            <a href="{{ scholarship.application_link }}" class="btn-gradient stipendiya-action-btn" style="justify-content: flex-start;" target="_blank" rel="noopener noreferrer">
+                                <i class="fas fa-external-link-alt"></i>
+                                Tanlovga ariza (onlayn)
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="card" style="padding: 40px 20px; text-align: center; grid-column: 1 / -1;">
+                        <i class="fas fa-inbox" style="font-size: 48px; color: var(--text-muted); margin-bottom: 16px;"></i>
+                        <p class="text-muted" style="font-size: 16px;">
+                            Hozircha BuxDU stipendiyalari ro'yxati bo'sh
+                        </p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => {
+        observer.observe(section);
+    });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Online kurslar - Yosh Tadqiqotchi{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Elegant Themes inspired animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* Scroll Animation Styles */
+    .scroll-section {
+        opacity: 0;
+        transform: translateY(80px) scale(0.95);
+        transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .scroll-section.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    /* Enhanced course cards with purple theme */
+    .course-box {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--border-color) !important;
+        background: var(--bg-elevated) !important;
+        border-radius: 16px !important;
+    }
+
+    .course-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.08), transparent);
+        transition: left 0.6s ease;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .course-box:hover::before {
+        left: 100%;
+    }
+
+    .course-box:hover {
+        transform: translateY(-8px) !important;
+        box-shadow: 0 20px 60px rgba(139, 92, 246, 0.15) !important;
+        border-color: rgba(139, 92, 246, 0.3) !important;
+    }
+
+    .btn-gradient {
+        background: linear-gradient(135deg, #8b5cf6, #d946ef) !important;
+        border: none !important;
+        box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .btn-gradient:hover {
+        background: linear-gradient(135deg, #7c3aed, #c026d3) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4) !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Kurslar sahifasi hero -->
+    <section class="subpage-hero stipendiya-hero scroll-section">
+        <div class="subpage-hero-inner">
+            <div class="subpage-hero-text">
+                <div class="subpage-breadcrumb">
+                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <span>//</span>
+                    <span>Online kurslar</span>
+                </div>
+                <h1 class="title subpage-title">Online kurslar markazi</h1>
+                <p class="subtitle subpage-subtitle">
+                    Ilmiy faoliyatingizni rivojlantirish uchun mo'ljallangan zamonaviy onlayn kurslar.
+                    Hozircha birinchi kurs sifatida "Ilmiy tadqiqot metodologiyasi" yo'lga qo'yilgan.
+                </p>
+            </div>
+            <div class="subpage-hero-illustration">
+                <div class="subpage-hero-pill">
+                    <span class="badge" style="margin-bottom: 0;">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Online ta'lim platformasi</span>
+                    </span>
+                </div>
+                <div class="subpage-hero-image-wrapper">
+                    <img src="{% static 'assets/hero-section-showcase.png' %}" alt="Online kurslar" class="subpage-hero-image" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kurslar ro'yxati -->
+    <section class="stipendiya-table-section scroll-section">
+        <div class="stipendiya-container">
+            <div class="card stipendiya-table-card">
+                <div class="stipendiya-table-header">
+                    <h2 class="subtitle">Mavjud kurslar</h2>
+                    <p class="text-muted">Kurslarni boshlash uchun "Boshlash" tugmasini bosing</p>
+                </div>
+
+                {% if courses %}
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 24px; padding: 24px;">
+                        {% for course in courses %}
+                        <div class="course-box">
+                            {% if course.image %}
+                            <div style="width: 100%; height: 200px; overflow: hidden; background: #f3f4f6;">
+                                <img src="{{ course.image.url }}" alt="{{ course.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                            {% else %}
+                            <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%); display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-book-open" style="font-size: 64px; color: white; opacity: 0.3;"></i>
+                            </div>
+                            {% endif %}
+                            
+                            <div style="padding: 20px; position: relative; z-index: 2;">
+                                <h3 style="margin: 0 0 12px 0; font-size: 20px; font-weight: 700; background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                    {{ course.name }}
+                                </h3>
+                                <p style="margin: 0 0 16px 0; color: var(--text-secondary); font-size: 14px; line-height: 1.5;">
+                                    {{ course.short_description|truncatewords:15 }}
+                                </p>
+                                
+                                <div style="display: flex; gap: 16px; margin-bottom: 16px; padding-top: 12px; border-top: 1px solid var(--border-color);">
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Modullar</div>
+                                        <div style="font-size: 16px; font-weight: 600; color: var(--accent-primary);">
+                                            <i class="fas fa-book"></i> {{ course.module_count }} ta
+                                        </div>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Yaratilgan</div>
+                                        <div style="font-size: 14px; font-weight: 500; color: var(--text-secondary);">
+                                            {{ course.created_at|date:"d.m.Y" }}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <a href="{% url 'main:course_detail' course.id %}" class="btn-gradient" style="display: block; width: 100%; text-align: center; padding: 12px; text-decoration: none; border-radius: 8px; font-weight: 600; color: white;">
+                                    <i class="fas fa-play-circle"></i> Boshlash
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div style="display: flex; flex-direction: column; gap: 16px; padding: 48px; text-align: center;">
+                        <i class="fas fa-graduation-cap" style="font-size: 64px; color: #9CA3AF;"></i>
+                        <p class="text-muted" style="font-size: 18px;">Hozircha kurslar ro'yxati bo'sh</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => {
+        observer.observe(section);
+    });
+})();
+</script>
+{% endblock %}

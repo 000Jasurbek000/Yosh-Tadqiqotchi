@@ -1,0 +1,467 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sozlamalar - {{ user.username }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .settings-container {
+        max-width: 900px;
+        margin: 80px auto;
+        padding: 40px 20px;
+    }
+    
+    .settings-header {
+        margin-bottom: 40px;
+    }
+    
+    .settings-header h1 {
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--text-title);
+        margin-bottom: 8px;
+    }
+    
+    .settings-header p {
+        color: var(--text-secondary);
+        font-size: 16px;
+    }
+    
+    .settings-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 30px;
+        border-bottom: 2px solid var(--border-color-soft);
+        overflow-x: auto;
+    }
+    
+    .tab-btn {
+        padding: 12px 24px;
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+        white-space: nowrap;
+    }
+    
+    .tab-btn.active {
+        color: var(--accent-primary);
+        border-bottom-color: var(--accent-primary);
+    }
+    
+    .tab-btn:hover {
+        color: var(--accent-primary);
+    }
+    
+    .tab-content {
+        display: none;
+    }
+    
+    .tab-content.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .settings-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 32px;
+        border: 1px solid var(--border-color-soft);
+        box-shadow: var(--shadow);
+        margin-bottom: 24px;
+    }
+    
+    .settings-card-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-title);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .settings-card-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, var(--accent-secondary), var(--accent-dark));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    
+    .form-group {
+        margin-bottom: 24px;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+        font-weight: 500;
+        font-size: 14px;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(148, 163, 184, 0.05);
+        border: 1px solid var(--border-color-soft);
+        border-radius: 10px;
+        color: var(--text-primary);
+        font-size: 15px;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: var(--accent-primary);
+        background: rgba(236, 72, 153, 0.05);
+        box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+    }
+    
+    .form-input::placeholder {
+        color: var(--text-secondary);
+    }
+    
+    [data-theme="light"] .form-input {
+        background: white;
+        border-color: rgba(148, 163, 184, 0.3);
+    }
+    
+    .form-help-text {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-top: 6px;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    .btn-primary {
+        padding: 12px 28px;
+        background: linear-gradient(to right, var(--accent-secondary), var(--accent-dark));
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(236, 72, 153, 0.6);
+    }
+    
+    .btn-secondary {
+        padding: 12px 28px;
+        background: rgba(148, 163, 184, 0.1);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color-soft);
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-left: 12px;
+    }
+    
+    .btn-secondary:hover {
+        background: rgba(148, 163, 184, 0.2);
+    }
+    
+    .alert {
+        padding: 14px 18px;
+        border-radius: 10px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .alert-success {
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        color: #22c55e;
+    }
+    
+    .alert-error {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+    }
+    
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .btn-secondary {
+            margin-left: 0;
+            margin-top: 12px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="settings-container scroll-section">
+    <div class="settings-header">
+        <h1>Sozlamalar</h1>
+        <p>Profilingiz va xavfsizlik sozlamalarini boshqaring</p>
+    </div>
+    
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                {% if message.tags == 'success' %}
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
+                {% else %}
+                <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>
+                {% endif %}
+            </svg>
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+    
+    <!-- Tabs -->
+    <div class="settings-tabs">
+        <button class="tab-btn active" data-tab="profile">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle; margin-right: 6px;">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            Profil ma'lumotlari
+        </button>
+        <button class="tab-btn" data-tab="password">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle; margin-right: 6px;">
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            Xavfsizlik
+        </button>
+    </div>
+    
+    <!-- Profile Tab -->
+    <div class="tab-content active" data-content="profile">
+        <div class="settings-card">
+            <h2 class="settings-card-title">
+                <span class="settings-card-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </span>
+                Shaxsiy ma'lumotlar
+            </h2>
+            
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="profile">
+                
+                <div class="form-group">
+                    <label class="form-label">Profil rasmi</label>
+                    {% if user.profile_image %}
+                    <div style="margin-bottom: 16px;">
+                        <img src="{{ user.profile_image.url }}" alt="Profile" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid var(--border-color-soft);">
+                    </div>
+                    {% endif %}
+                    {{ user_form.profile_image }}
+                    <small class="form-text" style="display: block; margin-top: 8px; color: var(--text-muted); font-size: 13px;">
+                        Profil rasmingizni yuklang (maksimal 5MB, jpg, png)
+                    </small>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ user_form.first_name.id_for_label }}">Ism</label>
+                        {{ user_form.first_name }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="{{ user_form.last_name.id_for_label }}">Familiya</label>
+                        {{ user_form.last_name }}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ user_form.email.id_for_label }}">Email</label>
+                    {{ user_form.email }}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ user_form.phone_number.id_for_label }}">Telefon raqam</label>
+                    {{ user_form.phone_number }}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ user_form.residence_region.id_for_label }}">Yashash xudud</label>
+                    {{ user_form.residence_region }}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ user_form.university.id_for_label }}">O'qigan/O'qiyotgan joy</label>
+                    {{ user_form.university }}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ user_form.academic_degree.id_for_label }}">Ilmiy daraja</label>
+                    {{ user_form.academic_degree }}
+                </div>
+                
+                <button type="submit" class="btn-primary">O'zgarishlarni saqlash</button>
+                <a href="{% url 'main:profile' %}" class="btn-secondary">Bekor qilish</a>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Password Tab -->
+    <div class="tab-content" data-content="password">
+        <div class="settings-card">
+            <h2 class="settings-card-title">
+                <span class="settings-card-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </span>
+                Parolni o'zgartirish
+            </h2>
+            
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="password">
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ password_form.old_password.id_for_label }}">Joriy parol</label>
+                    {{ password_form.old_password }}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ password_form.new_password1.id_for_label }}">Yangi parol</label>
+                    {{ password_form.new_password1 }}
+                    <p class="form-help-text">Parol kamida 8 ta belgidan iborat bo'lishi kerak</p>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ password_form.new_password2.id_for_label }}">Yangi parolni tasdiqlang</label>
+                    {{ password_form.new_password2 }}
+                </div>
+                
+                <button type="submit" class="btn-primary">Parolni o'zgartirish</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Select elementlarni standart dropdown holatiga qaytarish
+document.addEventListener('DOMContentLoaded', function() {
+    // Barcha select elementlarni topib, size atributini olib tashlash
+    const selects = document.querySelectorAll('select');
+    selects.forEach(select => {
+        select.removeAttribute('size');
+        select.style.height = 'auto';
+        select.style.overflow = 'visible';
+    });
+});
+
+// Phone number auto-format with +998
+document.addEventListener('DOMContentLoaded', function() {
+    const phoneInput = document.getElementById('phone_number');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+            
+            // If user starts typing and there's no +998, add it
+            if (value.length > 0 && !e.target.value.startsWith('+998')) {
+                value = '998' + value;
+            }
+            
+            // Format: +998 XX XXX XX XX
+            let formatted = '';
+            if (value.length > 0) {
+                formatted = '+' + value.substring(0, 3); // +998
+                if (value.length > 3) {
+                    formatted += ' ' + value.substring(3, 5); // XX
+                }
+                if (value.length > 5) {
+                    formatted += ' ' + value.substring(5, 8); // XXX
+                }
+                if (value.length > 8) {
+                    formatted += ' ' + value.substring(8, 10); // XX
+                }
+                if (value.length > 10) {
+                    formatted += ' ' + value.substring(10, 12); // XX
+                }
+            }
+            
+            e.target.value = formatted;
+        });
+        
+        // Allow backspace to work properly
+        phoneInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' && e.target.value === '+998 ') {
+                e.target.value = '';
+            }
+        });
+    }
+});
+
+// Tabs functionality
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const tabName = btn.dataset.tab;
+        
+        // Update buttons
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Update content
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.querySelector(`[data-content="${tabName}"]`).classList.add('active');
+    });
+});
+
+// Scroll animations
+(function() {
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => {
+        observer.observe(section);
+    });
+})();
+</script>
+{% endblock %}

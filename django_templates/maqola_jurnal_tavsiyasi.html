@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Maqola mazmuniga mos jurnalni tavsiya etish{% endblock %}
+{% block extra_head %}
+  <style>
+    .scroll-section {
+        opacity: 0;
+        transform: translateY(80px) scale(0.95);
+        transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .scroll-section.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    .journal-service-layout {
+      display: grid;
+      gap: 20px;
+    }
+
+    @media (min-width: 880px) {
+      .journal-service-layout {
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.15fr);
+        align-items: flex-start;
+      }
+    }
+
+    .journal-side-box {
+      border-radius: 18px;
+      border: 1px dashed var(--border-color-soft);
+      background: radial-gradient(circle at 0 0, rgba(148, 163, 184, 0.18), transparent 60%),
+        var(--bg-secondary);
+      padding: 14px 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .journal-side-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .journal-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .journal-step-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--badge-bg);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--accent-primary);
+      flex-shrink: 0;
+    }
+
+    .journal-step strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .journal-form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .journal-form-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .journal-form-field label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .journal-form-field input,
+    .journal-form-field textarea {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border-color-soft);
+      padding: 9px 11px;
+      font-size: 13px;
+      background: var(--card-bg);
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .journal-form-field input::placeholder,
+    .journal-form-field textarea::placeholder {
+      color: var(--text-muted);
+      opacity: 0.8;
+    }
+
+    .journal-form-field input:focus,
+    .journal-form-field textarea:focus {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.45);
+      transform: translateY(-0.5px);
+      background: var(--bg-primary);
+    }
+
+    .journal-form-note {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .journal-form-footer {
+      display: grid;
+      gap: 6px;
+      align-items: flex-start;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <section class="subpage-hero stipendiya-hero scroll-section">
+    <div class="subpage-hero-inner">
+      <div class="subpage-hero-text">
+        <div class="subpage-breadcrumb">
+          <a href="{% url 'main:home' %}">Bosh sahifa</a>
+          <span>//</span>
+          <span>Xizmatlar</span>
+          <span>//</span>
+          <span>Maqolaga mos jurnal tavsiyasi</span>
+        </div>
+        <h1 class="title subpage-title">Maqola mazmuniga mos jurnalni tavsiya etish</h1>
+        <p class="subtitle subpage-subtitle">
+          Maqolangiz mazmuni, soha va tiliga mos, OAK yoki xalqaro bazalarda indekslangan jurnallarni tavsiya qilish xizmati.
+          Ushbu sahifa demo ko'rinishida bo'lib, haqiqiy fayl jo'natish va qayta yuborish jarayonlari alohida tizim orqali
+          amalga oshiriladi.
+        </p>
+      </div>
+      <div class="subpage-hero-illustration">
+        <div class="subpage-hero-pill">
+          <span class="badge" style="margin-bottom: 0;">
+            <i class="fas fa-newspaper"></i>
+            <span>Jurnal tavsiyasi</span>
+          </span>
+        </div>
+        <div class="subpage-hero-image-wrapper">
+          <img src="{% static 'assets/hero-section-showcase.png' %}" alt="Jurnal tavsiyasi xizmati" class="subpage-hero-image" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stipendiya-table-section scroll-section">
+    <div class="stipendiya-container">
+      <div class="card stipendiya-table-card">
+        <div class="stipendiya-table-header">
+          <h2 class="subtitle">1. Maqola faylini va ma'lumotlarni yuborish</h2>
+          <p class="text-muted">
+            Quyidagi forma orqali maqolangiz faylini yuklab, F.I.O va aloqa ma'lumotlaringizni kiritib, mavzuga mos jurnal
+            tavsiyasi uchun so'rov yuborishingiz mumkin. Forma hozircha faqat demo ko'rinishida.
+          </p>
+        </div>
+        <div class="journal-service-layout">
+          <aside class="journal-side-box">
+            <div class="journal-side-title">Qanday ishlaydi?</div>
+            <p class="text-muted" style="font-size: 13px;">
+              Jurnal tavsiyasi xizmati quyidagi bosqichlarda amalga oshiriladi. Bu sahifa UI maket bo'lib, barcha jarayonlar
+              hozircha oflayn shaklda tashkil etiladi.
+            </p>
+            <div class="journal-step">
+              <div class="journal-step-badge">1</div>
+              <div>
+                <strong>Maqola faylini yuboring</strong>
+                <span class="text-muted" style="font-size: 12px;">.doc, .docx yoki .pdf formatida maqolangizni yuklaysiz.</span>
+              </div>
+            </div>
+            <div class="journal-step">
+              <div class="journal-step-badge">2</div>
+              <div>
+                <strong>Ma'lumotlarni to'ldiring</strong>
+                <span class="text-muted" style="font-size: 12px;">F.I.O va mavzuni kiritish orqali tavsiya aniqligini oshirasiz.</span>
+              </div>
+            </div>
+            <div class="journal-step">
+              <div class="journal-step-badge">3</div>
+              <div>
+                <strong>Tavsiyalarni qabul qiling</strong>
+                <span class="text-muted" style="font-size: 12px;">Mavzuga mos OAK yoki xalqaro jurnallar ro'yxati fayl holida yuboriladi.</span>
+              </div>
+            </div>
+            <div class="journal-step">
+              <div class="journal-step-badge">4</div>
+              <div>
+                <strong>To'lovni kelishasiz</strong>
+                <span class="text-muted" style="font-size: 12px;">To'lov Click, Payme yoki bank o'tkazmasi orqali alohida kelishiladi.</span>
+              </div>
+            </div>
+          </aside>
+
+          <div class="journal-form">
+            <div>
+              <label class="field-label" style="font-size: 13px; display: block; margin-bottom: 6px;">Maqola faylini yuklash</label>
+              <input type="file" accept=".doc,.docx,.pdf" style="width: 100%; max-width: 420px;" />
+              <p class="journal-form-note">
+                Fayl hozircha serverga yuborilmaydi; haqiqiy tavsiya jarayoni keyinchalik alohida tizim orqali yo'lga qo'yiladi.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="subtitle" style="font-size: 15px;">Murojaatchi ma'lumotlari</h3>
+              <p class="text-muted" style="font-size: 13px;">
+                Jurnal tavsiyasi tayyor bo'lgach siz bilan bog'lanish va natijani yuborish uchun quyidagi ma'lumotlarni to'ldiring.
+              </p>
+              <div class="journal-form-grid">
+                <div class="journal-form-field">
+                  <label>F.I.O</label>
+                  <input type="text" placeholder="Familiya Ism Sharifingiz" />
+                </div>
+                <div class="journal-form-field">
+                  <label>Email manzilingiz</label>
+                  <input type="email" placeholder="email@manzil.uz" />
+                </div>
+                <div class="journal-form-field">
+                  <label>Telefon raqam</label>
+                  <input type="text" placeholder="(97) 305-62-20" />
+                </div>
+                <div class="journal-form-field" style="grid-column: 1 / -1;">
+                  <label>Maqola mavzusi</label>
+                  <input type="text" placeholder="Maqolangiz to'liq mavzusi" />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="subtitle" style="font-size: 15px;">To'lov (demo ko'rinishida)</h3>
+              <p class="text-muted" style="font-size: 13px;">
+                Jurnal tavsiyasi xizmati uchun haqiqiy to'lov tizimi hali ulanmagan. Kelgusida Click, Payme yoki bank o'tkazmasi
+                orqali onlayn to'lov qilish imkoniyati yaratiladi. Hozircha ushbu bo'lim faqat dizayn maqsadida.
+              </p>
+            </div>
+
+            <div class="journal-form-footer">
+              <button class="btn-gradient stipendiya-action-btn" type="button">
+                <i class="fas fa-paper-plane"></i>
+                So'rovni yuborish (demo)
+              </button>
+              <p class="journal-form-note">
+                Tugma bosilganda ma'lumotlar haqiqiy serverga yuborilmaydi. Keyingi bosqichda bu yerga haqiqiy yuborish va
+                tasdiqlash jarayoni ulanadi.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => {
+        observer.observe(section);
+    });
+})();
+</script>
+{% endblock %}

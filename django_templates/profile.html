@@ -1,0 +1,604 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profil - {{ user.first_name }} {{ user.last_name }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .profile-container {
+        max-width: 1200px;
+        margin: 80px auto;
+        padding: 40px 20px;
+    }
+    
+    .profile-header {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 40px;
+        margin-bottom: 30px;
+        border: 1px solid var(--border-color-soft);
+        box-shadow: var(--shadow);
+        display: flex;
+        align-items: center;
+        gap: 30px;
+    }
+    
+    .profile-avatar-large {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent-secondary), var(--accent-dark));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 48px;
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+    }
+    
+    .profile-info h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: var(--text-title);
+    }
+    
+    .profile-info .profile-username {
+        font-size: 18px;
+        color: var(--text-secondary);
+        margin-bottom: 12px;
+    }
+    
+    .profile-badges {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    
+    .profile-badge {
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .badge-active {
+        background: rgba(34, 197, 94, 0.15);
+        color: #22c55e;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    
+    .badge-region {
+        background: rgba(59, 130, 246, 0.15);
+        color: #3b82f6;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    
+    .profile-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 24px;
+        margin-bottom: 30px;
+    }
+    
+    .profile-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 30px;
+        border: 1px solid var(--border-color-soft);
+        box-shadow: var(--shadow);
+    }
+    
+    .profile-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border-color-soft);
+    }
+    
+    .profile-card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--accent-secondary), var(--accent-dark));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    
+    .profile-card-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-title);
+    }
+    
+    .profile-info-list {
+        list-style: none;
+    }
+    
+    .profile-info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    }
+    
+    .profile-info-item:last-child {
+        border-bottom: none;
+    }
+    
+    .info-label {
+        color: var(--text-secondary);
+        font-size: 14px;
+    }
+    
+    .info-value {
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-secondary);
+    }
+    
+    .empty-state svg {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+    }
+    
+    .course-item, .certificate-item {
+        padding: 16px;
+        background: rgba(236, 72, 153, 0.05);
+        border-radius: 12px;
+        margin-bottom: 12px;
+        border-left: 3px solid var(--accent-primary);
+    }
+    
+    .course-title, .certificate-title {
+        font-weight: 600;
+        color: var(--text-title);
+        margin-bottom: 4px;
+    }
+    
+    .course-progress {
+        font-size: 13px;
+        color: var(--text-secondary);
+    }
+    
+    @media (max-width: 768px) {
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .profile-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container scroll-section">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-avatar-large">
+            {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+        </div>
+        <div class="profile-info">
+            <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+            <p class="profile-username">@{{ user.username }}</p>
+            <div class="profile-badges">
+                <span class="profile-badge badge-active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <path d="m9 11 3 3L22 4"/>
+                    </svg>
+                    Faol
+                </span>
+                {% if user.residence_region %}
+                <span class="profile-badge badge-region">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    {{ user.residence_region }}
+                </span>
+                {% endif %}
+                {% if user.academic_degree %}
+                <span class="profile-badge badge-degree" style="background: rgba(139, 92, 246, 0.1); color: var(--accent-primary); border: 1px solid rgba(139, 92, 246, 0.2);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                        <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                    </svg>
+                    {{ user.get_academic_degree_display }}
+                </span>
+                {% endif %}
+                {% if user.university %}
+                <span class="profile-badge badge-university" style="background: rgba(99, 102, 241, 0.1); color: #6366f1; border: 1px solid rgba(99, 102, 241, 0.2);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 21h18M3 7v1a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V7M3 7l9-4 9 4M3 7h18"/>
+                        <path d="M9 21v-8a3 3 0 0 1 3-3 3 3 0 0 1 3 3v8"/>
+                    </svg>
+                    {{ user.university }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profile Grid -->
+    <div class="profile-grid">
+        <!-- Personal Information -->
+        <div class="profile-card">
+            <div class="profile-card-header">
+                <div class="profile-card-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </div>
+                <h2 class="profile-card-title">Shaxsiy ma'lumotlar</h2>
+            </div>
+            <ul class="profile-info-list">
+                <li class="profile-info-item">
+                    <span class="info-label">Ism</span>
+                    <span class="info-value">{{ user.first_name }}</span>
+                </li>
+                <li class="profile-info-item">
+                    <span class="info-label">Familiya</span>
+                    <span class="info-value">{{ user.last_name }}</span>
+                </li>
+                <li class="profile-info-item">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">{{ user.email }}</span>
+                </li>
+                {% if user.phone_number %}
+                <li class="profile-info-item">
+                    <span class="info-label">Telefon</span>
+                    <span class="info-value">{{ user.phone_number }}</span>
+                </li>
+                {% endif %}
+                {% if user.residence_region %}
+                <li class="profile-info-item">
+                    <span class="info-label">Yashash xudud</span>
+                    <span class="info-value">{{ user.residence_region }}</span>
+                </li>
+                {% endif %}
+                {% if user.university %}
+                <li class="profile-info-item">
+                    <span class="info-label">O'qigan/O'qiyotgan joy</span>
+                    <span class="info-value">{{ user.university }}</span>
+                </li>
+                {% endif %}
+                {% if user.academic_degree %}
+                <li class="profile-info-item">
+                    <span class="info-label">Ilmiy daraja</span>
+                    <span class="info-value">{{ user.get_academic_degree_display }}</span>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        
+        <!-- Courses -->
+       
+        
+       
+        
+        <!-- Activity -->
+        <div class="profile-card">
+            <div class="profile-card-header">
+                <div class="profile-card-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                    </svg>
+                </div>
+                <h2 class="profile-card-title">Faoliyat</h2>
+            </div>
+            <ul class="profile-info-list">
+                <li class="profile-info-item">
+                    <span class="info-label">Ro'yxatdan o'tgan</span>
+                    <span class="info-value">{{ user.date_joined|date:"d.m.Y" }}</span>
+</li>
+                <li class="profile-info-item">
+                    <span class="info-label">Oxirgi kirish</span>
+                    <span class="info-value">{% if user.last_login %}{{ user.last_login|date:"d.m.Y H:i" }}{% else %}Birinchi marta{% endif %}</span>
+                </li>
+                <li class="profile-info-item">
+                    <span class="info-label">Status</span>
+                    <span class="info-value">{{ user.status|capfirst }}</span>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Saralash testi (Assessment Test) bo'limi -->
+        <div class="profile-card">
+            <div class="profile-card-header">
+                <div class="profile-card-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                        <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                    </svg>
+                </div>
+                <h2 class="profile-card-title">Saralash testi</h2>
+            </div>
+            <div style="padding: 20px;">
+                <div style="background: linear-gradient(135deg, {% if user.assessment_status == 'iqtidorli' %}#4facfe 0%, #00f2fe{% else %}#f093fb 0%, #f5576c{% endif %} 100%); color: white; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0 0 8px 0; font-size: 18px;">
+                        {% if user.assessment_status == 'iqtidorli' %}
+                            <i class="fas fa-star"></i> Iqtidorli talaba
+                        {% else %}
+                            <i class="fas fa-user"></i> {{ user.assessment_status|capfirst }}
+                        {% endif %}
+                    </h3>
+                    {% if user.assessment_score > 0 %}
+                    <p style="margin: 0; font-size: 28px; font-weight: 700;">{{ user.assessment_score|floatformat:1 }}%</p>
+                    {% else %}
+                    <p style="margin: 0; font-size: 14px; opacity: 0.95;">Hali test topshirilmagan</p>
+                    {% endif %}
+                </div>
+                
+                {% if assessment_results.exists %}
+                <div style="margin-bottom: 15px;">
+                    <h4 style="margin-bottom: 10px; color: #333; font-size: 14px;">Oxirgi natija:</h4>
+                    {% with assessment_results.first as result %}
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; border-left: 4px solid {% if result.passed %}#10b981{% else %}#ef4444{% endif %};">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span style="font-weight: 600; color: #333; font-size: 13px;">{{ result.submitted_at|date:"d.m.Y H:i" }}</span>
+                            <span style="font-size: 18px; font-weight: 700; color: {% if result.passed %}#10b981{% else %}#ef4444{% endif %};">
+                                {{ result.percentage|floatformat:1 }}%
+                            </span>
+                        </div>
+                        <div style="font-size: 13px; color: #666;">
+                            <i class="fas fa-check-circle" style="color: #10b981;"></i> To'g'ri: {{ result.correct_answers }}/{{ result.total_questions }}
+                            {% if result.time_taken %}
+                            • <i class="fas fa-clock" style="color: #667eea;"></i> Vaqt: {{ result.time_taken }}s
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endwith %}
+                </div>
+                {% endif %}
+                
+                <div style="display: flex; gap: 10px;">
+                    {% if can_take_assessment %}
+                    <a href="{% url 'main:assessment_test' %}" style="flex: 1; background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; padding: 14px 20px; border-radius: 10px; text-decoration: none; text-align: center; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class="fas fa-play"></i>
+                        {% if user.assessment_score > 0 %}Qayta topshirish{% else %}Test topshirish{% endif %}
+                    </a>
+                    {% else %}
+                    <div style="flex: 1; background: #f0f0f0; color: #666; padding: 14px 20px; border-radius: 10px; text-align: center; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; flex-direction: column;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-lock"></i>
+                            <span>Keyingi urinish</span>
+                        </div>
+                        <span style="font-size: 18px; color: #667eea;" id="assessmentTimer">{{ assessment_wait_time.hours }}:{{ assessment_wait_time.minutes|stringformat:"02d" }}:00</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User Courses Section -->
+    {% if courses_data %}
+    <div class="profile-card" style="grid-column: 1 / -1;">
+        <div class="profile-card-header">
+            <div class="profile-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                </svg>
+            </div>
+            <h2 class="profile-card-title">Mening kurslarim</h2>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; margin-top: 20px;">
+            {% for data in courses_data %}
+            <div style="border: 2px solid #e5e7eb; border-radius: 12px; overflow: hidden; background: white; transition: all 0.3s; cursor: pointer;" onclick="window.location.href='{% url 'main:course_detail' data.course.id %}'">
+                {% if data.course.image %}
+                <div style="height: 160px; background: url('{{ data.course.image.url }}') center/cover;"></div>
+                {% else %}
+                <div style="height: 160px; background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);"></div>
+                {% endif %}
+                
+                <div style="padding: 20px;">
+                    <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #111827;">{{ data.course.name }}</h3>
+                    <p style="margin: 0 0 16px 0; color: #6b7280; font-size: 14px; line-height: 1.5;">{{ data.course.short_description|truncatewords:12 }}</p>
+                    
+                    <!-- Progress Bar -->
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span style="font-size: 13px; font-weight: 600; color: #6b7280;">Progress</span>
+                            <span style="font-size: 13px; font-weight: 600; color: #3b82f6;">{{ data.progress_percentage }}%</span>
+                        </div>
+                        <div style="height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+                            <div style="height: 100%; background: linear-gradient(90deg, #3b82f6, #8b5cf6); width: {{ data.progress_percentage }}%; transition: width 0.5s;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats -->
+                    <div style="display: flex; gap: 16px; margin-bottom: 16px; font-size: 13px; color: #6b7280;">
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <i class="fas fa-check-circle" style="color: #10b981;"></i>
+                            <span>{{ data.completed_modules }}/{{ data.total_modules }} modul</span>
+                        </div>
+                        {% if data.progress.test_passed %}
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <i class="fas fa-trophy" style="color: #f59e0b;"></i>
+                            <span>Test topshirildi</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: 8px;">
+                        {% if data.progress.is_completed and data.progress.test_passed %}
+                        <button style="flex: 1; padding: 10px 16px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer;">
+                            <i class="fas fa-check-double"></i> Tugatilgan
+                        </button>
+                        {% else %}
+                        <button style="flex: 1; padding: 10px 16px; background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer;">
+                            <i class="fas fa-play"></i> Davom ettirish
+                        </button>
+                        {% endif %}
+                        
+                        <div style="font-size: 12px; color: #9ca3af; padding: 10px 0;">
+                            Boshlangan: {{ data.progress.started_at|date:"d.m.Y" }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="profile-card" style="grid-column: 1 / -1; text-align: center; padding: 60px 40px;">
+        <i class="fas fa-book-open" style="font-size: 64px; color: #d1d5db; margin-bottom: 20px;"></i>
+        <h3 style="font-size: 20px; font-weight: 600; color: #6b7280; margin: 0 0 12px 0;">Hozircha kurslar yo'q</h3>
+        <p style="color: #9ca3af; margin: 0 0 24px 0;">Siz hali birorta kursni boshlamagansiz</p>
+        <a href="{% url 'main:courses' %}" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+            <i class="fas fa-book"></i>
+            <span>Kurslarni ko'rish</span>
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Certificates Section - Always visible -->
+<div class="profile-card scroll-section" style="grid-column: 1 / -1;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+        <div style="background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: center;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                <path d="M4 22h16"/>
+                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+            </svg>
+        </div>
+        <h2 class="profile-card-title">Mening sertifikatlarim</h2>
+        {% if certificates %}
+        <span style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: 600; margin-left: auto;">{{ certificates|length }} ta</span>
+        {% endif %}
+    </div>
+    
+    {% if certificates %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+        {% for certificate in certificates %}
+        <div style="border: 2px solid #fbbf24; border-radius: 12px; overflow: hidden; background: linear-gradient(135deg, #fffbeb, #fef3c7); transition: all 0.3s; position: relative; box-shadow: 0 4px 12px rgba(251, 191, 36, 0.15);">
+            <div style="padding: 24px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                    <div style="background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);">
+                        <i class="fas fa-trophy" style="font-size: 20px; color: white;"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 600; color: #92400e;">{{ certificate.course.name }}</h3>
+                        <p style="margin: 0; font-size: 13px; color: #b45309;">
+                            <i class="fas fa-calendar-alt" style="font-size: 11px; margin-right: 4px;"></i>
+                            {{ certificate.issued_at|date:"d.m.Y" }}
+                        </p>
+                    </div>
+                </div>
+                
+                <div style="background: white; border-radius: 8px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-size: 14px; color: #6b7280;">
+                            <i class="fas fa-chart-line" style="font-size: 12px; margin-right: 4px;"></i>
+                            Test natijasi:
+                        </span>
+                        <span style="font-size: 14px; font-weight: 600; color: #10b981;">{{ certificate.test_result.percentage }}%</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="font-size: 14px; color: #6b7280;">
+                            <i class="fas fa-check-circle" style="font-size: 12px; margin-right: 4px;"></i>
+                            To'g'ri javoblar:
+                        </span>
+                        <span style="font-size: 14px; font-weight: 600; color: #3b82f6;">{{ certificate.test_result.correct_answers }}/{{ certificate.test_result.total_questions }}</span>
+                    </div>
+                </div>
+                
+                <a href="{% url 'main:download_certificate' certificate.id %}" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; transition: all 0.3s; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(245, 158, 11, 0.35)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(245, 158, 11, 0.25)'">
+                    <i class="fas fa-download"></i>
+                    <span>Yuklab olish</span>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Empty state -->
+    <div style="text-align: center; padding: 60px 20px; background: linear-gradient(135deg, #fffbeb, #fef3c7); border-radius: 12px; border: 2px dashed #fbbf24;">
+        <div style="background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+            <i class="fas fa-award" style="font-size: 36px; color: white;"></i>
+        </div>
+        <h3 style="font-size: 20px; font-weight: 600; color: #92400e; margin: 0 0 12px 0;">Hozircha sertifikatlar yo'q</h3>
+        <p style="color: #b45309; margin: 0 0 24px 0; max-width: 400px; margin-left: auto; margin-right: auto;">
+            Kurslarni tugatib, testlardan muvaffaqiyatli o'ting va sertifikatlar oling
+        </p>
+        <a href="{% url 'main:courses' %}" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);">
+            <i class="fas fa-book"></i>
+            <span>Kurslarni ko'rish</span>
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => {
+        observer.observe(section);
+    });
+})();
+
+{% if not can_take_assessment and assessment_wait_time %}
+// Assessment test countdown timer
+let assessmentSeconds = {{ assessment_wait_time.seconds }};
+const assessmentTimerElement = document.getElementById('assessmentTimer');
+
+setInterval(() => {
+    if (assessmentSeconds > 0) {
+        assessmentSeconds--;
+        const hours = Math.floor(assessmentSeconds / 3600);
+        const minutes = Math.floor((assessmentSeconds % 3600) / 60);
+        const seconds = assessmentSeconds % 60;
+        
+        assessmentTimerElement.textContent = 
+            hours + ':' + 
+            String(minutes).padStart(2, '0') + ':' + 
+            String(seconds).padStart(2, '0');
+    } else {
+        window.location.reload();
+    }
+}, 1000);
+{% endif %}
+</script>
+{% endblock %}

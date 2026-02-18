@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Iqtidorli talabamisiz? - So'rovnoma{% endblock %}
+
+{% block extra_head %}
+<style>
+.scroll-section {
+    opacity: 0;
+    transform: translateY(80px) scale(0.95);
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+.scroll-section.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <section class="subpage-hero stipendiya-hero scroll-section">
+        <div class="subpage-hero-inner">
+            <div class="subpage-hero-text">
+                <div class="subpage-breadcrumb">
+                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <span>//</span>
+                    <span>Iqtidorli talabamisiz?</span>
+                    <span>//</span>
+                    <span>So'rovnoma</span>
+                </div>
+                <h1 class="title subpage-title">Iqtidorli talabalar uchun so'rovnoma</h1>
+                <p class="subtitle subpage-subtitle">
+                    Qiziqishlaringiz, ilmiy yutuqlaringiz va maqsadlaringiz haqida qisqacha so'rovnoma. Natijalar asosida
+                    sizga mos imkoniyatlar tavsiya etiladi.
+                </p>
+            </div>
+            <div class="subpage-hero-illustration">
+                <div class="subpage-hero-pill">
+                    <span class="badge" style="margin-bottom: 0;">
+                        <i class="fas fa-user-check"></i>
+                        <span>Iqtidorli talabalar so'rovnomasi</span>
+                    </span>
+                </div>
+                <div class="subpage-hero-image-wrapper">
+                    <img src="{% static 'assets/hero-section-showcase.png' %}" alt="So'rovnoma" class="subpage-hero-image" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stipendiya-table-section scroll-section">
+        <div class="stipendiya-container">
+            <div class="card stipendiya-table-card">
+                <div class="stipendiya-table-header">
+                    <h2 class="subtitle">Mavjud so'rovnomalar</h2>
+                    <p class="text-muted">
+                        Quyidagi so'rovnomalarni to'ldiring. Natijalar asosida sizga mos imkoniyatlar tavsiya etiladi.
+                    </p>
+                </div>
+                {% if surveys %}
+                    <div style="display: flex; flex-direction: column; gap: 24px;">
+                        {% for survey in surveys %}
+                        <div class="card" style="padding: 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                            <h3 style="font-size: 20px; font-weight: 600; margin-bottom: 12px;">{{ survey.title }}</h3>
+                            <p style="margin-bottom: 20px; opacity: 0.95;">{{ survey.description }}</p>
+                            <a href="{{ survey.link }}" target="_blank" class="btn-primary" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; background: white; color: #667eea; text-decoration: none;">
+                                <i class="fas fa-external-link-alt"></i>
+                                <span>So'rovnomani ochish</span>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div style="display: flex; flex-direction: column; gap: 16px; padding: 32px; text-align: center;">
+                        <i class="fas fa-clipboard-list" style="font-size: 48px; color: #9CA3AF;"></i>
+                        <p class="text-muted">Hozircha faol so'rovnomalar yo'q</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => {
+        observer.observe(section);
+    });
+})();
+</script>
+{% endblock %}

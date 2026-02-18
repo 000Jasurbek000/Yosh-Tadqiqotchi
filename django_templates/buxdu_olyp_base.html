@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% block olympiad_title %}BuxDU olimpiadasi{% endblock %} - Yosh Tadqiqotchi{% endblock %}
+
+{% block extra_head %}
+<style>
+    .scroll-section {
+        opacity: 0;
+        transform: translateY(80px) scale(0.95);
+        transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .scroll-section.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    .buxdu-detail-wrapper {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 32px 20px 96px;
+    }
+    .buxdu-detail-header {
+        margin-top: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .buxdu-detail-title {
+        font-size: 26px;
+        font-weight: 700;
+        line-height: 1.3;
+        color: var(--text-primary);
+    }
+    .buxdu-detail-date-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: var(--badge-bg);
+        color: var(--text-secondary);
+        font-size: 13px;
+        margin-top: 4px;
+        width: fit-content;
+    }
+    .buxdu-detail-meta {
+        font-size: 14px;
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+    .buxdu-detail-content {
+        margin-top: 16px;
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.8;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .buxdu-detail-content p {
+        margin: 0;
+    }
+    .buxdu-detail-links {
+        margin-top: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .buxdu-detail-links a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+    }
+    .buxdu-detail-links .program-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #4f46e5, #06b6d4);
+        color: #f9fafb;
+        text-decoration: none;
+        font-weight: 500;
+        width: fit-content;
+    }
+    .buxdu-detail-links .program-link i {
+        font-size: 15px;
+    }
+    .buxdu-detail-links .secondary-link {
+        color: var(--accent-primary);
+        text-decoration: none;
+    }
+    .buxdu-detail-links .secondary-link i {
+        color: var(--accent-primary);
+    }
+    .buxdu-detail-links .secondary-link:hover {
+        text-decoration: underline;
+    }
+    .buxdu-detail-links h3 {
+        font-size: 16px;
+        margin: 8px 0 0 0;
+        color: var(--text-primary);
+    }
+    .buxdu-hero-image-wrapper {
+        max-width: 680px;
+        margin: 80px auto 18px;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.6);
+    }
+    [data-theme="light"] .buxdu-hero-image-wrapper {
+        box-shadow: 0 14px 34px rgba(148, 163, 184, 0.24);
+    }
+    .buxdu-hero-image-wrapper img {
+        width: 100%;
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="buxdu-detail-wrapper scroll-section">
+    <div class="subpage-breadcrumb" style="margin-bottom: 8px;">
+        <a href="{% url 'main:home' %}">Bosh sahifa</a>
+        <span>//</span>
+        <span>Xalqaro grant va olimpiadalar</span>
+        <span>//</span>
+        <a href="{% url 'main:buxdu_olimpiadalari' %}">BuxDU olimpiadalari</a>
+    </div>
+
+    {% block olympiad_image %}
+    <div class="buxdu-hero-image-wrapper">
+        <img src="{% static 'assets/hero-section-showcase.png' %}" alt="BuxDU olimpiadasi" />
+    </div>
+    {% endblock %}
+
+    <div class="buxdu-detail-header">
+        <h1 class="buxdu-detail-title">{% block olympiad_heading %}BuxDU olimpiadasi{% endblock %}</h1>
+        <div class="buxdu-detail-date-pill">
+            <i class="far fa-calendar"></i>
+            <span>{% block olympiad_date %}Olimpiada sanasi{% endblock %}</span>
+        </div>
+        <p class="buxdu-detail-meta">
+            {% block olympiad_meta %}Olimpiada haqida qisqacha ma'lumot.{% endblock %}
+        </p>
+    </div>
+
+    <div class="buxdu-detail-content">
+        {% block olympiad_content %}
+        <p>Olimpiada tafsilotlari.</p>
+        {% endblock %}
+    </div>
+
+    <div class="buxdu-detail-links">
+        {% block olympiad_links %}
+        <a href="#" class="program-link">
+            <i class="fas fa-file-download"></i>
+            <span>Olimpiada dasturi</span>
+        </a>
+
+        <h3>Ro'yxatdan o'tish havolalari</h3>
+        <a href="#" class="secondary-link">
+            <i class="far fa-lightbulb"></i>
+            <span>Ro'yxatdan o'tish</span>
+        </a>
+        {% endblock %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => {
+        observer.observe(section);
+    });
+})();
+</script>
+{% endblock %}

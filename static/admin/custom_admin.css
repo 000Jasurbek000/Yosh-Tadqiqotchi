@@ -1,0 +1,40 @@
+/* Admin panel logo o'lchamini kichikroq qilish */
+.login-logo img,
+.brand-link .brand-image,
+.navbar-brand img {
+    max-height: 50px !important;
+    max-width: 50px !important;
+    width: auto !important;
+    height: auto !important;
+}
+
+.login-logo {
+    font-size: 1.5rem !important;
+}
+
+/* Login sahifasida logo */
+.login-box .login-logo img {
+    max-height: 80px !important;
+    max-width: 200px !important;
+}
+
+/* Sidebar logo */
+.brand-link {
+    padding: 0.5rem !important;
+}
+
+.brand-link .brand-image {
+    float: left;
+    line-height: 0.8;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    margin-top: -3px;
+    max-height: 40px !important;
+    width: auto;
+}
+
+/* Admin panel asosiy logo */
+.main-header .navbar-brand img {
+    max-height: 40px !important;
+    width: auto !important;
+}

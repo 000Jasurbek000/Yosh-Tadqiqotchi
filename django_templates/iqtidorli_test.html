@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Iqtidorli talabamisiz? - Saralash testi{% endblock %}
+
+{% block extra_head %}
+<style>
+.scroll-section {
+    opacity: 0;
+    transform: translateY(80px) scale(0.95);
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+.scroll-section.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <section class="subpage-hero stipendiya-hero scroll-section">
+        <div class="subpage-hero-inner">
+            <div class="subpage-hero-text">
+                <div class="subpage-breadcrumb">
+                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <span>//</span>
+                    <span>Iqtidorli talabamisiz?</span>
+                    <span>//</span>
+                    <span>Saralash testi</span>
+                </div>
+                <h1 class="title subpage-title">Iqtidorli talabalar uchun saralash testi</h1>
+                <p class="subtitle subpage-subtitle">
+                    60 bal va undan yuqori natija olganlar "Iqtidorli talaba" statusiga ega bo'ladi. Past ball olganlar esa
+                    faqat umumiy test topshiruvchilar ro'yxatida qayd etiladi.
+                </p>
+            </div>
+            <div class="subpage-hero-illustration">
+                <div class="subpage-hero-pill">
+                    <span class="badge" style="margin-bottom: 0;">
+                        <i class="fas fa-brain"></i>
+                        <span>Saralash testi (UI)</span>
+                    </span>
+                </div>
+                <div class="subpage-hero-image-wrapper">
+                    <img src="{% static 'assets/features-showcase-2.png' %}" alt="Saralash testi" class="subpage-hero-image" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="course-page-section scroll-section">
+        <div class="course-page-container">
+            <article class="course-card">
+                <header class="course-card-header">
+                    <div>
+                        <span class="course-pill">Saralash testi</span>
+                        <h2 class="course-title">Demo test interfeysi</h2>
+                        <p class="course-trainer">Rejim: <span>faqat UI, natijalar saqlanmaydi</span></p>
+                    </div>
+                    <div class="course-status-row">
+                        <div class="course-status-badge is-pending">
+                            <i class="fas fa-circle-notch"></i>
+                            Boshlanmagan (demo)
+                        </div>
+                        <div class="course-progress-text">Minimal o'tish ballari: 60 / 100</div>
+                    </div>
+                </header>
+
+                <div class="course-layout">
+                    <div class="course-column">
+                        <h3 class="course-section-title">Test bo'yicha qisqacha ma'lumot</h3>
+                        <p class="course-section-text">
+                            Quyidagi savollar iqtidorli talabalarni aniqlashga yordam beruvchi IQ, mantiqiy fikrlash va umumiy
+                            bilim darajasiga oid namunaviy savollardir. Hozircha faqat dizayn ko'rinishida joylashtirilgan.
+                        </p>
+
+                        <ul class="course-module-list">
+                            <li class="course-module-item is-active">
+                                <div class="course-module-main">
+                                    <div class="course-module-badge">1-savol</div>
+                                    <div>
+                                        <p class="course-module-title">Mantiqiy ketma-ketlik</p>
+                                        <p class="course-module-desc">2, 4, 8, 16, ... keyingi son qaysi?</p>
+                                    </div>
+                                </div>
+                                <div class="course-module-actions" style="margin-top: 8px;">
+                                    <label><input type="radio" name="q1"> 18</label>
+                                    <label><input type="radio" name="q1"> 24</label>
+                                    <label><input type="radio" name="q1"> 32</label>
+                                </div>
+                            </li>
+                            <li class="course-module-item is-active">
+                                <div class="course-module-main">
+                                    <div class="course-module-badge">2-savol</div>
+                                    <div>
+                                        <p class="course-module-title">So'zlar o'rtasidagi bog'liqlik</p>
+                                        <p class="course-module-desc">"Kitob" so'ziga ma'nodosh so'zni tanlang.</p>
+                                    </div>
+                                </div>
+                                <div class="course-module-actions" style="margin-top: 8px;">
+                                    <label><input type="radio" name="q2"> Daftar</label>
+                                    <label><input type="radio" name="q2"> Adabiyot</label>
+                                    <label><input type="radio" name="q2"> Qalam</label>
+                                </div>
+                            </li>
+                            <li class="course-module-item is-active">
+                                <div class="course-module-main">
+                                    <div class="course-module-badge">3-savol</div>
+                                    <div>
+                                        <p class="course-module-title">Analitik fikrlash</p>
+                                        <p class="course-module-desc">Agar barcha A lar B bo'lsa va barcha B lar C bo'lsa, unda barcha A lar C bo'ladimi?</p>
+                                    </div>
+                                </div>
+                                <div class="course-module-actions" style="margin-top: 8px;">
+                                    <label><input type="radio" name="q3"> Ha</label>
+                                    <label><input type="radio" name="q3"> Yo'q</label>
+                                    <label><input type="radio" name="q3"> Bilmayman</label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="course-column">
+                        <h3 class="course-section-title">Natijalar haqida ma'lumot</h3>
+                        <p class="course-section-text">
+                            To'liq funksional tizimda siz barcha savollarga javob berganingizdan so'ng avtomatik tarzda ball
+                            hisoblanadi. 60 va undan yuqori ball olgan talabalar "Iqtidorli talaba" bazasiga qo'shiladi.
+                        </p>
+
+                        <div class="course-final">
+                            <div class="course-final-grid">
+                                <div class="course-final-card">
+                                    <p class="course-module-title">Joriy holat (demo)</p>
+                                    <p class="course-module-desc">
+                                        Hozircha natijalar hisoblanmaydi va saqlanmaydi. Bu bo'lim faqat dizayn va kelajakdagi
+                                        tizim uchun tayyorlangan.
+                                    </p>
+                                </div>
+                                <div class="course-final-card">
+                                    <p class="course-module-title">Statuslar qoidasi</p>
+                                    <p class="course-module-desc">
+                                        60 balldan yuqori natija olganlar "Iqtidorli talaba" maqomiga ega bo'ladi.
+                                        0–59 ball oralig'idagi natijalar esa faqat "test topshiruvchilar ro'yxati"da saqlanadi.
+                                    </p>
+                                    <div class="course-result-row">
+                                        <button class="btn-primary" type="button" disabled>
+                                            <i class="fas fa-play"></i>
+                                            Testni boshlash (tez orada)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => {
+        observer.observe(section);
+    });
+})();
+</script>
+{% endblock %}

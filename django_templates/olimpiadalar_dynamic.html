@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Fan olimpiadalari - Yosh Tadqiqotchi{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Scroll Animation Styles */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .scroll-section {
+        opacity: 0;
+        transform: translateY(80px) scale(0.95);
+        transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .scroll-section.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    /* Text Wrapping Styles */
+    .olympiad-title, .olympiad-country, .olympiad-desc {
+        word-wrap: break-word !important;
+        white-space: normal !important;
+        overflow-wrap: break-word !important;
+        word-break: break-word !important;
+        max-width: 100% !important;
+    }
+
+    .olympiad-body {
+        max-width: 100% !important;
+        overflow: hidden !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Subpage Hero -->
+    <section class="subpage-hero olimpiada-hero scroll-section">
+        <div class="subpage-hero-inner">
+            <div class="subpage-hero-text">
+                <div class="subpage-breadcrumb">
+                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <span>//</span>
+                    <span>Xalqaro grant va olimpiadalar</span>
+                    <span>//</span>
+                    <span id="breadcrumb-title">Fan olimpiadalari</span>
+                </div>
+                <h1 class="title subpage-title" id="hero-title">Fan olimpiadalari</h1>
+                <p class="subtitle subpage-subtitle" id="hero-subtitle">
+                    Iqtidorli talabalar uchun fan olimpiadalari, qisqacha ma'lumot, axborot xati va ro'yxatdan o'tish havolalari.
+                </p>
+            </div>
+            <div class="subpage-hero-illustration">
+                <div class="subpage-hero-pill">
+                    <span class="badge" style="margin-bottom: 0;">
+                        <span id="hero-icon"><i class="fas fa-trophy"></i></span>
+                        <span id="hero-badge">Olimpiadalar</span>
+                    </span>
+                </div>
+                <div class="subpage-hero-image-wrapper">
+                    <img src="{% static 'assets/hero-section-showcase.png' %}" alt="Fan olimpiadalari" class="subpage-hero-image" id="hero-image" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Olimpiadalar ro'yxati -->
+    <section class="olympiad-section scroll-section">
+        <div class="olympiad-container">
+            <div class="olympiad-header">
+                <h2 class="subtitle" id="section-title">Faol fan olimpiadalari</h2>
+                <p class="text-muted" id="section-description">
+                    Har bir olimpiada uchun alohida karta: nomi, o'tkaziladigan davlat, qisqacha ma'lumot, axborot xatini yuklab olish va rasmiy ro'yxatdan o'tish havolasi.
+                </p>
+            </div>
+
+            {% if olympiads %}
+                <div class="olympiad-list">
+                    {% for olympiad in olympiads %}
+                    <article class="olympiad-item">
+                        <div class="olympiad-item-inner olympiad-media">
+                            <div class="olympiad-media-content">
+                                <div class="olympiad-icon-ring">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="olympiad-item-inner olympiad-body-wrapper">
+                            <div class="olympiad-body">
+                                <div class="olympiad-tags">
+                                    <span class="olympiad-tag">
+                                        <i class="fas fa-hashtag"></i>
+                                        {{ forloop.counter }}-olimpiada
+                                    </span>
+                                </div>
+                                <h3 class="olympiad-title" style="word-wrap: break-word; white-space: normal; overflow-wrap: break-word; word-break: break-word;">{{ olympiad.name }}</h3>
+                                <p class="olympiad-meta-label">O'tkaziladigan davlat</p>
+                                <p class="olympiad-country" style="word-wrap: break-word; white-space: normal; overflow-wrap: break-word; word-break: break-word;">{{ olympiad.country }}</p>
+                                <p class="olympiad-desc" style="word-wrap: break-word; white-space: normal; overflow-wrap: break-word; word-break: break-word;">{{ olympiad.short_description }}</p>
+                                <div class="olympiad-links">
+                                    {% if olympiad.information_letter %}
+                                    <a href="{{ olympiad.information_letter.url }}" target="_blank" class="btn-gradient stipendiya-action-btn">
+                                        <i class="fas fa-download"></i>
+                                        Axborot xatini yuklash
+                                    </a>
+                                    {% endif %}
+                                    <a href="{{ olympiad.registration_link }}" target="_blank" class="secondary-link">
+                                        <i class="fas fa-link"></i>
+                                        Rasmiy ro'yxatdan o'tish havolasi
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div style="display: flex; flex-direction: column; gap: 16px; padding: 48px; text-align: center;">
+                    <i class="fas fa-medal" style="font-size: 64px; color: #9CA3AF;"></i>
+                    <p class="text-muted" style="font-size: 18px;" id="empty-message">Hozircha olimpiadalar ro'yxati bo'sh</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    // Django context'dan type ni olish
+    const type = '{{ olimp_type }}' || 'xalqaro'; // default: xalqaro
+    console.log('Olimp Type received:', type);
+
+    // Olimpiada turiga qarab matn va iconlar
+    const config = {
+        xalqaro: {
+            title: 'Xalqaro fan olimpiadalari',
+            subtitle: 'Iqtidorli talabalar uchun yirik xalqaro fan olimpiadalari, qisqacha ma\'lumot, axborot xati va ro\'yxatdan o\'tish havolalari.',
+            icon: '<i class="fas fa-globe"></i>',
+            badge: 'Xalqaro imkoniyatlar',
+            sectionTitle: 'Faol xalqaro fan olimpiadalari',
+            emptyMessage: 'Hozircha xalqaro olimpiadalar ro\'yxati bo\'sh'
+        },
+        respublika: {
+            title: 'Respublika fan olimpiadalari',
+            subtitle: 'Iqtidorli talabalar uchun respublika miqyosidagi fan olimpiadalari, qisqacha ma\'lumot, axborot xati va ro\'yxatdan o\'tish havolalari.',
+            icon: '<i class="fas fa-flag"></i>',
+            badge: 'Respublika imkoniyatlari',
+            sectionTitle: 'Faol respublika fan olimpiadalari',
+            emptyMessage: 'Hozircha respublika olimpiadalar ro\'yxati bo\'sh'
+        },
+        onlayn: {
+            title: 'Onlayn fan olimpiadalari',
+            subtitle: 'Iqtidorli talabalar uchun onlayn fan olimpiadalari, qisqacha ma\'lumot, axborot xati va ro\'yxatdan o\'tish havolalari.',
+            icon: '<i class="fas fa-laptop"></i>',
+            badge: 'Onlayn imkoniyatlar',
+            sectionTitle: 'Faol onlayn fan olimpiadalari',
+            emptyMessage: 'Hozircha onlayn olimpiadalar ro\'yxati bo\'sh'
+        }
+    };
+
+    // Tanlangan konfiguratsiya
+    const settings = config[type] || config.xalqaro;
+
+    // DOM elementlarni yangilash
+    document.getElementById('breadcrumb-title').textContent = settings.title;
+    document.getElementById('hero-title').textContent = settings.title;
+    document.getElementById('hero-subtitle').textContent = settings.subtitle;
+    document.getElementById('hero-icon').innerHTML = settings.icon;
+    document.getElementById('hero-badge').textContent = settings.badge;
+    document.getElementById('hero-image').alt = settings.title;
+    document.getElementById('section-title').textContent = settings.sectionTitle;
+    
+    const emptyMsg = document.getElementById('empty-message');
+    if (emptyMsg) {
+        emptyMsg.textContent = settings.emptyMessage;
+    }
+
+    // Scroll animation
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => {
+        observer.observe(section);
+    });
+})();
+</script>
+{% endblock %}

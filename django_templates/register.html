@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ro'yxatdan o'tish - Yosh Tadqiqotchi{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Elegant Themes inspired animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.scroll-section {
+    opacity: 0;
+    transform: translateY(80px) scale(0.95);
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-section.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Purple gradient blobs */
+.bg-blob-1 {
+    background: linear-gradient(135deg, #8b5cf6, #d946ef) !important;
+}
+
+.bg-blob-2 {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+}
+
+.bg-blob-3 {
+    background: linear-gradient(135deg, #d946ef, #f0abfc) !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Background Blobs -->
+    <div class="bg-blobs">
+        <div class="bg-blob bg-blob-1 animate-float"></div>
+        <div class="bg-blob bg-blob-2 animate-float"></div>
+        <div class="bg-blob bg-blob-3 animate-float"></div>
+    </div>
+
+    <!-- Register Container -->
+<div class="form-container scroll-section">
+    <div class="form-wrapper">
+        <!-- Left Side -->
+        <div class="form-left animate-fadeInUp" style="display: none;">
+            <div>
+                <div class="badge" style="display: inline-flex; align-items: center; gap: 8px;">
+                    <span style="position: relative; width: 12px; height: 12px;">
+                        <span style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background: rgb(34, 197, 94); opacity: 0.75; animation: ping 1s infinite;"></span>
+                        <span style="position: relative; display: inline-flex; width: 12px; height: 12px; border-radius: 50%; background: rgb(34, 197, 94);"></span>
+                    </span>
+                    <span style="font-size: 14px;">Iqtidorli talabalar hamjamiyatiga qo'shiling</span>
+                </div>
+
+                <h1 class="title" style="font-size: 48px; margin: 24px 0; background: linear-gradient(to right, var(--text-primary), rgb(244, 114, 182)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    Boshlang
+                </h1>
+
+                <p class="subtitle" style="font-size: 18px; line-height: 1.6;">
+                    Profil yarating va sizga mos grant hamda stipendiya imkoniyatlarini bir joyda kuzating.
+                </p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div class="card" style="padding: 20px;">
+                    <h3 class="subtitle" style="font-size: 18px; margin-bottom: 8px;">🎓 Grant va stipendiyalar</h3>
+                    <p class="text-muted" style="font-size: 14px;">Xalqaro va mahalliy dasturlar, talablar va muddatlar haqida aniq ma'lumot</p>
+                </div>
+
+                <div class="card" style="padding: 20px;">
+                    <h3 class="subtitle" style="font-size: 18px; margin-bottom: 8px;">📝 Ariza uchun yo'riqnomalar</h3>
+                    <p class="text-muted" style="font-size: 14px;">Hujjatlar ro'yxati, tavsiyalar va topshirish bosqichlari bo'yicha ko'rsatmalar</p>
+                </div>
+
+                <div class="card" style="padding: 20px;">
+                    <h3 class="subtitle" style="font-size: 18px; margin-bottom: 8px;">🔔 Eslatmalar va yangiliklar</h3>
+                    <p class="text-muted" style="font-size: 14px;">Yangi imkoniyatlar va deadline'lar haqida tezkor xabardor bo'ling</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Register Form -->
+        <div class="glass-effect animate-fadeInUp" style="animation-delay: 0.2s;">
+            <h2 class="title" style="font-size: 32px; margin-bottom: 8px; text-align: center;">Profil yaratish</h2>
+            <p class="text-muted" style="text-align: center; margin-bottom: 32px;">Ro'yxatdan o'tish uchun ma'lumotlaringizni kiriting</p>
+
+            {% if messages %}
+                {% for message in messages %}
+                <div class="message-box" style="background: {% if message.tags == 'error' %}rgba(239, 68, 68, 0.1){% else %}rgba(34, 197, 94, 0.1){% endif %}; border: 1px solid {% if message.tags == 'error' %}rgba(239, 68, 68, 0.3){% else %}rgba(34, 197, 94, 0.3){% endif %}; color: {% if message.tags == 'error' %}#ef4444{% else %}#22c55e{% endif %}; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label for="{{ form.first_name.id_for_label }}">Ism</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                            <span style="color: #ef4444; font-size: 13px;">{{ form.first_name.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.last_name.id_for_label }}">Familiya</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                            <span style="color: #ef4444; font-size: 13px;">{{ form.last_name.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Email</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <span style="color: #ef4444; font-size: 13px;">{{ form.email.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.phone_number.id_for_label }}">Telefon raqam</label>
+                    {{ form.phone_number }}
+                    {% if form.phone_number.errors %}
+                        <span style="color: #ef4444; font-size: 13px;">{{ form.phone_number.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.residence_region.id_for_label }}">Yashash xudud</label>
+                    {{ form.residence_region }}
+                    {% if form.residence_region.errors %}
+                        <span style="color: #ef4444; font-size: 13px;">{{ form.residence_region.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.university.id_for_label }}">O'qigan/O'qiyotgan joy</label>
+                    {{ form.university }}
+                    {% if form.university.errors %}
+                        <span style="color: #ef4444; font-size: 13px;">{{ form.university.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.academic_degree.id_for_label }}">Ilmiy daraja</label>
+                    {{ form.academic_degree }}
+                    {% if form.academic_degree.errors %}
+                        <span style="color: #ef4444; font-size: 13px;">{{ form.academic_degree.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password1.id_for_label }}">Parol</label>
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}
+                        <span style="color: #ef4444; font-size: 13px;">{{ form.password1.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password2.id_for_label }}">Parolni tasdiqlash</label>
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}
+                        <span style="color: #ef4444; font-size: 13px;">{{ form.password2.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="form-btn">Ro'yxatdan o'tish</button>
+            </form>
+
+            <p class="text-center mt-4 text-muted">
+                Allaqachon akkauntingiz bormi?
+                <a href="{% url 'main:login' %}" class="text-link">Tizimga kirish</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Select elementlarni standart dropdown holatiga qaytarish
+document.addEventListener('DOMContentLoaded', function() {
+    // Barcha select elementlarni topib, size atributini olib tashlash
+    const selects = document.querySelectorAll('select');
+    selects.forEach(select => {
+        select.removeAttribute('size');
+        select.style.height = 'auto';
+        select.style.overflow = 'visible';
+    });
+});
+
+// Phone number auto-format with +998
+document.addEventListener('DOMContentLoaded', function() {
+    const phoneInput = document.getElementById('phone_number');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+            
+            // If user starts typing and there's no +998, add it
+            if (value.length > 0 && !e.target.value.startsWith('+998')) {
+                value = '998' + value;
+            }
+            
+            // Format: +998 XX XXX XX XX
+            let formatted = '';
+            if (value.length > 0) {
+                formatted = '+' + value.substring(0, 3); // +998
+                if (value.length > 3) {
+                    formatted += ' ' + value.substring(3, 5); // XX
+                }
+                if (value.length > 5) {
+                    formatted += ' ' + value.substring(5, 8); // XXX
+                }
+                if (value.length > 8) {
+                    formatted += ' ' + value.substring(8, 10); // XX
+                }
+                if (value.length > 10) {
+                    formatted += ' ' + value.substring(10, 12); // XX
+                }
+            }
+            
+            e.target.value = formatted;
+        });
+        
+        // Allow backspace to work properly
+        phoneInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' && e.target.value === '+998 ') {
+                e.target.value = '';
+            }
+        });
+    }
+});
+
+// Scroll animations
+(function() {
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => {
+        observer.observe(section);
+    });
+})();
+</script>
+<style>
+    @keyframes ping {
+        75%, 100% {
+            transform: scale(2);
+            opacity: 0;
+        }
+    }
+    @media (min-width: 768px) {
+        .form-left {
+            display: flex !important;
+        }
+    }
+</style>
+{% endblock %}

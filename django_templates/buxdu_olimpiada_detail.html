@@ -1,0 +1,520 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ olympiad.subject }} - BuxDU olimpiadasi - Yosh Tadqiqotchi{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Umumiy */
+    .olympiad-detail-section {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 40px 24px 100px;
+        background: var(--bg-primary);
+    }
+    
+    /* Breadcrumb */
+    .detail-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-bottom: 32px;
+    }
+    .detail-breadcrumb a {
+        color: var(--accent-primary);
+        text-decoration: none;
+    }
+    .detail-breadcrumb a:hover {
+        text-decoration: underline;
+    }
+    
+    /* Hero rasm */
+    .olympiad-hero-image {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+        border-radius: 16px;
+        margin-bottom: 32px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Header */
+    .olympiad-header {
+        margin-bottom: 32px;
+    }
+    .olympiad-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 16px;
+        line-height: 1.3;
+    }
+    .olympiad-meta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    
+    /* Status badge */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+    .status-upcoming {
+        background: rgba(34, 197, 94, 0.15);
+        color: #16a34a;
+        border: 2px solid rgba(34, 197, 94, 0.3);
+    }
+    .status-finished {
+        background: rgba(239, 68, 68, 0.15);
+        color: #dc2626;
+        border: 2px solid rgba(239, 68, 68, 0.3);
+    }
+    [data-theme="light"] .status-upcoming {
+        background: rgba(34, 197, 94, 0.1);
+    }
+    [data-theme="light"] .status-finished {
+        background: rgba(239, 68, 68, 0.1);
+    }
+    
+    /* Date badge */
+    .date-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: var(--badge-bg);
+        color: var(--text-secondary);
+        font-size: 14px;
+        border: 1px solid var(--border-color);
+    }
+    
+    /* Content */
+    .olympiad-description {
+        font-size: 16px;
+        line-height: 1.8;
+        color: var(--text-secondary);
+        margin-bottom: 24px;
+        padding: 20px;
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+    }
+    
+    /* Links section */
+    .olympiad-links {
+        margin-top: 0;
+    }
+    .olympiad-links h3 {
+        font-size: 17px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    /* Download button */
+    .download-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #8b5cf6, #d946ef);
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 14px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        margin-bottom: 12px;
+    }
+    .download-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    }
+    .download-btn i {
+        font-size: 16px;
+    }
+    
+    /* Registration links */
+    .registration-link {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 16px;
+        background: var(--card-bg);
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        color: var(--text-primary);
+        text-decoration: none;
+        margin-bottom: 10px;
+        transition: all 0.2s;
+    }
+    .registration-link:hover {
+        border-color: var(--accent-primary);
+        background: var(--hover-bg);
+        transform: translateX(4px);
+    }
+    .registration-link i {
+        font-size: 18px;
+        color: var(--accent-primary);
+        margin-top: 1px;
+        flex-shrink: 0;
+    }
+    .registration-link span {
+        line-height: 1.5;
+        font-size: 14px;
+    }
+    
+    /* Gallery section */
+    .gallery-section {
+        margin-top: 32px;
+        padding-top: 32px;
+        border-top: 2px solid var(--border-color);
+    }
+    .gallery-section h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 16px;
+        margin-top: 16px;
+    }
+    .gallery-item {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+        aspect-ratio: 16/10;
+        background: var(--card-bg);
+        border: 2px solid var(--border-color);
+        transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    }
+    .gallery-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        border-color: var(--accent-primary);
+    }
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .gallery-empty {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-secondary);
+        font-style: italic;
+    }
+    
+    /* Modal styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.92);
+        z-index: 99999;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+    }
+    .modal-overlay.active {
+        display: flex;
+    }
+    .modal-content {
+        position: relative;
+        width: 100%;
+        max-width: 1200px;
+        max-height: 85vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .modal-content img {
+        max-width: 100%;
+        max-height: 85vh;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    }
+    .modal-close {
+        position: fixed;
+        top: 20px;
+        right: 30px;
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        color: white;
+        font-size: 40px;
+        cursor: pointer;
+        padding: 10px 18px;
+        border-radius: 8px;
+        z-index: 100000;
+        line-height: 1;
+        transition: background 0.2s;
+        backdrop-filter: blur(10px);
+    }
+    .modal-close:hover {
+        background: rgba(255, 255, 255, 0.25);
+    }
+    .modal-nav {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        color: white;
+        font-size: 32px;
+        cursor: pointer;
+        padding: 20px 16px;
+        border-radius: 8px;
+        z-index: 100000;
+        transition: background 0.2s;
+        backdrop-filter: blur(10px);
+    }
+    .modal-nav:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+    .modal-prev {
+        left: 30px;
+    }
+    .modal-next {
+        right: 30px;
+    }
+    
+    @media (max-width: 768px) {
+        .olympiad-detail-section {
+            padding: 24px 16px 80px;
+        }
+        .olympiad-title {
+            font-size: 24px;
+        }
+        .olympiad-hero-image {
+            max-height: 250px;
+        }
+        .gallery-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        .modal-nav {
+            padding: 12px 10px;
+            font-size: 24px;
+        }
+        .modal-prev {
+            left: 10px;
+        }
+        .modal-next {
+            right: 10px;
+        }
+        .modal-close {
+            top: 10px;
+            right: 10px;
+            font-size: 32px;
+        }
+        .modal-overlay {
+            padding: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="olympiad-detail-section">
+    <!-- Breadcrumb -->
+    <div class="detail-breadcrumb">
+        <a href="{% url 'main:home' %}">Bosh sahifa</a>
+        <span>//</span>
+        <a href="{% url 'main:buxdu_olimpiadalari' %}">BuxDU olimpiadalari</a>
+        <span>//</span>
+        <span>{{ olympiad.subject }}</span>
+    </div>
+    
+    <!-- Hero Image -->
+    {% if olympiad.image %}
+    <img src="{{ olympiad.image.url }}" alt="{{ olympiad.subject }}" class="olympiad-hero-image" />
+    {% else %}
+    <img src="{% static 'assets/hero-section-showcase.png' %}" alt="{{ olympiad.subject }}" class="olympiad-hero-image" />
+    {% endif %}
+    
+    <!-- Header -->
+    <div class="olympiad-header">
+        <h1 class="olympiad-title">{{ olympiad.subject }}</h1>
+        <div class="olympiad-meta">
+            <div class="status-badge {% if olympiad.is_finished %}status-finished{% else %}status-upcoming{% endif %}">
+                {% if olympiad.is_finished %}
+                    <i class="fas fa-check-circle"></i>
+                    <span>Tugagan</span>
+                {% else %}
+                    <i class="fas fa-clock"></i>
+                    <span>Kutilmoqda</span>
+                {% endif %}
+            </div>
+            <div class="date-badge">
+                <i class="far fa-calendar-alt"></i>
+                <span>{{ olympiad.date|date:"d.m.Y" }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Description -->
+    <div class="olympiad-description">
+        <p style="white-space: pre-wrap; margin: 0;">{{ olympiad.description }}</p>
+    </div>
+    
+    <!-- Program file download (if exists) -->
+    {% if olympiad.program_file %}
+    <div style="margin-bottom: 20px;">
+        <a href="{{ olympiad.program_file.url }}" download class="download-btn">
+            <i class="fas fa-file-pdf"></i>
+            <span>Olimpiada dasturini yuklash</span>
+        </a>
+    </div>
+    {% endif %}
+    
+    <!-- Links Section -->
+    <div class="olympiad-links">
+        {% if not olympiad.is_finished %}
+            {% if olympiad.registration_link_1 or olympiad.registration_link_2 %}
+            <h3>
+                <i class="fas fa-user-plus"></i>
+                Ro'yxatdan o'tish
+            </h3>
+            
+            {% if olympiad.registration_link_1 %}
+            <a href="{{ olympiad.registration_link_1 }}" target="_blank" rel="noopener noreferrer" class="registration-link">
+                <i class="fas fa-user"></i>
+                <span>Individual ro'yxatdan o'tish - Xalqaro {{ olympiad.subject|lower }} olimpiadasida ishtirok etish</span>
+            </a>
+            {% endif %}
+            
+            {% if olympiad.registration_link_2 %}
+            <a href="{{ olympiad.registration_link_2 }}" target="_blank" rel="noopener noreferrer" class="registration-link">
+                <i class="fas fa-users"></i>
+                <span>Jamoaviy ro'yxatdan o'tish - {{ olympiad.subject }} olimpiadasi uchun guruh sifatida qatnashish</span>
+            </a>
+            {% endif %}
+            {% endif %}
+        {% else %}
+            <!-- Tugagan olimpiadalar uchun foto galereya va natija fayli -->
+            <div class="gallery-section">
+                <h3>
+                    <i class="fas fa-images"></i>
+                    Olimpiada jarayonidan fotolavhalar
+                </h3>
+                
+                {% if gallery_images %}
+                <div class="gallery-grid">
+                    {% for image in gallery_images %}
+                    <div class="gallery-item" onclick="openModal({{ forloop.counter0 }})">
+                        <img src="{{ image.image.url }}" alt="{{ image.caption|default:'Olimpiada foto' }}" />
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="gallery-empty">
+                    <i class="fas fa-info-circle" style="font-size: 32px; margin-bottom: 12px; display: block; opacity: 0.5;"></i>
+                    <p>Hozircha fotolavhalar yuklanmagan</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if olympiad.result_file %}
+            <div style="margin-top: 32px;">
+                <a href="{{ olympiad.result_file.url }}" download class="download-btn">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Olimpiada natijalari va ma'lumotlarini yuklash</span>
+                </a>
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</section>
+
+<!-- Modal for image gallery -->
+{% if olympiad.is_finished and gallery_images %}
+<div class="modal-overlay" id="imageModal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <button class="modal-nav modal-prev" onclick="changeImage(-1)">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <img id="modalImage" src="" alt="" />
+        <button class="modal-nav modal-next" onclick="changeImage(1)">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+    const images = [
+        {% for image in gallery_images %}
+        {
+            src: "{{ image.image.url }}",
+            caption: "{{ image.caption|default:'Olimpiada foto' }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+    
+    let currentIndex = 0;
+    
+    function openModal(index) {
+        currentIndex = index;
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        
+        modalImage.src = images[currentIndex].src;
+        modalImage.alt = images[currentIndex].caption;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeModal(event) {
+        if (event) event.stopPropagation();
+        const modal = document.getElementById('imageModal');
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    function changeImage(direction) {
+        currentIndex = (currentIndex + direction + images.length) % images.length;
+        const modalImage = document.getElementById('modalImage');
+        modalImage.src = images[currentIndex].src;
+        modalImage.alt = images[currentIndex].caption;
+    }
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        const modal = document.getElementById('imageModal');
+        if (modal.classList.contains('active')) {
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowLeft') changeImage(-1);
+            if (e.key === 'ArrowRight') changeImage(1);
+        }
+    });
+</script>
+{% endif %}
+{% endblock %}

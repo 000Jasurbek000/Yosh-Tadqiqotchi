@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}OAK jurnallari - Yosh Tadqiqotchi{% endblock %}
+
+{% block extra_head %}
+<style>
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+.scroll-section {
+    opacity: 0;
+    transform: translateY(80px) scale(0.95);
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.scroll-section.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <section class="subpage-hero stipendiya-hero scroll-section">
+        <div class="subpage-hero-inner">
+            <div class="subpage-hero-text">
+                <div class="subpage-breadcrumb">
+                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <span>//</span>
+                    <span>Ilmiy nashrlar va bazalar</span>
+                    <span>//</span>
+                    <span id="breadcrumb-title">OAK jurnallari</span>
+                </div>
+                <h1 class="title subpage-title" id="hero-title">OAK jurnallari</h1>
+                <p class="subtitle subpage-subtitle" id="hero-subtitle">
+                    OAK ro'yxatiga kiritilgan ilmiy jurnallar haqida ma'lumot.
+                </p>
+            </div>
+            <div class="subpage-hero-illustration">
+                <div class="subpage-hero-pill">
+                    <span class="badge" style="margin-bottom: 0;">
+                        <span id="hero-icon"><i class="fas fa-book"></i></span>
+                        <span id="hero-badge">OAK jurnallari</span>
+                    </span>
+                </div>
+                <div class="subpage-hero-image-wrapper">
+                    <img src="{% static 'assets/features-showcase-2.png' %}" alt="OAK jurnallari" class="subpage-hero-image" id="hero-image" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stipendiya-table-section scroll-section">
+        <div class="stipendiya-container">
+            <div class="card stipendiya-table-card">
+                <div class="stipendiya-table-header">
+                    <h2 class="subtitle" id="section-title">OAK jurnallari ro'yxati</h2>
+                    <p class="text-muted" id="section-description">
+                        Har bir satrda jurnal nomi, OAK ro'yxatiga kiritilgan ilmiy sohalar, OAK bazasi uchun havola va jurnal
+                        tahririyatiga ulanish keltiriladi.
+                    </p>
+                </div>
+                {% if journals %}
+                    <div class="stipendiya-table-wrapper">
+                        <table class="stipendiya-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px;">T/r</th>
+                                    <th>Jurnal nomi</th>
+                                    <th>OAK ga kiritilgan sohalari</th>
+                                    <th>OAK bazasi</th>
+                                    <th style="text-align: right;">Jurnal tahririyatiga ulanish</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for journal in journals %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ journal.journal_name }}</td>
+                                    <td>{{ journal.fields }}</td>
+                                    <td class="stipendiya-table-action">
+                                        <a href="{{ journal.database_link }}" target="_blank" class="btn-gradient stipendiya-action-btn">OAK bazasiga o'tish</a>
+                                    </td>
+                                    <td class="stipendiya-table-action">
+                                        <a href="{{ journal.editorial_link }}" target="_blank" class="btn-gradient stipendiya-action-btn">Tahririyat bilan bog'lanish</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div style="display: flex; flex-direction: column; gap: 16px; padding: 32px; text-align: center;">
+                        <i class="fas fa-book" style="font-size: 48px; color: #9CA3AF;" id="empty-icon"></i>
+                        <p class="text-muted" id="empty-message">Hozircha jurnallar ro'yxati bo'sh</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    // Django context'dan type ni olish
+    const type = '{{ oak_type }}' || 'mahalliy';
+    console.log('OAK Type received:', type);
+
+    // OAK turi bo'yicha konfiguratsiya
+    const config = {
+        mahalliy: {
+            title: 'Mahalliy OAK jurnallari',
+            subtitle: 'O\'zbekiston Respublikasidagi OAK ro\'yxatiga kiritilgan mahalliy ilmiy jurnallar, ularning sohalari, OAK bazasi va jurnal tahririyati bilan bog\'lanish uchun ma\'lumotlar.',
+            icon: '<i class="fas fa-book"></i>',
+            badge: 'Mahalliy OAK jurnallari',
+            sectionTitle: 'Mahalliy OAK jurnallari ro\'yxati',
+            sectionDesc: 'Har bir satrda jurnal nomi, OAK ro\'yxatiga kiritilgan ilmiy sohalar, OAK bazasi uchun havola va jurnal tahririyatiga ulanish (veb-sayt, telefon raqami yoki manzil) keltiriladi.',
+            emptyIcon: 'fas fa-book',
+            emptyMessage: 'Hozircha jurnallar ro\'yxati bo\'sh'
+        },
+        xalqaro: {
+            title: 'Xalqaro OAK jurnallari',
+            subtitle: 'Xalqaro darajadagi ilmiy jurnallar va ularda maqola chop etish uchun zarur ma\'lumotlar.',
+            icon: '<i class="fas fa-globe"></i>',
+            badge: 'Xalqaro OAK jurnallari',
+            sectionTitle: 'Xalqaro OAK jurnallari ro\'yxati',
+            sectionDesc: 'Har bir satrda jurnal nomi, OAK ro\'yxatiga kiritilgan ilmiy sohalar, OAK bazasi uchun havola va jurnal tahririyatiga ulanish keltiriladi.',
+            emptyIcon: 'fas fa-globe',
+            emptyMessage: 'Hozircha xalqaro jurnallar ro\'yxati bo\'sh'
+        }
+    };
+
+    const settings = config[type] || config.mahalliy;
+
+    // DOM elementlarni yangilash
+    document.getElementById('breadcrumb-title').textContent = settings.title;
+    document.getElementById('hero-title').textContent = settings.title;
+    document.getElementById('hero-subtitle').textContent = settings.subtitle;
+    document.getElementById('hero-icon').innerHTML = settings.icon;
+    document.getElementById('hero-badge').textContent = settings.badge;
+    document.getElementById('hero-image').alt = settings.title;
+    document.getElementById('section-title').textContent = settings.sectionTitle;
+    document.getElementById('section-description').textContent = settings.sectionDesc;
+    
+    const emptyIcon = document.getElementById('empty-icon');
+    const emptyMsg = document.getElementById('empty-message');
+    if (emptyIcon) emptyIcon.className = settings.emptyIcon + ' fa-3x';
+    if (emptyMsg) emptyMsg.textContent = settings.emptyMessage;
+
+    // Scroll animation
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => {
+        observer.observe(section);
+    });
+})();
+</script>
+{% endblock %}

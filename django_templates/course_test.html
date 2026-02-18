@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ course.name }} - Test{% endblock %}
+
+{% block content %}
+<section class="subpage-hero stipendiya-hero">
+    <div class="subpage-hero-inner">
+        <div class="subpage-hero-text">
+            <div class="subpage-breadcrumb">
+                <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                <span>//</span>
+                <a href="{% url 'main:courses' %}">Kurslar</a>
+                <span>//</span>
+                <a href="{% url 'main:course_detail' course.id %}">{{ course.name }}</a>
+                <span>//</span>
+                <span>Test</span>
+            </div>
+            <h1 class="title subpage-title">Yakuniy test</h1>
+            <p class="subtitle subpage-subtitle">{{ course.name }} - O'tish bali: {{ course.passing_score }}%</p>
+        </div>
+    </div>
+</section>
+
+<section class="stipendiya-table-section">
+    <div class="stipendiya-container">
+        <!-- Timer Card -->
+        <div class="card" style="margin-bottom: 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+            <div style="padding: 24px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="color: white; margin: 0 0 8px 0; font-size: 20px; font-weight: 600;">
+                        <i class="fas fa-clock"></i> Qolgan vaqt
+                    </h3>
+                    <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 14px;">Vaqt tugagach test avtomatik yuboriladi</p>
+                </div>
+                <div id="timer" style="font-size: 48px; font-weight: 700; color: white; font-family: 'Courier New', monospace;">
+                    {{ total_time_minutes }}:00
+                </div>
+            </div>
+        </div>
+
+        <!-- Questions -->
+        <div class="card stipendiya-table-card">
+            <div class="stipendiya-table-header">
+                <h2 class="subtitle">Test savollari</h2>
+                <p class="text-muted">Jami {{ questions.count }} ta savol. Har bir savolga javob bering.</p>
+            </div>
+
+            <form id="testForm" style="padding: 24px;">
+                {% csrf_token %}
+                {% for question in questions %}
+                <div class="question-block" style="margin-bottom: 32px; padding: 24px; background: #f9fafb; border-radius: 12px; border: 2px solid #e5e7eb;">
+                    <div style="display: flex; align-items: start; gap: 16px; margin-bottom: 16px;">
+                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: #3b82f6; color: white; font-weight: bold; font-size: 16px; flex-shrink: 0;">
+                            {{ question.number }}
+                        </span>
+                        <h3 style="margin: 0; font-size: 18px; font-weight: 600; color: #111827; line-height: 1.6;">
+                            {{ question.text }}
+                        </h3>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-left: 52px;">
+                        {% for answer in question.answers.all %}
+                        <label class="answer-option" style="display: flex; align-items: center; padding: 16px; background: white; border: 2px solid #e5e7eb; border-radius: 10px; cursor: pointer; transition: all 0.3s;">
+                            <input type="radio" name="question_{{ question.id }}" value="{{ answer.id }}" style="width: 20px; height: 20px; margin-right: 12px; cursor: pointer;">
+                            <span style="color: #374151; font-size: 16px;">{{ answer.text }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div style="display: flex; justify-content: center; gap: 16px; margin-top: 32px; padding-top: 32px; border-top: 2px solid #e5e7eb;">
+                    <button type="button" onclick="window.history.back()" style="padding: 14px 32px; background: #6b7280; color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 16px; cursor: pointer;">
+                        <i class="fas fa-arrow-left"></i> Bekor qilish
+                    </button>
+                    <button type="submit" id="submitBtn" style="padding: 14px 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 16px; cursor: pointer; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+                        <i class="fas fa-paper-plane"></i> Testni yuborish
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Result Modal -->
+<div id="resultModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 20px; padding: 48px; max-width: 500px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+        <div id="resultIcon" style="font-size: 80px; margin-bottom: 24px;"></div>
+        <h2 id="resultTitle" style="font-size: 32px; font-weight: 700; margin: 0 0 16px 0;"></h2>
+        <p id="resultMessage" style="font-size: 18px; color: #6b7280; margin: 0 0 24px 0;"></p>
+        
+        <div style="display: flex; gap: 16px; margin-bottom: 24px; padding: 20px; background: #f9fafb; border-radius: 12px;">
+            <div style="flex: 1; text-align: center;">
+                <div style="font-size: 14px; color: #6b7280; margin-bottom: 4px;">To'g'ri javoblar</div>
+                <div id="correctAnswers" style="font-size: 28px; font-weight: 700; color: #10b981;"></div>
+            </div>
+            <div style="flex: 1; text-align: center;">
+                <div style="font-size: 14px; color: #6b7280; margin-bottom: 4px;">Natija</div>
+                <div id="percentage" style="font-size: 28px; font-weight: 700; color: #3b82f6;"></div>
+            </div>
+        </div>
+        
+        <button onclick="window.location.href='{% url 'main:course_detail' course.id %}'" style="width: 100%; padding: 16px; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 16px; cursor: pointer;">
+            Kursga qaytish
+        </button>
+    </div>
+</div>
+
+<style>
+.answer-option:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.answer-option input[type="radio"]:checked + span {
+    color: #3b82f6;
+    font-weight: 600;
+}
+
+.answer-option:has(input[type="radio"]:checked) {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+#submitBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+</style>
+
+<script>
+let timeLeft = {{ total_time_seconds }};
+let timerInterval;
+
+// Start timer
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            submitTest(true); // Auto submit
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    document.getElementById('timer').textContent = display;
+    
+    // Change color when time is running out
+    if (timeLeft <= 60) {
+        document.getElementById('timer').style.color = '#ef4444';
+    } else if (timeLeft <= 300) {
+        document.getElementById('timer').style.color = '#f59e0b';
+    }
+}
+
+// Form submission
+document.getElementById('testForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!confirm('Testni yuborishga ishonchingiz komilmi?')) {
+        return;
+    }
+    
+    submitTest(false);
+});
+
+function submitTest(autoSubmit) {
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...';
+    
+    clearInterval(timerInterval);
+    
+    // Collect answers
+    const formData = new FormData(document.getElementById('testForm'));
+    const answers = {};
+    
+    {% for question in questions %}
+    const q{{ question.id }} = document.querySelector('input[name="question_{{ question.id }}"]:checked');
+    if (q{{ question.id }}) {
+        answers['{{ question.id }}'] = q{{ question.id }}.value;
+    }
+    {% endfor %}
+    
+    // Submit to server
+    fetch('{% url "main:submit_test" course.id %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ answers: answers })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showResult(data);
+        } else {
+            alert('Xatolik yuz berdi: ' + (data.error || 'Noma\'lum xatolik'));
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Testni yuborish';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Xatolik yuz berdi. Iltimos qayta urinib ko\'ring.');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Testni yuborish';
+    });
+}
+
+function showResult(data) {
+    const modal = document.getElementById('resultModal');
+    const icon = document.getElementById('resultIcon');
+    const title = document.getElementById('resultTitle');
+    const message = document.getElementById('resultMessage');
+    const correctAnswers = document.getElementById('correctAnswers');
+    const percentage = document.getElementById('percentage');
+    
+    if (data.passed) {
+        icon.innerHTML = '<i class="fas fa-trophy" style="color: #f59e0b;"></i>';
+        title.textContent = 'Tabriklaymiz!';
+        title.style.color = '#10b981';
+        message.textContent = 'Siz testdan muvaffaqiyatli o\'tdingiz!';
+    } else {
+        icon.innerHTML = '<i class="fas fa-times-circle" style="color: #ef4444;"></i>';
+        title.textContent = 'Afsuski...';
+        title.style.color = '#ef4444';
+        message.textContent = 'Test o\'tish baliga yetmadingiz. O\'tish bali: ' + data.passing_score + '%';
+    }
+    
+    correctAnswers.textContent = data.correct_answers + '/' + data.total_questions;
+    percentage.textContent = data.percentage + '%';
+    
+    modal.style.display = 'flex';
+}
+
+// Start timer on page load
+window.addEventListener('load', function() {
+    startTimer();
+});
+
+// Warn before leaving page
+window.addEventListener('beforeunload', function(e) {
+    if (timeLeft > 0) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
+});
+</script>
+{% endblock %}

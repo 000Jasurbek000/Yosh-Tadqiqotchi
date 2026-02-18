@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tizimga kirish - Yosh Tadqiqotchi{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Elegant Themes inspired animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.scroll-section {
+    opacity: 0;
+    transform: translateY(80px) scale(0.95);
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-section.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Purple gradient blobs */
+.bg-blob-1 {
+    background: linear-gradient(135deg, #8b5cf6, #d946ef) !important;
+}
+
+.bg-blob-2 {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+}
+
+.bg-blob-3 {
+    background: linear-gradient(135deg, #d946ef, #f0abfc) !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Background Blobs -->
+    <div class="bg-blobs">
+        <div class="bg-blob bg-blob-1 animate-float"></div>
+        <div class="bg-blob bg-blob-2 animate-float"></div>
+        <div class="bg-blob bg-blob-3 animate-float"></div>
+    </div>
+
+    <!-- Login Container -->
+    <div class="form-container scroll-section">
+        <div class="form-wrapper">
+            <!-- Left Side -->
+           <!-- Left Side -->
+<div class="form-left animate-fadeInUp" style="display: none;">
+    <div>
+        <div class="badge" style="display: inline-flex; align-items: center; gap: 8px;">
+            <span style="position: relative; width: 12px; height: 12px;">
+                <span style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background: rgb(34, 197, 94); opacity: 0.75; animation: ping 1s infinite;"></span>
+                <span style="position: relative; display: inline-flex; width: 12px; height: 12px; border-radius: 50%; background: rgb(34, 197, 94);"></span>
+            </span>
+            <span style="font-size: 14px;">Minglab iqtidorli talabalar bir platformada</span>
+        </div>
+
+        <h1 class="title" style="font-size: 48px; margin: 24px 0; background: linear-gradient(to right, var(--text-primary), rgb(244, 114, 182)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            Xush kelibsiz!
+        </h1>
+
+        <p class="subtitle" style="font-size: 18px; line-height: 1.6;">
+            Profilingizga kiring va sizga mos stipendiya hamda grant imkoniyatlarini bir joyda ko'ring.
+        </p>
+    </div>
+    
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="card" style="padding: 20px;">
+            <h3 class="subtitle" style="font-size: 18px; margin-bottom: 8px;">🎓 Stipendiya va grantlar</h3>
+            <p class="text-muted" style="font-size: 14px;">Xalqaro va mahalliy dasturlar, talablar va muddatlar bir joyda</p>
+        </div>
+
+        <div class="card" style="padding: 20px;">
+            <h3 class="subtitle" style="font-size: 18px; margin-bottom: 8px;">🚀 Tez va qulay ariza</h3>
+            <p class="text-muted" style="font-size: 14px;">Kerakli hujjatlarni tayyorlash va topshirish bo'yicha yo'riqnomalar</p>
+        </div>
+    </div>
+</div>
+
+<!-- Right Side - Login Form -->
+<div class="glass-effect animate-fadeInUp" style="animation-delay: 0.2s;">
+    <h2 class="title" style="font-size: 32px; margin-bottom: 8px; text-align: center;">Tizimga kirish</h2>
+    <p class="text-muted" style="text-align: center; margin-bottom: 32px;">Grant va stipendiyalar bo'limiga kirish uchun ma'lumotlaringizni kiriting</p>
+
+    {% if messages %}
+        {% for message in messages %}
+        <div class="message-box" style="background: {% if message.tags == 'error' %}rgba(239, 68, 68, 0.1){% else %}rgba(34, 197, 94, 0.1){% endif %}; border: 1px solid {% if message.tags == 'error' %}rgba(239, 68, 68, 0.3){% else %}rgba(34, 197, 94, 0.3){% endif %}; color: {% if message.tags == 'error' %}#ef4444{% else %}#22c55e{% endif %}; padding: 16px; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                {% if message.tags == 'error' %}
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                {% else %}
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                {% endif %}
+            </svg>
+            <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+    {% endif %}
+    
+    {% if form.non_field_errors %}
+        <div class="message-box" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 8px;">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+            {% for error in form.non_field_errors %}
+                <span>{{ error }}</span>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.username.id_for_label }}">Email</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <span style="color: #ef4444; font-size: 13px;">{{ form.username.errors.0 }}</span>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.password.id_for_label }}">Parol</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+                <span style="color: #ef4444; font-size: 13px;">{{ form.password.errors.0 }}</span>
+            {% endif %}
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 16px 0;">
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="remember" name="remember">
+                <label for="remember">Eslab qol</label>
+            </div>
+            <a href="#" class="text-link" style="font-size: 14px;">Parolni unutdingizmi?</a>
+        </div>
+
+        <button type="submit" class="form-btn">Kirish</button>
+    </form>
+
+    <p class="text-center mt-4 text-muted">
+        Akkauntingiz yo'qmi?
+        <a href="{% url 'main:register' %}" class="text-link">Ro'yxatdan o'tish</a>
+    </p>
+</div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => {
+        observer.observe(section);
+    });
+})();
+</script>
+<style>
+    @keyframes ping {
+        75%, 100% {
+            transform: scale(2);
+            opacity: 0;
+        }
+    }
+    @media (min-width: 768px) {
+        .form-left {
+            display: flex !important;
+        }
+    }
+</style>
+{% endblock %}

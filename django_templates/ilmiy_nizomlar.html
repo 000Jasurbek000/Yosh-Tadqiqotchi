@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ilmiy tadqiqotchilar uchun nizomlar - Yosh Tadqiqotchi{% endblock %}
+
+{% block extra_head %}
+<style>
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+.scroll-section {
+    opacity: 0;
+    transform: translateY(80px) scale(0.95);
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.scroll-section.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <section class="subpage-hero stipendiya-hero scroll-section">
+        <div class="subpage-hero-inner">
+            <div class="subpage-hero-text">
+                <div class="subpage-breadcrumb">
+                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <span>//</span>
+                    <span>Xizmatlar</span>
+                    <span>//</span>
+                    <span>Ilmiy tadqiqotchilar uchun nizomlar</span>
+                </div>
+                <h1 class="title subpage-title">Ilmiy tadqiqotchilar uchun NIZOMLAR</h1>
+                <p class="subtitle subpage-subtitle">
+                    Ilmiy daraja olish, nashr talablari, iqtidorli talabalar, stipendiyalar va boshqa tartib-taomillar bo'yicha asosiy
+                    nizomlar va yo'riqnomalar fayllari. Foydalanuvchilar bu yerda hech narsa yuklamaydi, faqat tayyor hujjatlarni
+                    yuklab olib tanishib chiqadi.
+                </p>
+            </div>
+            <div class="subpage-hero-illustration">
+                <div class="subpage-hero-pill">
+                    <span class="badge" style="margin-bottom: 0;">
+                        <i class="fas fa-scale-balanced"></i>
+                        <span>Normativ hujjatlar</span>
+                    </span>
+                </div>
+                <div class="subpage-hero-image-wrapper">
+                    <img src="{% static 'assets/features-showcase-2.png' %}" alt="Ilmiy nizomlar" class="subpage-hero-image" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stipendiya-table-section scroll-section">
+        <div class="stipendiya-container">
+            <div class="card stipendiya-table-card">
+                <div class="stipendiya-table-header">
+                    <h2 class="subtitle">Asosiy nizomlar ro'yxati</h2>
+                    <p class="text-muted">
+                        Quyidagi jadvalda nizom nomi va unga mos faylni yuklab olish tugmasi keltirilgan. Hozircha barcha havolalar demo
+                        ko'rinishida bo'lib, keyinchalik haqiqiy PDF yoki DOC fayllar bilan almashtiriladi.
+                    </p>
+                </div>
+                <div class="stipendiya-table-wrapper">
+                    <table class="stipendiya-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">T/r</th>
+                                <th>Nizom nomi</th>
+                                <th style="text-align: right;">Faylni yuklab olish</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for regulation in regulations %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ regulation.regulation_name }}</td>
+                                <td class="stipendiya-table-action">
+                                    <a href="{{ regulation.file.url }}" target="_blank" class="btn-gradient stipendiya-action-btn" download>Nizom faylini yuklab olish</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" style="text-align: center; padding: 40px;">
+                                    <i class="fas fa-scale-balanced" style="font-size: 48px; color: #ccc; margin-bottom: 15px;"></i>
+                                    <p style="color: #999; font-size: 16px;">Hozircha ilmiy nizomlar ma'lumotlari mavjud emas.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => {
+        observer.observe(section);
+    });
+})();
+</script>
+{% endblock %}

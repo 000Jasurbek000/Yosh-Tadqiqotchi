@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Konferensiyalar - Yosh Tadqiqotchi{% endblock %}
+
+{% block extra_head %}
+<style>
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+.scroll-section {
+    opacity: 0;
+    transform: translateY(80px) scale(0.95);
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.scroll-section.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <section class="subpage-hero stipendiya-hero scroll-section">
+        <div class="subpage-hero-inner">
+            <div class="subpage-hero-text">
+                <div class="subpage-breadcrumb">
+                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <span>//</span>
+                    <span>Ilmiy nashrlar va bazalar</span>
+                    <span>//</span>
+                    <span id="breadcrumb-title">Konferensiyalar</span>
+                </div>
+                <h1 class="title subpage-title" id="hero-title">Konferensiyalar</h1>
+                <p class="subtitle subpage-subtitle" id="hero-subtitle">
+                    BuxDU tadqiqotchilari ishtirok etishi mumkin bo'lgan ilmiy-amaliy konferensiyalar haqida ma'lumot.
+                </p>
+            </div>
+            <div class="subpage-hero-illustration">
+                <div class="subpage-hero-pill">
+                    <span class="badge" style="margin-bottom: 0;">
+                        <span id="hero-icon"><i class="fas fa-chalkboard-teacher"></i></span>
+                        <span id="hero-badge">Konferensiyalar</span>
+                    </span>
+                </div>
+                <div class="subpage-hero-image-wrapper">
+                    <img src="{% static 'assets/features-showcase-1.png' %}" alt="Konferensiyalar" class="subpage-hero-image" id="hero-image" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stipendiya-table-section scroll-section">
+        <div class="stipendiya-container">
+            <div class="card stipendiya-table-card">
+                <div class="stipendiya-table-header">
+                    <h2 class="subtitle" id="section-title">Konferensiyalar ro'yxati</h2>
+                    <p class="text-muted" id="section-description">
+                        Har bir konferensiya haqida qisqacha ma'lumot va rasmiy axborot xatlari havolalari.
+                    </p>
+                </div>
+                {% if conferences %}
+                    <div class="stipendiya-table-wrapper">
+                        <table class="stipendiya-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px;">T/r</th>
+                                    <th>Konferensiya nomi</th>
+                                    <th id="table-about-header">Konferensiya</th>
+                                    <th>Axborot xati</th>
+                                    <th style="text-align: right;">Tashkilotchiga ulanish</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for conference in conferences %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td style="max-width: 300px; word-wrap: break-word; white-space: normal;">{{ conference.name }}</td>
+                                    <td class="dynamic-about-text" style="max-width: 400px; word-wrap: break-word; white-space: normal;"></td>
+                                    <td class="stipendiya-table-action">
+                                        {% if conference.information_letter %}
+                                        <a href="{{ conference.information_letter.url }}" download class="btn-gradient stipendiya-action-btn">Axborot xatini yuklash</a>
+                                        {% else %}
+                                        <span class="text-muted">Mavjud emas</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="stipendiya-table-action">
+                                        <a href="{{ conference.organizer_link }}" target="_blank" class="btn-gradient stipendiya-action-btn">Tashkilotchiga ulanish</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div style="display: flex; flex-direction: column; gap: 16px; padding: 32px; text-align: center;">
+                        <i class="fas fa-chalkboard-teacher" style="font-size: 48px; color: #9CA3AF;" id="empty-icon"></i>
+                        <p class="text-muted" id="empty-message">Hozircha konferensiyalar ma'lumotlari mavjud emas</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    // Django context'dan type ni olish
+    const type = '{{ konf_type }}' || 'xalqaro';
+    console.log('Konf Type received:', type);
+
+    // Konferensiya turi bo'yicha konfiguratsiya
+    const config = {
+        xalqaro: {
+            title: 'Xalqaro konferensiyalar',
+            subtitle: 'BuxDU tadqiqotchilari ishtirok etishi mumkin bo\'lgan yirik xalqaro ilmiy-amaliy konferensiyalar haqida qisqacha ma\'lumot va rasmiy axborot xatlari havolalari.',
+            icon: '<i class="fas fa-globe"></i>',
+            badge: 'Xalqaro konferensiyalar',
+            sectionTitle: 'Xalqaro konferensiyalar ro\'yxati',
+            sectionDesc: 'Har bir satrda konferensiya nomi, qisqacha ma\'lumot, axborot xatini yuklab olish va tashkilotchiga ulanish uchun havolalar keltiriladi.',
+            aboutHeader: 'Xalqaro konferensiya haqida',
+            aboutText: 'Bu xalqaro miqyosdagi konferensiya',
+            emptyIcon: 'fas fa-globe',
+            emptyMessage: 'Hozircha xalqaro konferensiyalar ma\'lumotlari mavjud emas'
+        },
+        respublika: {
+            title: 'Respublika konferensiyalari',
+            subtitle: 'O\'zbekiston Respublikasida o\'tkaziladigan ilmiy-amaliy konferensiyalar haqida qisqacha ma\'lumot va rasmiy axborot xatlari havolalari.',
+            icon: '<i class="fas fa-flag"></i>',
+            badge: 'Respublika konferensiyalari',
+            sectionTitle: 'Respublika konferensiyalari ro\'yxati',
+            sectionDesc: 'Har bir satrda konferensiya nomi, qisqacha ma\'lumot, axborot xatini yuklab olish va tashkilotchiga ulanish uchun havolalar keltiriladi.',
+            aboutHeader: 'Respublika konferensiyasi haqida',
+            aboutText: 'Bu respublika miqyosidagi konferensiya',
+            emptyIcon: 'fas fa-flag',
+            emptyMessage: 'Hozircha respublika konferensiyalari ma\'lumotlari mavjud emas'
+        }
+    };
+
+    const settings = config[type] || config.xalqaro;
+
+    // DOM elementlarni yangilash
+    document.getElementById('breadcrumb-title').textContent = settings.title;
+    document.getElementById('hero-title').textContent = settings.title;
+    document.getElementById('hero-subtitle').textContent = settings.subtitle;
+    document.getElementById('hero-icon').innerHTML = settings.icon;
+    document.getElementById('hero-badge').textContent = settings.badge;
+    document.getElementById('hero-image').alt = settings.title;
+    document.getElementById('section-title').textContent = settings.sectionTitle;
+    document.getElementById('section-description').textContent = settings.sectionDesc;
+    
+    const tableAboutHeader = document.getElementById('table-about-header');
+    if (tableAboutHeader) tableAboutHeader.textContent = settings.aboutHeader;
+    
+    // Barcha dynamic-about-text ustunlariga matn yozish
+    const aboutCells = document.querySelectorAll('.dynamic-about-text');
+    aboutCells.forEach(cell => {
+        cell.textContent = settings.aboutText;
+    });
+    
+    const emptyIcon = document.getElementById('empty-icon');
+    const emptyMsg = document.getElementById('empty-message');
+    if (emptyIcon) emptyIcon.className = settings.emptyIcon + ' fa-3x';
+    if (emptyMsg) emptyMsg.textContent = settings.emptyMessage;
+
+    // Scroll animation
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => {
+        observer.observe(section);
+    });
+})();
+</script>
+{% endblock %}
