@@ -409,7 +409,10 @@ class OlimpiadalarView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['olympiads'] = Olympiad.objects.all().order_by('-created_at')
+        from datetime import date
+        # Faqat kelgusi olimpiadalarni ko'rsatish
+        olympiads = Olympiad.objects.filter(date__gte=date.today()).order_by('date')
+        context['olympiads'] = olympiads
         return context
 
 
@@ -420,6 +423,7 @@ class XalqaroOlimpiadalarView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['olympiads'] = Olympiad.objects.filter(type='international').order_by('-created_at')
         context['olimp_type'] = 'xalqaro'
+        context['hero_image'] = 'assets/xalqaro_olymp.jpg'
         return context
 
 
@@ -430,6 +434,7 @@ class RespublikaOlimpiadalarView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['olympiads'] = Olympiad.objects.filter(type='republic').order_by('-created_at')
         context['olimp_type'] = 'respublika'
+        context['hero_image'] = 'assets/olimpiada.jpg'
         return context
 
 
@@ -440,6 +445,7 @@ class OnlaynOlimpiadalarView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['olympiads'] = Olympiad.objects.filter(type='online').order_by('-created_at')
         context['olimp_type'] = 'onlayn'
+        context['hero_image'] = 'assets/onlayn_olymp.jpg'
         return context
 
 
@@ -616,8 +622,8 @@ def login_view(request):
 @login_required
 def logout_view(request):
     logout(request)
-    messages.info(request, 'Tizimdan chiqdingiz.')
-    return redirect('main:home')
+    messages.success(request, 'Tizimdan muvaffaqiyatli chiqdingiz.')
+    return redirect('main:login')
 
 
 @login_required

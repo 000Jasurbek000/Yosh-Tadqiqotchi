@@ -121,10 +121,10 @@ class BuxduWinnerDatabaseAdmin(admin.ModelAdmin):
 class OlympiadAdmin(admin.ModelAdmin):
     from main.forms import OlympiadAdminForm
     form = OlympiadAdminForm
-    list_display = ('name', 'subject', 'country', 'type', 'created_at')
-    list_filter = ('subject', 'country', 'type')
+    list_display = ('name', 'subject', 'country', 'type', 'date', 'created_at')
+    list_filter = ('subject', 'country', 'type', 'date')
     search_fields = ('name', 'subject', 'country')
-    fields = ('type', 'name', 'subject', 'country', 'short_description', 'information_letter', 'registration_link')
+    fields = ('type', 'name', 'subject', 'country', 'date', 'short_description', 'image', 'information_letter', 'registration_link')
 
 
 @admin.register(BuxduOlympiadWinner)

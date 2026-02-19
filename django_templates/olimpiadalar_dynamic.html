@@ -65,7 +65,7 @@
                     </span>
                 </div>
                 <div class="subpage-hero-image-wrapper">
-                    <img src="{% static 'assets/hero-section-showcase.png' %}" alt="Fan olimpiadalari" class="subpage-hero-image" id="hero-image" />
+                    <img src="{% static hero_image|default:'assets/hero-section-showcase.png' %}" alt="Fan olimpiadalari" class="subpage-hero-image" id="hero-image" />
                 </div>
             </div>
         </div>

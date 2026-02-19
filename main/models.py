@@ -190,6 +190,8 @@ class Olympiad(models.Model):
     name = models.CharField(max_length=255, verbose_name='Olimpiada nomi', help_text='Olimpiadaning to\'liq nomi')
     country = models.CharField(max_length=100, verbose_name='Davlat', help_text='Olimpiada o\'tkaziladigan davlat (masalan: O\'zbekiston, AQSh)')
     short_description = models.TextField(verbose_name='Qisqacha tavsif', help_text='Olimpiada haqida qisqa ma\'lumot')
+    image = models.ImageField(upload_to='olympiads/images/', blank=True, null=True, verbose_name='Olimpiada rasmi', help_text='Olimpiada kartasida ko\'rsatiladigan rasm (tavsiya: 400x300px)')
+    date = models.DateField(verbose_name='Olimpiada sanasi', help_text='Olimpiada o\'tkaziladigan sana', default='2026-12-31')
     information_letter = models.FileField(upload_to='olympiads/info_letters/', blank=True, null=True, verbose_name='Ma\'lumot xati', help_text='Olimpiada haqida rasmiy ma\'lumot xati (PDF)')
     registration_link = models.URLField(verbose_name='Ro\'yxatdan o\'tish havolasi', help_text='Olimpiadaga ro\'yxatdan o\'tish uchun havola')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -199,9 +201,26 @@ class Olympiad(models.Model):
         db_table = 'olympiads'
         verbose_name = 'Olimpiada'
         verbose_name_plural = 'Olimpiadalar'
+        ordering = ['date']
 
     def __str__(self):
         return f"{self.name} ({self.subject})"
+    
+    @property
+    def status(self):
+        """Olimpiada statusini sanaga qarab aniqlash"""
+        from datetime import date
+        today = date.today()
+        if self.date >= today:
+            return 'kutilmoqda'
+        else:
+            return 'tugagan'
+    
+    @property
+    def is_upcoming(self):
+        """Olimpiada kelgusi yoki yo'qligini tekshirish"""
+        from datetime import date
+        return self.date >= date.today()
 
 
 # 10. BuxDU olimpiada g'oliblari

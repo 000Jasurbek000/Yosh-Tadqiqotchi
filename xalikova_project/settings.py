@@ -174,10 +174,13 @@ JAZZMIN_SETTINGS = {
     "site_brand": "Yosh Tadqiqotchi",
 
     # Logo to use for your site, must be present in static files
-    "site_logo": "assets/logo.png",
+    "site_logo": None,  # Logo admin panelidagi sidebar uchun
+    
+    # Login sahifasida logo yo'q
+    "login_logo": None,
 
     # Welcome text on the login screen
-    "welcome_sign": "Yosh Tadqiqotchi platformasiga xush kelibsiz",
+    "welcome_sign": "Admin paneliga xush kelibsiz",
 
     # Copyright on the footer
     "copyright": "Yosh Tadqiqotchi 2026",
@@ -257,10 +260,6 @@ JAZZMIN_SETTINGS = {
     # Change colors - SINGLE format (barcha maydonlar bitta sahifada)
     "changeform_format": "single",
     "changeform_format_overrides": {"auth.user": "single", "auth.group": "single"},
-    
-    # Login sahifasida logo kichikroq bo'lishi uchun
-    "login_logo": None,  # Logo o'chirildi
-    "site_logo_classes": "img-circle",  # Logo aylana shakli
 }
 
 JAZZMIN_UI_TWEAKS = {

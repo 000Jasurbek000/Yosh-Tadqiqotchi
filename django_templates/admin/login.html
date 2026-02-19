@@ -1,0 +1,229 @@
+{% extends "admin/login.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+/* Admin Login sahifasi dizayni */
+body.login {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.login #header {
+    background: transparent;
+    padding: 20px 0;
+}
+
+.login #header h1 {
+    margin: 0;
+    text-align: center;
+}
+
+.login #header h1 a {
+    display: inline-block;
+    width: auto;
+    height: auto;
+    max-width: 180px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    padding: 10px 0;
+}
+
+.login #content {
+    padding: 20px 20px 0;
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+.login #content-main {
+    width: 100%;
+}
+
+.login form {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 40px 35px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.login form .form-row {
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.login form .form-row label {
+    display: block;
+    margin-bottom: 8px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    padding-left: 0;
+}
+
+.login form input[type="text"],
+.login form input[type="password"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background: #ffffff;
+    color: #1e293b;
+}
+
+.login form input[type="text"]:focus,
+.login form input[type="password"]:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.login .submit-row {
+    padding: 0;
+    margin-top: 25px;
+    border: none;
+}
+
+.login input[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.login input[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.login input[type="submit"]:active {
+    transform: translateY(0);
+}
+
+.login .errornote {
+    background: #fee2e2;
+    border: 2px solid #ef4444;
+    color: #b91c1c;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.login #footer {
+    margin-top: 30px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 13px;
+}
+
+/* Password reset link */
+.login .password-reset-link {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.login .password-reset-link a {
+    color: #667eea;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.login .password-reset-link a:hover {
+    text-decoration: underline;
+}
+
+/* Welcome message styling */
+.login form p {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #64748b;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .login form {
+        padding: 30px 25px;
+    }
+    
+    .login #content {
+        padding: 10px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        Yosh Tadqiqotchi Admin
+    </a>
+</h1>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {% if form.errors and not form.non_field_errors %}
+        <p class="errornote">
+            {% if form.errors.items|length == 1 %}
+                Xatolik: Login yoki parol noto'g'ri.
+            {% else %}
+                Xatolik: Ma'lumotlarni to'g'ri kiriting.
+            {% endif %}
+        </p>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <p class="errornote">{{ error }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form action="{{ app_path }}" method="post" id="login-form">
+        {% csrf_token %}
+        
+        <p style="text-align: center; margin-bottom: 25px; color: #64748b; font-size: 15px;">
+            Admin paneliga kirish uchun login ma'lumotlaringizni kiriting
+        </p>
+
+        <div class="form-row">
+            {{ form.username.errors }}
+            {{ form.username.label_tag }}
+            {{ form.username }}
+        </div>
+
+        <div class="form-row">
+            {{ form.password.errors }}
+            {{ form.password.label_tag }}
+            {{ form.password }}
+            <input type="hidden" name="next" value="{{ next }}">
+        </div>
+
+        <div class="submit-row">
+            <input type="submit" value="Kirish">
+        </div>
+    </form>
+</div>
+{% endblock %}
