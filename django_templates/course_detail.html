@@ -4,6 +4,151 @@
 
 {% block title %}{{ course.name }} - Yosh Tadqiqotchi{% endblock %}
 
+{% block extra_head %}
+<!-- PDF.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+</script>
+<!-- StPageFlip for beautiful page turning -->
+<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
+<style>
+    @keyframes pulse {
+        0%, 100% { box-shadow: 0 10px 30px rgba(99,102,241,0.4); transform: scale(1.02); }
+        50%       { box-shadow: 0 18px 50px rgba(99,102,241,0.7); transform: scale(1.05); }
+    }
+
+    /* ===== Flipbook Outer Wrapper ===== */
+    .pflipper-outer {
+        width: 100%;
+        border-radius: 0;
+        overflow: hidden;
+        box-shadow: none;
+        background: transparent;
+    }
+
+    /* ===== Loading State ===== */
+    .pflipper-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 400px;
+        background: white;
+        gap: 16px;
+        padding: 20px;
+    }
+    .pflipper-spinner {
+        width: 56px; height: 56px;
+        border: 5px solid #334155;
+        border-top-color: #6366f1;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .pflipper-loading p {
+        color: #94a3b8; font-size: 17px; font-weight: 600; margin: 0;
+    }
+    .pflipper-progress-wrap {
+        width: 280px; height: 8px;
+        background: #334155; border-radius: 8px; overflow: hidden;
+    }
+    .pflipper-progress-bar {
+        height: 100%; width: 0%;
+        background: linear-gradient(90deg, #6366f1, #8b5cf6, #d946ef);
+        border-radius: 8px;
+        transition: width 0.3s ease;
+    }
+    .pflipper-progress-text {
+        color: #64748b !important; font-size: 14px !important;
+    }
+
+    /* ===== Scene (book stage) ===== */
+    .pflipper-scene {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 450px;
+        padding: 15px;
+        background: white;
+    }
+
+    /* ===== Controls Bar ===== */
+    .pflipper-controls {
+        height: 70px;
+        background: transparent;
+        border-top: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        gap: 16px;
+    }
+    .pflipper-prev, .pflipper-next {
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white; border: none; border-radius: 10px;
+        cursor: pointer; font-weight: 700; font-size: 15px;
+        display: flex; align-items: center; gap: 8px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 16px rgba(59,130,246,0.4);
+        min-width: 130px; justify-content: center;
+    }
+    .pflipper-prev:hover, .pflipper-next:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 12px 32px rgba(59,130,246,0.6);
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    }
+    .pflipper-prev:disabled, .pflipper-next:disabled {
+        background: linear-gradient(135deg, #475569, #334155);
+        opacity: 0.5; cursor: not-allowed; box-shadow: none; transform: none;
+    }
+    .pflipper-info {
+        font-size: 20px; font-weight: 800;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white; padding: 12px 28px; border-radius: 12px;
+        border: 3px solid #a5b4fc;
+        box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+        white-space: nowrap;
+    }
+    .pflipper-info span { color: #c7d2fe; }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 992px) {
+        .pflipper-scene { min-height: 400px; padding: 12px; }
+    }
+    
+    @media (max-width: 768px) {
+        .pflipper-scene { min-height: 350px; padding: 10px; }
+        .pflipper-prev, .pflipper-next, .pflipper-fullscreen { padding: 8px 16px; font-size: 14px; }
+    }
+    
+    @media (max-width: 480px) {
+        .pflipper-scene { min-height: 300px; padding: 8px; }
+        .pflipper-prev, .pflipper-next, .pflipper-fullscreen { padding: 6px 12px; font-size: 13px; }
+    }
+
+    /* ===== Page Styling ===== */
+    .stf__item {
+        background: white !important;
+        box-shadow: inset 0 0 30px rgba(0,0,0,0.05) !important;
+        border-radius: 8px !important;
+    }
+    
+    /* ===== High-quality image rendering ===== */
+    .stf__item img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        image-rendering: pixelated;
+    }
+    
+    /* ===== Smooth Transitions ===== */
+    * {
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <section class="subpage-hero stipendiya-hero">
     <div class="subpage-hero-inner">
@@ -75,67 +220,20 @@
                         </div>
                         
                         {% if module.is_unlocked %}
-                        <!-- Module Content: Left-Right Layout -->
-                        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 0; min-height: 400px;">
-                            <!-- Left Side: Description & Presentation -->
-                            <div style="padding: 32px; background: #f9fafb; border-right: 2px solid #e5e7eb;">
-                                <h4 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600; color: #111827;">
-                                    <i class="fas fa-info-circle" style="color: #3b82f6;"></i> Modul haqida
-                                </h4>
-                                <p style="margin: 0 0 24px 0; color: #4b5563; line-height: 1.8; font-size: 15px;">
-                                    {{ module.description|default:"Ushbu modulda muhim mavzular o'rganiladi." }}
-                                </p>
-                                
-                                {% if module.presentation %}
-                                <div style="margin-top: auto; padding-top: 24px;">
-                                    <a href="{{ module.presentation.url }}" 
-                                       download 
-                                       class="btn-gradient presentation-download" 
-                                       data-module-id="{{ module.id }}"
-                                       style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 20px; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 15px; width: 100%; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
-                                        <i class="fas fa-file-powerpoint" style="font-size: 18px;"></i>
-                                        <span>Taqdimotni yuklash</span>
-                                    </a>
-                                </div>
-                                {% endif %}
-                                
-                                <!-- Progress Indicators -->
-                                <div style="margin-top: 24px; padding: 16px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
-                                    <div style="font-size: 14px; font-weight: 600; color: #6b7280; margin-bottom: 12px;">Bajarilish holati:</div>
-                                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                                        <div style="display: flex; align-items: center; gap: 8px;">
-                                            <i class="fas fa-{% if module.progress and module.progress.watched_video %}check-circle{% else %}circle{% endif %} video-status-{{ module.id }}" style="color: {% if module.progress and module.progress.watched_video %}#10b981{% else %}#d1d5db{% endif %}; font-size: 16px;"></i>
-                                            <span style="color: #4b5563; font-size: 14px;">Video ko'rildi</span>
-                                        </div>
-                                        <div style="display: flex; align-items: center; gap: 8px;">
-                                            <i class="fas fa-{% if module.progress and module.progress.viewed_presentation %}check-circle{% else %}circle{% endif %} presentation-status-{{ module.id }}" style="color: {% if module.progress and module.progress.viewed_presentation %}#10b981{% else %}#d1d5db{% endif %}; font-size: 16px;"></i>
-                                            <span style="color: #4b5563; font-size: 14px;">Taqdimot yuklandi</span>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Complete Module Button -->
-                                    {% if not module.is_completed %}
-                                    <div class="complete-btn-container-{{ module.id }}" style="margin-top: 16px;">
-                                        <button class="complete-module-btn" 
-                                                data-module-id="{{ module.id }}"
-                                                data-video-done="{% if module.progress and module.progress.watched_video %}true{% else %}false{% endif %}"
-                                                data-presentation-done="{% if module.progress and module.progress.viewed_presentation %}true{% else %}false{% endif %}"
-                                                style="width: 100%; padding: 12px 20px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); transition: all 0.3s; {% if not module.progress or not module.progress.watched_video or not module.progress.viewed_presentation %}opacity: 0.4; pointer-events: none;{% endif %}">
-                                            <i class="fas fa-check-double"></i>
-                                            <span>O'rgandim</span>
-                                        </button>
-                                    </div>
-                                    {% endif %}
-                                </div>
-                            </div>
+                        <!-- Module Content: Vertical Full Width Layout -->
+                        <div style="display: flex; flex-direction: column; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
                             
-                            <!-- Right Side: Embedded YouTube Video -->
-                            <div style="padding: 32px; background: white; display: flex; flex-direction: column;">
-                                {% if module.youtube_url %}
-                                    <h4 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600; color: #111827;">
-                                        <i class="fab fa-youtube" style="color: #ff0000;"></i> Video dars
+                            <!-- Video Section - Full Width -->
+                            {% if module.youtube_url %}
+                            <div style="padding: 40px; background: white; border-bottom: 4px solid #e2e8f0;">
+                                <div style="max-width: 1400px; margin: 0 auto;">
+                                    <h4 style="margin: 0 0 24px 0; font-size: 22px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 12px;">
+                                        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(255, 0, 0, 0.3);">
+                                            <i class="fab fa-youtube" style="color: white; font-size: 26px;"></i>
+                                        </div>
+                                        <span>Video Dars</span>
                                     </h4>
-                                    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);">
+                                    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); border: 4px solid #e2e8f0;">
                                         <iframe 
                                             src="{{ module.youtube_url|youtube_embed_url }}&enablejsapi=1" 
                                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
@@ -146,19 +244,138 @@
                                             id="video-{{ module.id }}"
                                         ></iframe>
                                     </div>
-                                    <p style="margin-top: 16px; color: #6b7280; font-size: 14px; text-align: center;">
-                                        <i class="fas fa-info-circle"></i> Videoni korib chiqing va sahhifani qayta yuklang, so'ngra "O'rgandim" tugmasini bosing
-                                    </p>
-                                {% else %}
-                                    <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: #f3f4f6; border-radius: 12px; border: 2px dashed #d1d5db;">
-                                        <div style="text-align: center;">
-                                            <i class="fas fa-video-slash" style="font-size: 48px; color: #9ca3af; margin-bottom: 12px;"></i>
-                                            <p style="color: #6b7280; margin: 0;">Video dars hozircha yuklanmagan</p>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div style="padding: 40px; background: white; border-bottom: 4px solid #e2e8f0;">
+                                <div style="max-width: 1400px; margin: 0 auto; padding: 60px; background: #f9fafb; border-radius: 20px; border: 3px dashed #cbd5e1; text-align: center;">
+                                    <i class="fas fa-video-slash" style="font-size: 64px; color: #cbd5e1; margin-bottom: 20px;"></i>
+                                    <p style="color: #64748b; margin: 0; font-size: 18px; font-weight: 600;">Video dars hozircha yuklanmagan</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- PDF Section - Full Width -->
+                            {% if module.presentation %}
+                            <div style="padding: 10px;">
+                                <div style="max-width: 1400px; margin: 0 auto;">
+                                    <h4 style="margin: 0 0 10px 0; font-size: 22px; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 12px; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
+                                        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(239,68,68,0.4);">
+                                            <i class="fas fa-file-pdf" style="color: white; font-size: 24px;"></i>
+                                        </div>
+                                        <span>Taqdimot Materiallari (PDF)</span>
+                                    </h4>
+
+                                    <!-- Flipbook Container -->
+                                    <div style="background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 15px; padding: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); margin-top: 20px;">
+
+                                        <!-- StPageFlip Flipbook -->
+                                        <div class="pflipper-outer" id="pflipper-outer-{{ module.id }}" data-pdf-url="{{ module.presentation.url }}" style="min-height: 450px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); background: white; border-radius: 12px; overflow: hidden;">
+                                        <!-- Loading -->
+                                        <div class="pflipper-loading" id="pflipper-loading-{{ module.id }}">
+                                            <div class="pflipper-spinner"></div>
+                                            <p>PDF yuklanmoqda...</p>
+                                            <div class="pflipper-progress-wrap">
+                                                <div class="pflipper-progress-bar" id="pflipper-bar-{{ module.id }}"></div>
+                                            </div>
+                                            <p class="pflipper-progress-text" id="pflipper-text-{{ module.id }}">0 / ?</p>
+                                        </div>
+                                        <!-- Scene -->
+                                        <div class="pflipper-scene" id="pflipper-scene-{{ module.id }}" style="display:none;">
+                                            <div id="pflipper-{{ module.id }}"></div>
+                                        </div>
+                                            <!-- Controls -->
+                                            <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 20px; padding: 15px; background: white; border-radius: 12px; box-shadow: 0 3px 15px rgba(0,0,0,0.08);">
+                                                <button class="pflipper-prev" id="pflipper-prev-{{ module.id }}" disabled
+                                                        style="background: linear-gradient(135deg, #1e40af 0%, #0ea5e9 100%); color: white; border: none; border-radius: 50px; padding: 12px 25px; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(30,64,175,0.3);" 
+                                                        onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(30,64,175,0.4)'" 
+                                                        onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(30,64,175,0.3)'">
+                                                    <i class="fas fa-chevron-left"></i> Oldingi
+                                                </button>
+                                                <div style="font-size: 15px; font-weight: 600; color: #1e40af; padding: 0 15px;">
+                                                    <span id="pflipper-cur-{{ module.id }}">1</span>
+                                                    <span> / </span>
+                                                    <span id="pflipper-tot-{{ module.id }}">?</span>
+                                                </div>
+                                                <button class="pflipper-fullscreen" onclick="openPDFFullscreen('{{ module.presentation.url }}')"
+                                                        style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; border-radius: 50px; padding: 12px 25px; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(245,158,11,0.3);" 
+                                                        onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(245,158,11,0.4)'" 
+                                                        onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(245,158,11,0.3)'">
+                                                    <i class="fas fa-external-link-alt"></i> To'liq ekran
+                                                </button>
+                                                <button class="pflipper-next" id="pflipper-next-{{ module.id }}" disabled
+                                                        style="background: linear-gradient(135deg, #1e40af 0%, #0ea5e9 100%); color: white; border: none; border-radius: 50px; padding: 12px 25px; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(30,64,175,0.3);" 
+                                                        onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(30,64,175,0.4)'" 
+                                                        onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(30,64,175,0.3)'">
+                                                    Keyingi <i class="fas fa-chevron-right"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                {% endif %}
                             </div>
-                        </div>
+                            {% else %}
+                            <div style="padding: 40px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+                                <div style="max-width: 1400px; margin: 0 auto; padding: 60px; background: white; border-radius: 20px; border: 3px dashed #cbd5e1; text-align: center;">
+                                    <i class="fas fa-file-pdf" style="font-size: 64px; color: #cbd5e1; margin-bottom: 20px;"></i>
+                                    <p style="color: #64748b; margin: 0; font-size: 18px; font-weight: 600;">Taqdimot hozircha yuklanmagan</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Progress & Complete Section - At Bottom -->
+                            <div style="padding: 40px; background: white; border-top: 4px solid #e2e8f0;">
+                                <div style="max-width: 1400px; margin: 0 auto;">
+                                    <!-- Progress Checkboxes -->
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px;">
+                                        <div style="padding: 24px; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 16px; border: 3px solid {% if module.progress and module.progress.watched_video %}#10b981{% else %}#d1fae5{% endif %}; display: flex; align-items: center; gap: 16px; transition: all 0.3s;">
+                                            <div style="width: 64px; height: 64px; background: {% if module.progress and module.progress.watched_video %}linear-gradient(135deg, #10b981 0%, #059669 100%){% else %}white{% endif %}; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3); transition: all 0.3s;">
+                                                <i class="fas fa-{% if module.progress and module.progress.watched_video %}check-circle{% else %}circle{% endif %} video-status-{{ module.id }}" style="color: {% if module.progress and module.progress.watched_video %}white{% else %}#cbd5e1{% endif %}; font-size: 32px; transition: all 0.3s;"></i>
+                                            </div>
+                                            <div style="flex: 1;">
+                                                <div style="font-size: 18px; font-weight: 700; color: {% if module.progress and module.progress.watched_video %}#047857{% else %}#6b7280{% endif %}; margin-bottom: 4px;">Video Dars</div>
+                                                <div style="font-size: 14px; color: {% if module.progress and module.progress.watched_video %}#059669{% else %}#9ca3af{% endif %};">{% if module.progress and module.progress.watched_video %}✓ To'liq ko'rildi{% else %}80% ko'rish kerak{% endif %}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div style="padding: 24px; background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border-radius: 16px; border: 3px solid {% if module.progress and module.progress.viewed_presentation %}#ef4444{% else %}#fecaca{% endif %}; display: flex; align-items: center; gap: 16px; transition: all 0.3s;">
+                                            <div style="width: 64px; height: 64px; background: {% if module.progress and module.progress.viewed_presentation %}linear-gradient(135deg, #ef4444 0%, #dc2626 100%){% else %}white{% endif %}; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3); transition: all 0.3s;">
+                                                <i class="fas fa-{% if module.progress and module.progress.viewed_presentation %}check-circle{% else %}circle{% endif %} presentation-status-{{ module.id }}" style="color: {% if module.progress and module.progress.viewed_presentation %}white{% else %}#cbd5e1{% endif %}; font-size: 32px; transition: all 0.3s;"></i>
+                                            </div>
+                                            <div style="flex: 1;">
+                                                <div style="font-size: 18px; font-weight: 700; color: {% if module.progress and module.progress.viewed_presentation %}#b91c1c{% else %}#6b7280{% endif %}; margin-bottom: 4px;">PDF Taqdimot</div>
+                                                <div style="font-size: 14px; color: {% if module.progress and module.progress.viewed_presentation %}#dc2626{% else %}#9ca3af{% endif %};">{% if module.progress and module.progress.viewed_presentation %}✓ Oxirgi sahifa ko'rildi{% else %}Oxirigacha o'qing{% endif %}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Complete Button -->
+                                    {% if not module.is_completed %}
+                                    <div class="complete-btn-container-{{ module.id }}">
+                                        <button class="complete-module-btn" 
+                                                data-module-id="{{ module.id }}"
+                                                data-has-video="{% if module.youtube_url %}true{% else %}false{% endif %}"
+                                                data-has-presentation="{% if module.presentation %}true{% else %}false{% endif %}"
+                                                data-video-done="{% if module.progress and module.progress.watched_video %}true{% else %}false{% endif %}"
+                                                data-presentation-done="{% if module.progress and module.progress.viewed_presentation %}true{% else %}false{% endif %}"
+                                                style="width: 100%; padding: 20px 32px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; border: none; border-radius: 16px; font-weight: 700; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4); transition: all 0.4s; {% if not module.progress or not module.progress.watched_video or not module.progress.viewed_presentation %}opacity: 0.4; pointer-events: none; filter: grayscale(1);{% endif %}">
+                                            <i class="fas fa-check-double" style="font-size: 24px;"></i>
+                                            <span>Modulni tugatdim - Keyingisiga o'tish</span>
+                                        </button>
+                                    </div>
+                                    {% else %}
+                                    <div style="padding: 20px 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 16px; font-weight: 700; font-size: 20px; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);">
+                                        <i class="fas fa-check-circle" style="font-size: 24px;"></i>
+                                        <span>Modul muvaffaqiyatli tugatildi!</span>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <!-- Info Message -->
+                                    <div style="margin-top: 24px; padding: 20px; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-radius: 12px; border: 3px solid #fbbf24; text-align: center;">
+                                        <i class="fas fa-info-circle" style="color: #f59e0b; font-size: 20px; margin-right: 8px;"></i>
+                                        <span style="color: #92400e; font-size: 16px; font-weight: 600;">Video va PDFni to'liq ko'rib chiqing, so'ngra "Modulni tugatdim" tugmasini bosing</span>
+                                    </div>
+                                </div>
+                            </div>
                         {% else %}
                         <!-- Locked Module Content -->
                         <div style="padding: 48px; text-align: center; background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);">
@@ -185,12 +402,6 @@
                         </p>
                         
                         <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-                            {% if certificate %}
-                            <a href="{% url 'main:download_certificate' certificate.id %}" class="btn-gradient" style="display: inline-flex; align-items: center; gap: 10px; padding: 16px 32px; background: white; color: #10b981; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 17px; box-shadow: 0 6px 20px rgba(0,0,0,0.15);">
-                                <i class="fas fa-download" style="font-size: 20px;"></i>
-                                <span>Sertifikatni yuklash</span>
-                            </a>
-                            {% endif %}
                             <a href="{% url 'main:course_test' course.id %}" class="btn-gradient" style="display: inline-flex; align-items: center; gap: 10px; padding: 16px 32px; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 17px; border: 2px solid white;">
                                 <i class="fas fa-redo" style="font-size: 20px;"></i>
                                 <span>Takrorlash</span>
@@ -446,39 +657,245 @@ function trackVideoWatched(moduleId) {
     .catch(error => console.error('Error tracking video:', error));
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Track presentation download
-    document.querySelectorAll('.presentation-download').forEach(link => {
-        link.addEventListener('click', function(e) {
-            const moduleId = this.dataset.moduleId;
-            
-            console.log('Tracking presentation for module:', moduleId);
-            
-            // Track presentation view
-            fetch(`/module/${moduleId}/track-presentation/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    console.log('Presentation tracked successfully');
-                    // Update UI
-                    const statusIcon = document.querySelector(`.presentation-status-${moduleId}`);
-                    if (statusIcon) {
-                        statusIcon.classList.remove('fa-circle');
-                        statusIcon.classList.add('fa-check-circle');
-                        statusIcon.style.color = '#10b981';
-                    }
-                    checkModuleCompletion(moduleId);
-                }
-            })
-            .catch(error => console.error('Error tracking presentation:', error));
-        });
+// ===== StPageFlip Management =====
+var pageFlippers = {};
+var pageFlipperTracked = {};
+
+function initPageFlippers() {
+    document.querySelectorAll('.pflipper-outer').forEach(outer => {
+        const moduleId = outer.id.replace('pflipper-outer-', '');
+        const pdfUrl = outer.dataset.pdfUrl;
+        if (!pdfUrl) return;
+        loadPDFForFlipper(moduleId, pdfUrl);
     });
+}
+
+async function loadPDFForFlipper(moduleId, pdfUrl) {
+    const loadingEl  = document.getElementById(`pflipper-loading-${moduleId}`);
+    const sceneEl    = document.getElementById(`pflipper-scene-${moduleId}`);
+    const barEl      = document.getElementById(`pflipper-bar-${moduleId}`);
+    const textEl     = document.getElementById(`pflipper-text-${moduleId}`);
+    const prevBtn    = document.getElementById(`pflipper-prev-${moduleId}`);
+    const nextBtn    = document.getElementById(`pflipper-next-${moduleId}`);
+    const curEl      = document.getElementById(`pflipper-cur-${moduleId}`);
+    const totEl      = document.getElementById(`pflipper-tot-${moduleId}`);
+
+    try {
+        const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+        const numPages = pdf.numPages;
+        if (totEl) totEl.textContent = numPages;
+
+        // --- Calculate dimensions from first page ---
+        const firstPage = await pdf.getPage(1);
+        const vp1 = firstPage.getViewport({ scale: 1 });
+        const sceneWidth = sceneEl.clientWidth || window.innerWidth;
+        // Single page mode - fit to screen without scroll but keep text crisp
+        const maxPageW = Math.min(450, Math.floor(sceneWidth * 0.7)); // Smaller to fit screen
+        const scale    = maxPageW / vp1.width;
+        const pageW    = Math.round(vp1.width  * scale);
+        const pageH    = Math.round(vp1.height * scale);
+        const dpr      = Math.max(window.devicePixelRatio || 1, 2); // Higher DPR for crisp text
+
+        // --- Render all pages to data URLs with high quality ---
+        const images = [];
+        for (let i = 1; i <= numPages; i++) {
+            const page     = await pdf.getPage(i);
+            const viewport = page.getViewport({ scale: scale * dpr });
+            const canvas   = document.createElement('canvas');
+            canvas.width   = viewport.width;
+            canvas.height  = viewport.height;
+            const context  = canvas.getContext('2d');
+            // Enable high-quality rendering
+            context.imageSmoothingEnabled = true;
+            context.imageSmoothingQuality = 'high';
+            context.textRenderingOptimization = 'optimizeQuality';
+            await page.render({ canvasContext: context, viewport }).promise;
+            images.push(canvas.toDataURL('image/png')); // PNG for better text quality
+
+            // Progress
+            const pct = Math.round((i / numPages) * 100);
+            if (barEl)  barEl.style.width = pct + '%';
+            if (textEl) textEl.textContent = `${i} / ${numPages}`;
+        }
+
+        // --- Show scene ---
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (sceneEl)   sceneEl.style.display   = 'flex';
+
+        const flipContainer = document.getElementById(`pflipper-${moduleId}`);
+
+        const pageFlip = new St.PageFlip(flipContainer, {
+            width:               pageW,
+            height:              pageH,
+            size:                'fixed',
+            showCover:           false,
+            mobileScrollSupport: true,
+            swipeDistance:       30,
+            usePortrait:         true,
+            drawShadow:          true,
+            flippingTime:        700,
+            maxShadowOpacity:    0.6,
+            startPage:           0,
+            clickEventForward:   true,
+        });
+
+        pageFlip.loadFromImages(images);
+        pageFlippers[moduleId] = pageFlip;
+
+        // --- Initialize first ---
+        setTimeout(() => {
+            // Get current page after initialization
+            const currentPage = pageFlip.getCurrentPageIndex ? pageFlip.getCurrentPageIndex() + 1 : 1;
+            if (curEl) curEl.textContent = currentPage;
+            if (prevBtn) prevBtn.disabled = (currentPage <= 1);
+            if (nextBtn) nextBtn.disabled = (currentPage >= numPages - 1); // Disable at 23/24
+        }, 100);
+
+        // --- Update UI on page flip ---
+        pageFlip.on('flip', (e) => {
+            // In portrait mode (single page), e.data is actual page index (0-based)
+            const current = e.data + 1;
+            if (curEl) curEl.textContent = current;
+            if (prevBtn) prevBtn.disabled = (e.data === 0);
+            if (nextBtn) nextBtn.disabled = (current >= numPages - 1); // Disable at second-to-last page (23/24)
+
+            // Track completion at second-to-last page (23/24)
+            if (current >= numPages - 1 && !pageFlipperTracked[moduleId]) {
+                pageFlipperTracked[moduleId] = true;
+                trackPDFCompleted(moduleId);
+            }
+        });
+
+        // --- Prev / Next buttons ---
+        if (prevBtn) {
+            prevBtn.disabled = true; // First page - prev disabled
+            prevBtn.addEventListener('click', () => {
+                pageFlip.flipPrev();
+                // Update states after flip
+                setTimeout(() => {
+                    const currentPage = pageFlip.getCurrentPageIndex ? pageFlip.getCurrentPageIndex() + 1 : 1;
+                    if (prevBtn) prevBtn.disabled = (currentPage <= 1);
+                    if (nextBtn) nextBtn.disabled = (currentPage >= numPages - 1); // Disable at 23/24
+                }, 100);
+            });
+        }
+        if (nextBtn) {
+            nextBtn.disabled = (numPages <= 1); // Enable next if more than 1 page
+            nextBtn.addEventListener('click', () => {
+                pageFlip.flipNext();
+                // Update states after flip
+                setTimeout(() => {
+                    const currentPage = pageFlip.getCurrentPageIndex ? pageFlip.getCurrentPageIndex() + 1 : 1;
+                    if (prevBtn) prevBtn.disabled = (currentPage <= 1);
+                    if (nextBtn) nextBtn.disabled = (currentPage >= numPages - 1); // Disable at 23/24
+                    // Track completion when reaching 23/24
+                    if (currentPage >= numPages - 1 && !pageFlipperTracked[moduleId]) {
+                        pageFlipperTracked[moduleId] = true;
+                        trackPDFCompleted(moduleId);
+                    }
+                }, 100);
+            });
+        }
+
+        // Single-page PDF: auto-track
+        if (numPages === 1 && !pageFlipperTracked[moduleId]) {
+            pageFlipperTracked[moduleId] = true;
+            trackPDFCompleted(moduleId);
+        }
+
+    } catch (err) {
+        console.error('PDF load error:', err);
+        if (loadingEl) loadingEl.innerHTML = '<p style="color:#f87171;font-weight:600;">PDF yuklab bo\'lmadi</p>';
+    }
+}
+
+function trackPDFCompleted(moduleId) {
+    console.log('📄 Tracking PDF for module:', moduleId);
+    fetch(`/module/${moduleId}/track-presentation/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        console.log('📄 PDF Track Response:', data);
+        if (data.status === 'success') {
+            console.log('✅ PDF tracked - updating UI and reloading page');
+            // Update presentation checkbox
+            const icon = document.querySelector(`.presentation-status-${moduleId}`);
+            if (icon) {
+                icon.classList.remove('fa-circle');
+                icon.classList.add('fa-check-circle');
+                icon.style.color = 'white';
+                const circle = icon.closest('div[style]')?.querySelector('div[style*="width: 64px"]');
+                if (circle) circle.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
+                const card = icon.closest('div[style*="padding: 24px"]');
+                if (card) card.style.border = '3px solid #ef4444';
+            }
+            
+            // Update Progress Cards immediately
+            updateProgressCards(moduleId);
+            
+            checkModuleCompletion(moduleId);
+            
+            // Force page reload after 1.5 seconds
+            console.log('🔄 Page will reload in 1.5 seconds...');
+            setTimeout(() => {
+                console.log('🔄 Reloading page now...');
+                location.reload(true); // Force reload from server
+            }, 1500);
+        } else {
+            console.log('❌ PDF tracking failed:', data);
+        }
+    })
+    .catch(e => {
+        console.error('PDF track error:', e);
+        // Even on error, try to reload after tracking attempt
+        setTimeout(() => {
+            console.log('🔄 Reloading page after error...');
+            location.reload(true);
+        }, 2000);
+    });
+}
+
+// Open PDF in fullscreen new tab
+function openPDFFullscreen(pdfUrl) {
+    window.open(pdfUrl, '_blank', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=' + screen.width + ',height=' + screen.height);
+}
+
+// Update Progress Cards immediately
+function updateProgressCards(moduleId) {
+    // Find progress cards for this module
+    const progressCards = document.querySelectorAll(`[data-module-id="${moduleId}"] .progress-card, .progress-card[data-module="${moduleId}"]`);
+    
+    progressCards.forEach(card => {
+        // Check if this is PDF progress card
+        const isPDFCard = card.textContent.includes('PDF') || card.textContent.includes('Taqdimot');
+        
+        if (isPDFCard) {
+            // Update icon
+            const icon = card.querySelector('i.fas');
+            if (icon) {
+                icon.classList.remove('fa-circle');
+                icon.classList.add('fa-check-circle');
+                icon.style.color = 'white';
+            }
+            
+            // Update background to completed state
+            card.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            card.style.border = '3px solid #ef4444';
+            
+            // Update text to completed
+            const statusText = card.querySelector('div[style*="font-size: 14px"]');
+            if (statusText && statusText.textContent.includes('Oxirgacha')) {
+                statusText.textContent = 'Oxirgi sahifa ko\'rildi';
+            }
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize StPageFlip for all PDF modules
+    initPageFlippers();
     
     // Complete module button
     document.querySelectorAll('.complete-module-btn').forEach(btn => {
@@ -516,48 +933,30 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     function checkModuleCompletion(moduleId) {
-        console.log('=== Checking module completion for:', moduleId, '===');
-        
         const videoStatus = document.querySelector(`.video-status-${moduleId}`);
         const presentationStatus = document.querySelector(`.presentation-status-${moduleId}`);
-        
-        // Try multiple selectors for button
+
         let completeBtn = document.querySelector(`.complete-btn-container-${moduleId} .complete-module-btn`);
-        if (!completeBtn) {
-            completeBtn = document.querySelector(`[data-module-id="${moduleId}"].complete-module-btn`);
-        }
-        
-        console.log('Video status element:', videoStatus);
-        console.log('Video status classes:', videoStatus ? videoStatus.className : 'NOT FOUND');
-        console.log('Presentation status element:', presentationStatus);
-        console.log('Presentation status classes:', presentationStatus ? presentationStatus.className : 'NOT FOUND');
-        console.log('Complete button element:', completeBtn);
-        console.log('Complete button found:', !!completeBtn);
-        
-        if (!completeBtn) {
-            console.error('Complete button not found for module:', moduleId);
-            console.log('Trying to find all buttons with class complete-module-btn:', document.querySelectorAll('.complete-module-btn'));
-            return;
-        }
-        
-        const videoChecked = videoStatus && videoStatus.classList.contains('fa-check-circle');
-        const presentationChecked = presentationStatus && presentationStatus.classList.contains('fa-check-circle');
-        
-        console.log('Module', moduleId, 'Video checked:', videoChecked, 'Presentation checked:', presentationChecked);
-        
+        if (!completeBtn) completeBtn = document.querySelector(`[data-module-id="${moduleId}"].complete-module-btn`);
+        if (!completeBtn) return;
+
+        const hasVideo        = completeBtn.dataset.hasVideo === 'true';
+        const hasPresentation = completeBtn.dataset.hasPresentation === 'true';
+
+        // If module doesn't have video/PDF, that condition is already satisfied
+        const videoChecked        = !hasVideo        || (videoStatus        && videoStatus.classList.contains('fa-check-circle'));
+        const presentationChecked = !hasPresentation || (presentationStatus && presentationStatus.classList.contains('fa-check-circle'));
+
+        console.log(`Module ${moduleId}: hasVideo=${hasVideo}, hasPresentation=${hasPresentation}, videoOK=${videoChecked}, pdfOK=${presentationChecked}`);
+
         if (videoChecked && presentationChecked) {
-            console.log('✅ Both completed! Enabling button...');
-            completeBtn.style.opacity = '1';
+            completeBtn.style.opacity       = '1';
             completeBtn.style.pointerEvents = 'auto';
-            completeBtn.style.cursor = 'pointer';
-            completeBtn.disabled = false;
-            completeBtn.dataset.videoDone = 'true';
-            completeBtn.dataset.presentationDone = 'true';
-            console.log('Button enabled! Current styles:', completeBtn.style.cssText);
-        } else {
-            console.log('❌ Not all tasks completed yet');
-            if (!videoChecked) console.log('  - Video not checked');
-            if (!presentationChecked) console.log('  - Presentation not checked');
+            completeBtn.style.cursor        = 'pointer';
+            completeBtn.style.filter        = 'none';
+            completeBtn.style.animation     = 'pulse 2s infinite';
+            completeBtn.disabled            = false;
+            console.log('✅ Complete button enabled for module', moduleId);
         }
     }
     
