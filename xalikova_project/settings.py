@@ -35,24 +35,17 @@ def _env_list(name, default=''):
     return [x.strip() for x in raw.split(',') if x.strip()]
 
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get(
-    'SECRET_KEY',
-    'django-insecure-dev-only-change-before-production',
-)
+SECRET_KEY = 'django-insecure-s*(=&6ozvgz8u#vfddf6perq!v1#mz3x0z8557b$$5=xb(+r8d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = _env_bool('DEBUG', False)
+DEBUG = False
 
-ALLOWED_HOSTS = _env_list('ALLOWED_HOSTS', '127.0.0.1,localhost,*')
+ALLOWED_HOSTS = ["yoshtadqiqotchi.uz", "www.yoshtadqiqotchi.uz"]
 
-# CSRF settings
-CSRF_TRUSTED_ORIGINS = _env_list(
-    'CSRF_TRUSTED_ORIGINS',
-    'http://127.0.0.1:8000,http://localhost:8000',
-)
-CSRF_COOKIE_SECURE = _env_bool('CSRF_COOKIE_SECURE', False)
-CSRF_COOKIE_HTTPONLY = False
+CSRF_TRUSTED_ORIGINS = ["https://yoshtadqiqotchi.uz", "https://www.yoshtadqiqotchi.uz"]
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 
 # Application definition
