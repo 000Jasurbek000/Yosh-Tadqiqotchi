@@ -169,6 +169,15 @@
                     {% endif %}
                 </div>
 
+                <div class="form-group" id="faculty-group">
+                    <label for="{{ form.faculty.id_for_label }}">Fakultet</label>
+                    {{ form.faculty }}
+                    <datalist id="buxdu-faculties-list"></datalist>
+                    {% if form.faculty.errors %}
+                        <span style="color: #ef4444; font-size: 13px;">{{ form.faculty.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
                 <div class="form-group">
                     <label for="{{ form.academic_degree.id_for_label }}">Ilmiy daraja</label>
                     {{ form.academic_degree }}
@@ -209,13 +218,46 @@
 <script>
 // Select elementlarni standart dropdown holatiga qaytarish
 document.addEventListener('DOMContentLoaded', function() {
-    // Barcha select elementlarni topib, size atributini olib tashlash
     const selects = document.querySelectorAll('select');
     selects.forEach(select => {
         select.removeAttribute('size');
         select.style.height = 'auto';
         select.style.overflow = 'visible';
     });
+});
+
+// Fakultet datalist - BuxDU tanlanganda tavsiyalar chiqarish
+document.addEventListener('DOMContentLoaded', function() {
+    const universitySelect = document.getElementById('id_university');
+    const facultyInput = document.getElementById('id_faculty');
+    const datalist = document.getElementById('buxdu-faculties-list');
+
+    const buxduFaculties = [
+        'Fizika-matematika va axborot texnologiyalari',
+        'Filologiya',
+        'Xorijiy tillar',
+        'Tarix va Yuridik',
+        "Sport va san'at",
+        'Iqtisodiyot va turizm',
+        'Tabiiy fanlar va agrobiotexnologiya',
+    ];
+
+    function updateFacultyDatalist() {
+        datalist.innerHTML = '';
+        if (universitySelect.value === 'Buxoro davlat universiteti') {
+            buxduFaculties.forEach(function(f) {
+                const opt = document.createElement('option');
+                opt.value = f;
+                datalist.appendChild(opt);
+            });
+            facultyInput.placeholder = 'Fakultetni tanlang yoki kiriting';
+        } else {
+            facultyInput.placeholder = 'Fakultetingizni kiriting';
+        }
+    }
+
+    universitySelect.addEventListener('change', updateFacultyDatalist);
+    updateFacultyDatalist();
 });
 
 // Phone number auto-format with +998

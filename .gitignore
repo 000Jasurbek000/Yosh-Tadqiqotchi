@@ -76,3 +76,9 @@ yarn-error.log
 # Database
 *.sqlite3
 *.db
+db_backups/
+
+# Loyihadagi katta/shaxsiy fayllar
+chatbot/
+
+# .env.example GitHubda qoladi, .env esa yuqorida ignore qilingan

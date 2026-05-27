@@ -1,0 +1,498 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ program.title }} — Topshiriqlar bazasi{% endblock %}
+
+{% block extra_head %}
+<style>
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.scroll-section {
+    opacity: 0;
+    transform: translateY(60px) scale(0.97);
+    transition: opacity 0.9s cubic-bezier(0.4,0,0.2,1), transform 0.9s cubic-bezier(0.4,0,0.2,1);
+}
+.scroll-section.visible { opacity: 1; transform: none; }
+
+.op-container { max-width: 1100px; margin: 36px auto 80px; padding: 0 24px; }
+
+/* Top intro card */
+.op-intro {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    box-shadow: 0 10px 40px rgba(139, 92, 246, 0.08);
+    padding: 32px 36px;
+    margin-bottom: 26px;
+    position: relative;
+    overflow: hidden;
+}
+.op-intro::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #8b5cf6, #d946ef);
+}
+.op-intro-head {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 14px;
+}
+.op-intro-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #8b5cf6, #d946ef);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 10px 24px rgba(139,92,246,0.3);
+    flex-shrink: 0;
+}
+.op-intro-title {
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: #1f1b2d;
+    margin: 0;
+    line-height: 1.3;
+}
+.op-intro-text {
+    color: #4b4b5a;
+    font-size: 15px;
+    line-height: 1.7;
+    margin: 0;
+    white-space: pre-line;
+}
+
+/* Info block */
+.op-block {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 26px 30px;
+    margin-bottom: 22px;
+    box-shadow: 0 6px 24px rgba(139, 92, 246, 0.06);
+}
+.op-block-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+.op-block-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+.op-block-icon.skills    { background: linear-gradient(135deg,#10b981,#059669); }
+.op-block-icon.knowledge { background: linear-gradient(135deg,#3b82f6,#2563eb); }
+.op-block-icon.self      { background: linear-gradient(135deg,#f97316,#ea580c); }
+.op-block-icon.file      { background: linear-gradient(135deg,#ec4899,#db2777); }
+.op-block-icon.extra     { background: linear-gradient(135deg,#facc15,#ca8a04); }
+
+.op-block-title {
+    font-size: 1.18rem;
+    font-weight: 700;
+    color: #1f1b2d;
+    margin: 0;
+}
+.op-block-text {
+    color: #4b4b5a;
+    font-size: 14.8px;
+    line-height: 1.75;
+    white-space: pre-line;
+    margin: 0;
+}
+
+/* File download */
+.op-file-card {
+    margin-top: 6px;
+    background: linear-gradient(135deg,#fdf2f8,#fef3c7);
+    border: 1px solid #fbcfe8;
+    border-radius: 12px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.op-file-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #db2777;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+.op-file-meta { flex: 1; min-width: 0; }
+.op-file-name {
+    font-weight: 700;
+    color: #1f1b2d;
+    margin: 0;
+    font-size: 14.5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.op-file-sub {
+    color: #6b7280;
+    font-size: 13px;
+    margin: 4px 0 0;
+}
+.op-file-btn {
+    padding: 10px 18px;
+    background: #db2777;
+    color: #fff !important;
+    border-radius: 9px;
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+.op-file-btn:hover { background: #be185d; transform: translateY(-1px); box-shadow: 0 6px 14px rgba(190,24,93,0.3); }
+
+/* Warning note (red) */
+.op-note {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-left: 4px solid #ef4444;
+    color: #991b1b;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.65;
+    margin: 22px 0;
+}
+.op-note b { color: #7f1d1d; }
+
+/* Apply section */
+.op-apply-section {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 18px;
+    padding: 38px 36px;
+    text-align: center;
+    color: #fff;
+    margin-top: 28px;
+    box-shadow: 0 20px 50px rgba(99,102,241,0.25);
+}
+.op-apply-section h3 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin: 0 0 10px;
+}
+.op-apply-section p {
+    color: rgba(255,255,255,0.92);
+    margin: 0 0 22px;
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 22px;
+}
+.op-textarea {
+    width: 100%;
+    max-width: 600px;
+    min-height: 110px;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-family: inherit;
+    font-size: 14.5px;
+    resize: vertical;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    margin: 0 auto 18px;
+    display: block;
+    color: #1f1b2d;
+}
+.op-textarea:focus { outline: 2px solid #fff; }
+.op-submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 38px;
+    background: #fff;
+    color: #6366f1 !important;
+    border-radius: 12px;
+    font-size: 15.5px;
+    font-weight: 800;
+    text-decoration: none !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.op-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.2);
+    background: #f9fafb;
+}
+.op-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* Existing application state */
+.op-applied {
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin: 6px auto 0;
+    max-width: 560px;
+    backdrop-filter: blur(6px);
+}
+.op-applied-icon { font-size: 38px; margin-bottom: 8px; }
+.op-applied-text {
+    color: #fff;
+    font-weight: 600;
+    margin: 0 0 6px;
+    font-size: 15px;
+}
+.op-applied-meta { color: rgba(255,255,255,0.88); font-size: 13.5px; margin: 0; }
+.op-status-badge {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    font-weight: 700;
+    background: #fff;
+    color: #6366f1;
+}
+
+/* Not ready (program doesn't exist) */
+.op-not-ready {
+    background: #fff;
+    border: 1px solid #fde68a;
+    border-left: 4px solid #f59e0b;
+    border-radius: 14px;
+    padding: 28px 32px;
+    text-align: center;
+}
+.op-not-ready-icon { font-size: 48px; color: #f59e0b; margin-bottom: 12px; }
+.op-not-ready h3 { color: #92400e; margin: 0 0 8px; font-size: 1.3rem; }
+.op-not-ready p { color: #78350f; margin: 0; font-size: 14.5px; line-height: 1.6; }
+
+@media (max-width: 720px) {
+    .op-container { padding: 0 16px; }
+    .op-intro, .op-block, .op-apply-section { padding: 22px 20px; }
+    .op-intro-title { font-size: 1.25rem; }
+    .op-file-card { flex-direction: column; align-items: flex-start; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <section class="subpage-hero stipendiya-hero scroll-section">
+        <div class="subpage-hero-inner">
+            <div class="subpage-hero-text">
+                <div class="subpage-breadcrumb">
+                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <span>//</span>
+                    <a href="{% url 'main:iqtidor_yoli' %}">Iqtidor Yo'li</a>
+                    <span>//</span>
+                    <span>Topshiriqlar bazasi</span>
+                </div>
+                <h1 class="title subpage-title">{{ program.title }}</h1>
+                <p class="subtitle subpage-subtitle">
+                    Olimpiada haqida toʻliq maʼlumot va arizachilar uchun talablar
+                </p>
+            </div>
+            <div class="subpage-hero-illustration">
+                <div class="subpage-hero-pill">
+                    <span class="badge" style="margin-bottom: 0;">
+                        <i class="fas fa-trophy"></i>
+                        <span>Topshiriqlar bazasi</span>
+                    </span>
+                </div>
+                <div class="subpage-hero-image-wrapper">
+                    <img src="{% static 'assets/iqtidor_yoli.png' %}" alt="Topshiriqlar bazasi" class="subpage-hero-image" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="op-container">
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="op-note" style="background:#{% if 'success' in message.tags %}ecfdf5{% elif 'warning' in message.tags %}fffbeb{% else %}fef2f2{% endif %};
+                            border-left-color:{% if 'success' in message.tags %}#10b981{% elif 'warning' in message.tags %}#f59e0b{% else %}#ef4444{% endif %};
+                            color:{% if 'success' in message.tags %}#065f46{% elif 'warning' in message.tags %}#92400e{% else %}#991b1b{% endif %};">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Kirish -->
+        <div class="op-intro scroll-section">
+            <div class="op-intro-head">
+                <div class="op-intro-icon"><i class="fas fa-medal"></i></div>
+                <h2 class="op-intro-title">Olimpiada haqida</h2>
+            </div>
+            <p class="op-intro-text">{{ program.short_intro }}</p>
+        </div>
+
+        <!-- Diqqat -->
+        <div class="op-note scroll-section">
+            <b>⚠️ Diqqat!</b> Quyidagi ma'lumotlar bilan tanishib chiqing va o'zingizning bilim
+            darajangizni shu olimpiadaga muvofiqligiga ishonch hosil qilgandan so'nggina ariza
+            yuboring. Saralash bosqichida kerakli bilim va ko'nikmalar talab qilinadi.
+        </div>
+
+        <!-- Talab qilingan ko'nikmalar -->
+        {% if program.required_skills %}
+        <div class="op-block scroll-section">
+            <div class="op-block-head">
+                <div class="op-block-icon skills"><i class="fas fa-cogs"></i></div>
+                <h3 class="op-block-title">Talab qilinadigan ko'nikmalar</h3>
+            </div>
+            <p class="op-block-text">{{ program.required_skills }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Bilim sohalari -->
+        {% if program.knowledge_areas %}
+        <div class="op-block scroll-section">
+            <div class="op-block-head">
+                <div class="op-block-icon knowledge"><i class="fas fa-book-open"></i></div>
+                <h3 class="op-block-title">Tekshiriladigan bilim sohalari va mavzular</h3>
+            </div>
+            <p class="op-block-text">{{ program.knowledge_areas }}</p>
+        </div>
+        {% endif %}
+
+        <!-- O'zini tekshirish -->
+        {% if program.self_check_text %}
+        <div class="op-block scroll-section">
+            <div class="op-block-head">
+                <div class="op-block-icon self"><i class="fas fa-clipboard-check"></i></div>
+                <h3 class="op-block-title">O'zingizning bilim darajangizni tekshiring</h3>
+            </div>
+            <p class="op-block-text">{{ program.self_check_text }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Topshiriqlar fayli -->
+        {% if program.task_file %}
+        <div class="op-block scroll-section">
+            <div class="op-block-head">
+                <div class="op-block-icon file"><i class="fas fa-file-alt"></i></div>
+                <h3 class="op-block-title">Topshiriqlar fayli</h3>
+            </div>
+            <div class="op-file-card">
+                <div class="op-file-icon"><i class="fas fa-file-download"></i></div>
+                <div class="op-file-meta">
+                    <p class="op-file-name">{{ program.task_file.name|cut:"olympiad_tasks/" }}</p>
+                    <p class="op-file-sub">Namunaviy topshiriqlar to'plamini yuklab oling va o'z bilimingizni sinab ko'ring.</p>
+                </div>
+                <a href="{{ program.task_file.url }}" target="_blank" class="op-file-btn">
+                    <i class="fas fa-download"></i> Yuklab olish
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Qo'shimcha -->
+        {% if program.additional_info %}
+        <div class="op-block scroll-section">
+            <div class="op-block-head">
+                <div class="op-block-icon extra"><i class="fas fa-info-circle"></i></div>
+                <h3 class="op-block-title">Qo'shimcha ma'lumot</h3>
+            </div>
+            <p class="op-block-text">{{ program.additional_info }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Ariza yuborish -->
+        <div class="op-apply-section scroll-section" id="apply">
+            {% if existing_application %}
+                {% if existing_application.status == 'new' or existing_application.status == 'reviewed' or existing_application.status == 'approved' %}
+                <h3>Siz allaqachon ariza yuborgansiz</h3>
+                <p>
+                    {% if existing_application.status == 'approved' %}
+                        Arizangiz tasdiqlangan. Admin siz bilan bog'lanadi.
+                    {% else %}
+                        Sizning arizangiz admin tomonidan ko'rib chiqilmoqda. Iltimos, kuting.
+                    {% endif %}
+                </p>
+                <div class="op-applied">
+                    <div class="op-applied-icon">✅</div>
+                    <p class="op-applied-text">«{{ program.title }}» olimpiadasi uchun arizangiz qabul qilindi.</p>
+                    <p class="op-applied-meta">Yuborilgan vaqt: {{ existing_application.created_at|date:"d.m.Y, H:i" }}</p>
+                    <span class="op-status-badge">{{ existing_application.get_status_display }}</span>
+                </div>
+                {% else %}
+                <h3>Ariza yuborish</h3>
+                <p>
+                    Oldingi arizangiz rad etilgan. Qayta ariza yuborishingiz mumkin.
+                </p>
+                <form method="post" action="{% url 'main:submit_olympiad_application' code=program.code %}"
+                      onsubmit="this.querySelector('button[type=submit]').disabled = true;">
+                    {% csrf_token %}
+                    <textarea name="motivation" class="op-textarea"
+                              placeholder="Motivatsiyangizni qisqacha yozing (ixtiyoriy)"
+                              maxlength="2000"></textarea>
+                    <button type="submit" class="op-submit-btn">
+                        <i class="fas fa-paper-plane"></i> Qayta ariza yuborish
+                    </button>
+                </form>
+                {% endif %}
+            {% else %}
+                <h3>Ariza yuborish</h3>
+                <p>
+                    Yuqoridagi ma'lumotlar bilan tanishib chiqdingizmi? Agar o'zingizni ushbu olimpiadaga
+                    munosib deb hisoblasangiz, quyidagi tugma orqali ariza yuboring. Adminlar arizangizni
+                    ko'rib chiqib siz bilan bog'lanishadi.
+                </p>
+                <form method="post" action="{% url 'main:submit_olympiad_application' code=program.code %}"
+                      onsubmit="this.querySelector('button[type=submit]').disabled = true;">
+                    {% csrf_token %}
+                    <textarea name="motivation" class="op-textarea"
+                              placeholder="Motivatsiyangizni qisqacha yozing (ixtiyoriy) — nima uchun bu olimpiadaga qatnashmoqchisiz, oldingi tajribangiz va boshqalar."
+                              maxlength="2000"></textarea>
+                    <button type="submit" class="op-submit-btn">
+                        <i class="fas fa-paper-plane"></i> Ariza yuborish
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.12, rootMargin: '0px 0px -80px 0px' });
+    document.querySelectorAll('.scroll-section').forEach(el => observer.observe(el));
+
+    // #apply hash kelganida pastga animatsiya bilan tushish
+    if (window.location.hash === '#apply') {
+        setTimeout(() => {
+            const target = document.getElementById('apply');
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 350);
+    }
+})();
+</script>
+{% endblock %}

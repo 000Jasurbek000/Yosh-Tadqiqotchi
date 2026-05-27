@@ -1,0 +1,1244 @@
+[
+    {
+        "id": 245,
+        "name": "Abu Rayhon Beruniy universiteti",
+        "website": "",
+        "region_id": 11
+    },
+    {
+        "id": 212,
+        "name": "Acharya University",
+        "website": "https://www.acharya.uz/oz/index",
+        "region_id": 2
+    },
+    {
+        "id": 3,
+        "name": "Alfraganus University",
+        "website": "https://alfraganusuniversity.uz",
+        "region_id": 10
+    },
+    {
+        "id": 246,
+        "name": "Al-Xorazmiy universiteti",
+        "website": "https://akhu.uz/",
+        "region_id": 13
+    },
+    {
+        "id": 225,
+        "name": "Amerika texnologiyalar universiteti",
+        "website": "https://aut-edu.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 157,
+        "name": "Andijon davlat chet tillari instituti",
+        "website": "https://adchti.uz/",
+        "region_id": 1
+    },
+    {
+        "id": 62,
+        "name": "Andijon davlat pedagogika instituti",
+        "website": "https://adpi.uz/",
+        "region_id": 1
+    },
+    {
+        "id": 231,
+        "name": "Andijon davlat texnika instituti",
+        "website": "https://web.astiedu.uz/",
+        "region_id": 1
+    },
+    {
+        "id": 25,
+        "name": "Andijon davlat tibbiyot instituti",
+        "website": "https://adti.uz/",
+        "region_id": 1
+    },
+    {
+        "id": 4,
+        "name": "Andijon davlat universiteti",
+        "website": "https://adu.uz/",
+        "region_id": 1
+    },
+    {
+        "id": 51,
+        "name": "Andijon qishloq xo'jaligi va agrotexnologiyalar instituti",
+        "website": "https://andqxai.uz",
+        "region_id": 1
+    },
+    {
+        "id": 99,
+        "name": "Angren universiteti",
+        "website": "https://auniver.uz/",
+        "region_id": 11
+    },
+    {
+        "id": 68,
+        "name": "Aniq va ijtimoiy fanlar universiteti",
+        "website": "https://uess.uz/",
+        "region_id": 11
+    },
+    {
+        "id": 11,
+        "name": "Astraxan davlat texnika universitetining Toshkent viloyatidagi filiali",
+        "website": "http://astutr.uz/",
+        "region_id": 11
+    },
+    {
+        "id": 199,
+        "name": "AXBOROT TEXNOLOGIYALARI VA MENEJMENT UNIVERSITETI",
+        "website": "https://atmu.uz",
+        "region_id": 4
+    },
+    {
+        "id": 190,
+        "name": "Berdaq nomidagi Qoraqalpoq davlat universiteti",
+        "website": "https://karsu.uz/ru/",
+        "region_id": 14
+    },
+    {
+        "id": 153,
+        "name": "Botir Zokirov nomidagi Milliy estrada san'ati instituti",
+        "website": "https://estrada-art.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 85,
+        "name": "British management university",
+        "website": "https://bmu-edu.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 100,
+        "name": "Buxoro davlat pedagogika instituti",
+        "website": "https://buxdpi.uz/",
+        "region_id": 2
+    },
+    {
+        "id": 232,
+        "name": "Buxoro davlat texnika universiteti",
+        "website": "https://bstu.uz/",
+        "region_id": 2
+    },
+    {
+        "id": 27,
+        "name": "Buxoro davlat tibbiyot instituti",
+        "website": "https://bsmi.uz/",
+        "region_id": 2
+    },
+    {
+        "id": 7,
+        "name": "Buxoro davlat universiteti",
+        "website": "https://buxdu.uz/",
+        "region_id": 2
+    },
+    {
+        "id": 158,
+        "name": "Buxoro innovatsion ta'lim va tibbiyot universiteti",
+        "website": "https://biti.uz/",
+        "region_id": 2
+    },
+    {
+        "id": 125,
+        "name": "Buxoro innovatsiyalar universiteti",
+        "website": "https://buxiu.uz/",
+        "region_id": 2
+    },
+    {
+        "id": 144,
+        "name": "Buxoro psixologiya va xorijiy tillar instituti",
+        "website": "http://buxpxti.uz/",
+        "region_id": 2
+    },
+    {
+        "id": 202,
+        "name": "Central Asian Medical University",
+        "website": "https://camuf.uz/",
+        "region_id": 12
+    },
+    {
+        "id": 26,
+        "name": "CENTRAL ASIAN UNIVERSITY",
+        "website": "https://centralasian.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 197,
+        "name": "Chirchiq davlat pedagogika universiteti",
+        "website": "https://cspi.uz/uz",
+        "region_id": 11
+    },
+    {
+        "id": 18,
+        "name": "“Collegium Humanum” Varshava menejment universiteti Andijon filiali",
+        "website": "https://collegiumhumanum.uz/",
+        "region_id": 1
+    },
+    {
+        "id": 237,
+        "name": "Cyber university",
+        "website": "https://csu.uz/en",
+        "region_id": 11
+    },
+    {
+        "id": 211,
+        "name": "Denov tadbirkorlik va pedagogika instituti",
+        "website": "https://dtpi.uz/",
+        "region_id": 8
+    },
+    {
+        "id": 228,
+        "name": "Digital university",
+        "website": "https://landing.idu.uz/?fbclid=PAZXh0bgNhZW0CMTEAAaa8Ae0ERv1HXyy6Q57N-P8jACVRnkDK5l3DTQknAwdk74YvPSNukCNJYZo_aem_C0gVmKVFjSEJw57BqJUGTg",
+        "region_id": 10
+    },
+    {
+        "id": 101,
+        "name": "D.I.Mendeleev nomidagi Rossiya kimyo-texnologiya universiteti Federal davlat byudjeti oliy taʼlim muassasasining Toshkent filiali",
+        "website": "https://muctr.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 155,
+        "name": "Diplomat University",
+        "website": "https://diplomat.university/",
+        "region_id": 10
+    },
+    {
+        "id": 1,
+        "name": "EMU-UNIVERSITY",
+        "website": "https://emuni.uz",
+        "region_id": 10
+    },
+    {
+        "id": 109,
+        "name": "Fan va Texnologiyalar Universiteti",
+        "website": "https://usat.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 234,
+        "name": "Farg‘ona davlat texnika universiteti",
+        "website": "https://fstu.uz/",
+        "region_id": 12
+    },
+    {
+        "id": 186,
+        "name": "Farg‘ona davlat universiteti",
+        "website": "https://fdu.uz/",
+        "region_id": 12
+    },
+    {
+        "id": 188,
+        "name": "Farg‘ona jamoat salomatligi tibbiyot instituti",
+        "website": "https://fjsti.uz",
+        "region_id": 12
+    },
+    {
+        "id": 104,
+        "name": "Farg'ona shahridagi Koreya xalqaro universiteti",
+        "website": "https://www.kiuf.uz/",
+        "region_id": 12
+    },
+    {
+        "id": 147,
+        "name": "Farmatsevtika ta'lim va tadqiqot instituti",
+        "website": "https://ftti.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 236,
+        "name": "Farmatsevtika texnik universiteti",
+        "website": "https://pharmatechuni.uz/",
+        "region_id": 11
+    },
+    {
+        "id": 143,
+        "name": "Federal davlat avtonom oliy taʼlim muassasasi Milliy texnologik tadqiqotlar universiteti MISiS ning Olmaliq shahridagi filiali",
+        "website": "http://misis.uz",
+        "region_id": 11
+    },
+    {
+        "id": 137,
+        "name": "Geologiya fanlari universiteti",
+        "website": "https://uzgeouniver.uz",
+        "region_id": 10
+    },
+    {
+        "id": 175,
+        "name": "Guliston davlat pedagogika instituti",
+        "website": "https://gspi.uz/",
+        "region_id": 9
+    },
+    {
+        "id": 10,
+        "name": "Guliston davlat universiteti",
+        "website": "http://guldu.uz/index.php",
+        "region_id": 9
+    },
+    {
+        "id": 47,
+        "name": "G.V.Plexanov nomli Rossiya iqtisodiyot universiteti Toshkent filiali",
+        "website": "https://reu.uz/en/about-university/",
+        "region_id": 10
+    },
+    {
+        "id": 114,
+        "name": "Ijtimoiy va siyosiy fanlar instituti",
+        "website": "https://isfi.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 30,
+        "name": "I.M.Gubkin nomidagi Rossiya davlat neft va gaz universiteti Toshkent shahridagi filiali",
+        "website": "https://gubkin.uz/uz",
+        "region_id": 10
+    },
+    {
+        "id": 111,
+        "name": "IMPULS BSR",
+        "website": "https://www.impulsmi.uz/",
+        "region_id": 6
+    },
+    {
+        "id": 53,
+        "name": "Innovatsion texnologiyalar universiteti",
+        "website": "https://www.youtube.com/@itu_uz",
+        "region_id": 14
+    },
+    {
+        "id": 142,
+        "name": "INTERNATIONAL SCHOOL OF FINANCE TECHOLOGY AND SCIENCE",
+        "website": "https://isft.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 50,
+        "name": "Ipak yo‘li innovatsiyalar universiteti",
+        "website": "https://iyiu.uz/ru",
+        "region_id": 11
+    },
+    {
+        "id": 120,
+        "name": "\"Ipak yo'li\" turizm va madaniy meros xalqaro universiteti",
+        "website": "https://univ-silkroad.uz",
+        "region_id": 7
+    },
+    {
+        "id": 201,
+        "name": "Iqtisodiyot va pedagogika universiteti",
+        "website": "https://ipu-edu.uz/uz/",
+        "region_id": 4
+    },
+    {
+        "id": 200,
+        "name": "IT Park University",
+        "website": "https://itpu.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 193,
+        "name": "Jahon iqtisodiyoti va diplomatiya universiteti",
+        "website": "http://www.uwed.uz",
+        "region_id": 10
+    },
+    {
+        "id": 57,
+        "name": "Japan digital university",
+        "website": "https://www.jdu.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 194,
+        "name": "Jizzax davlat pedagogika universiteti",
+        "website": "https://jspi.uz/",
+        "region_id": 3
+    },
+    {
+        "id": 24,
+        "name": "Jizzax politexnika instituti",
+        "website": "https://jizpi.uz/",
+        "region_id": 3
+    },
+    {
+        "id": 84,
+        "name": "Jizzax shahridagi Qozon Federal universiteti filiali",
+        "website": "http://www.kfujf.uz/",
+        "region_id": 3
+    },
+    {
+        "id": 165,
+        "name": "Kamoliddin Behzod Milliy rassomlik va dizayn instituti",
+        "website": "https://mrdi.uz",
+        "region_id": 10
+    },
+    {
+        "id": 83,
+        "name": "Kattaqo'rg'on davlat pedagogika instituti",
+        "website": "https://samdukf.uz",
+        "region_id": 7
+    },
+    {
+        "id": 15,
+        "name": "Latviyaning Аxborot tizimlari menejmenti Oliy maktabining Fargʼona shahridagi filiali",
+        "website": "https://www.ismaeu.uz/",
+        "region_id": 12
+    },
+    {
+        "id": 219,
+        "name": "Markaziy Osiyo atrof-muhit va iqlim o‘zgarishini o‘rganish universiteti (Green University)",
+        "website": "https://greenuniversity.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 43,
+        "name": "Maʼmun universiteti",
+        "website": "https://mamunedu.uz/uz",
+        "region_id": 13
+    },
+    {
+        "id": 77,
+        "name": "Mehnat va ijtimoiy munosabatlar akademiyasi",
+        "website": "https://www.atso.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 203,
+        "name": "MEI milliy tadqiqot universiteti Federal davlat byudjeti oliy taʼlim muassasasining Toshkent filiali",
+        "website": "https://mpei.uz/oz/",
+        "region_id": 10
+    },
+    {
+        "id": 150,
+        "name": "Millat umidi universiteti",
+        "website": "https://university.cambridge.uz/ru/",
+        "region_id": 10
+    },
+    {
+        "id": 135,
+        "name": "Mirzo Ulug'bek nomidagi O‘zbekiston Milliy universitetining Jizzax filiali",
+        "website": "https://jbnuu.uz/",
+        "region_id": 3
+    },
+    {
+        "id": 92,
+        "name": "MMFI milliy tadqiqot yadro universiteti federal davlat avtonom oliy taʼlim muassasasining Toshkent shahridagi filiali",
+        "website": "https://tashkent.mephi.ru/",
+        "region_id": 10
+    },
+    {
+        "id": 38,
+        "name": "M.V.Lomonosov nomidagi Moskva davlat universitetining Toshkent shahridagi filiali",
+        "website": "https://msu.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 227,
+        "name": "M. Аuezov nomidagi Janubiy Qozogʼiston universitetining Chirchiq shahridagi filiali",
+        "website": "",
+        "region_id": 11
+    },
+    {
+        "id": 171,
+        "name": "Namangan davlat chet tillari instituti",
+        "website": "https://namsifl.uz/",
+        "region_id": 6
+    },
+    {
+        "id": 172,
+        "name": "Namangan davlat pedagogika instituti",
+        "website": "https://namspi.uz/",
+        "region_id": 6
+    },
+    {
+        "id": 233,
+        "name": "Namangan davlat texnika universiteti",
+        "website": "https://namdtu.uz/",
+        "region_id": 6
+    },
+    {
+        "id": 28,
+        "name": "Namangan davlat universiteti",
+        "website": "https://www.namdu.uz",
+        "region_id": 6
+    },
+    {
+        "id": 86,
+        "name": "Navoiy davlat konchilik va texnologiyalar universiteti",
+        "website": "http://ndki.uz/uz",
+        "region_id": 5
+    },
+    {
+        "id": 196,
+        "name": "Navoiy davlat universiteti",
+        "website": "https://nspi.uz",
+        "region_id": 5
+    },
+    {
+        "id": 184,
+        "name": "Navoiy innovatsiyalar instituti",
+        "website": "https://niuedu.uz/uz/",
+        "region_id": 5
+    },
+    {
+        "id": 221,
+        "name": "N.I.Pirogov nomidagi Rossiya milliy tadqiqot tibbiyot universitetining Toshkent shahridagi filiali",
+        "website": "",
+        "region_id": 10
+    },
+    {
+        "id": 195,
+        "name": "Nukus davlat pedagogika instituti",
+        "website": "https://ndpi.uz",
+        "region_id": 14
+    },
+    {
+        "id": 230,
+        "name": "Nukus davlat texnika universiteti",
+        "website": "https://nukusstu.uz/",
+        "region_id": 14
+    },
+    {
+        "id": 106,
+        "name": "Oʻzbekiston davlat konservatoriyasi Nukus filiali",
+        "website": "https://uzdknf.uz/",
+        "region_id": 14
+    },
+    {
+        "id": 166,
+        "name": "Oʻzbekiston davlat xoreografiya akademiyasi Urganch filiali",
+        "website": "https://uzdxauf.uz",
+        "region_id": 13
+    },
+    {
+        "id": 32,
+        "name": "Olmaliq davlat texnika instituti",
+        "website": "https://tdtuof.uz/",
+        "region_id": 11
+    },
+    {
+        "id": 152,
+        "name": "Oriental universiteti",
+        "website": "https://orientaluniversity.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 60,
+        "name": "Osiyo texnologiyalar universiteti",
+        "website": "https://qitu.uz/",
+        "region_id": 4
+    },
+    {
+        "id": 70,
+        "name": "Osiyo xalqaro universiteti",
+        "website": "https://oxu.uz/",
+        "region_id": 2
+    },
+    {
+        "id": 161,
+        "name": "O‘zbekiston davlat jahon tillari universiteti",
+        "website": "https://uzswlu.uz",
+        "region_id": 10
+    },
+    {
+        "id": 78,
+        "name": "O‘zbekiston davlat jismoniy tarbiya va sport universiteti",
+        "website": "https://jtsu.uz",
+        "region_id": 11
+    },
+    {
+        "id": 127,
+        "name": "O‘zbekiston davlat jismoniy tarbiya va sport universiteti Nukus filiali",
+        "website": "https://uzdjtsunf.uz/",
+        "region_id": 14
+    },
+    {
+        "id": 67,
+        "name": "O‘zbekiston davlat konservatoriyasi",
+        "website": "https://konservatoriya.uz",
+        "region_id": 10
+    },
+    {
+        "id": 65,
+        "name": "O‘zbekiston davlat san’at va madaniyat instituti",
+        "website": "https://dsmi.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 113,
+        "name": "O‘zbekiston davlat san’at va madaniyat instituti Nukus filiali",
+        "website": "https://uzdsmi-nf.uz/",
+        "region_id": 14
+    },
+    {
+        "id": 247,
+        "name": "O‘zbekiston davlat sport akademiyasi",
+        "website": "http://usas.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 160,
+        "name": "O'zbekiston davlat xoreografiya akademiyasi",
+        "website": "https://uzdxa.uz",
+        "region_id": 10
+    },
+    {
+        "id": 118,
+        "name": "O‘zbekiston jurnalistika va ommaviy kommunikatsiyalar universiteti",
+        "website": "https://uzjoku.uz",
+        "region_id": 10
+    },
+    {
+        "id": 12,
+        "name": "O‘zbekiston milliy pedagogika universiteti",
+        "website": "https://new.tdpu.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 45,
+        "name": "O‘zbekiston Milliy universiteti",
+        "website": "https://nuu.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 9,
+        "name": "O‘zbekiston xalqaro islomshunoslik akademiyasi",
+        "website": "https://iiau.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 145,
+        "name": "Oziq-ovqat texnologiyasi va muhandisligi xalqaro instituti",
+        "website": "https://iifte.uz/",
+        "region_id": 12
+    },
+    {
+        "id": 243,
+        "name": "Oʼzbek-Fransuz universiteti",
+        "website": "",
+        "region_id": 10
+    },
+    {
+        "id": 139,
+        "name": "Oʼzbekistondagi Sharda universiteti",
+        "website": "http://www.shardauniversity.uz",
+        "region_id": 1
+    },
+    {
+        "id": 129,
+        "name": "Oʼzbekiston Respublikasi Huquqni muhofaza qilish akademiyasi",
+        "website": "https://proacademy.uz/uz-lat/#main_section",
+        "region_id": 10
+    },
+    {
+        "id": 133,
+        "name": "PDP University",
+        "website": "https://university.pdp.uz/uz",
+        "region_id": 10
+    },
+    {
+        "id": 35,
+        "name": "Perfect University",
+        "website": "https://perfectuniversity.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 164,
+        "name": "Pisa university in Tashkent",
+        "website": "https://www.pisa.uz/en",
+        "region_id": 10
+    },
+    {
+        "id": 151,
+        "name": "Profi University",
+        "website": "https://profiuniversity.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 229,
+        "name": "Qarshi davlat texnika universiteti",
+        "website": "https://kstu.uz/ru",
+        "region_id": 4
+    },
+    {
+        "id": 189,
+        "name": "Qarshi davlat universiteti",
+        "website": "https://qarshidu.uz",
+        "region_id": 4
+    },
+    {
+        "id": 61,
+        "name": "Qarshi xalqaro universiteti",
+        "website": "https://kiu.uz/",
+        "region_id": 4
+    },
+    {
+        "id": 235,
+        "name": "Qo‘qon davlat  universiteti",
+        "website": "https://kokandsu.uz/",
+        "region_id": 12
+    },
+    {
+        "id": 17,
+        "name": "Qo‘qon universiteti",
+        "website": "https://kokanduni.uz/",
+        "region_id": 12
+    },
+    {
+        "id": 93,
+        "name": "Qoraqalpog'iston qishloq xo'jaligi va agrotexnologiyalar instituti",
+        "website": "https://tdaunukus.uz/",
+        "region_id": 14
+    },
+    {
+        "id": 192,
+        "name": "Qoraqalpog'iston tibbiyot instituti",
+        "website": "https://kkmeduniver.uz",
+        "region_id": 14
+    },
+    {
+        "id": 115,
+        "name": "Raqamli iqtisodiyot va agrotexnologiyalar universiteti",
+        "website": "https://udea.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 126,
+        "name": "Renessans ta'lim universiteti",
+        "website": "https://renessans-edu.uz/uz",
+        "region_id": 10
+    },
+    {
+        "id": 220,
+        "name": "\"Rossiya Federatsiyasi Tashqi ishlar vazirligining Moskva davlat xalqaro munosabatlar instituti (universiteti)\" Federal davlat avtonom oliy ta’lim muassasasining Toshkent shahridagi filiali",
+        "website": "",
+        "region_id": 10
+    },
+    {
+        "id": 140,
+        "name": "Samarqand agroinnovatsiyalar va tadqiqotlar instituti",
+        "website": "https://samaguni.uz/",
+        "region_id": 7
+    },
+    {
+        "id": 42,
+        "name": "Samarqand davlat arxitektura-qurilish universiteti",
+        "website": "https://samgasi.uz/",
+        "region_id": 7
+    },
+    {
+        "id": 191,
+        "name": "Samarqand davlat chet tillar instituti",
+        "website": "https://samdchti.uz/",
+        "region_id": 7
+    },
+    {
+        "id": 89,
+        "name": "Samarqand davlat pedagogika instituti",
+        "website": "https://uzfi.uz/uz",
+        "region_id": 7
+    },
+    {
+        "id": 29,
+        "name": "Samarqand davlat tibbiyot universiteti",
+        "website": "https://www.sammu.uz/ru",
+        "region_id": 7
+    },
+    {
+        "id": 52,
+        "name": "Samarqand davlat veterinariya meditsinasi, chorvachilik va biotexnologiyalar universitet",
+        "website": "https://ssuv.uz",
+        "region_id": 7
+    },
+    {
+        "id": 123,
+        "name": "Samarqand davlat veterinariya meditsinasi, chorvachilik va biotexnologiyalar universiteti Nukus filiali",
+        "website": "https://www.sdvunf.uz/novosti/",
+        "region_id": 14
+    },
+    {
+        "id": 81,
+        "name": "Samarqand davlat veterinariya meditsinasi, chorvachilik va biotexnologiyalar universiteti Toshkent filiali",
+        "website": "https://svmitf.uz",
+        "region_id": 10
+    },
+    {
+        "id": 90,
+        "name": "Samarqand iqtisodiyot va servis instituti",
+        "website": "https://sies.uz/uz",
+        "region_id": 7
+    },
+    {
+        "id": 40,
+        "name": "Samarqand xalqaro texnologiya universiteti",
+        "website": "https://www.siut.uz/uz/",
+        "region_id": 7
+    },
+    {
+        "id": 156,
+        "name": "SAMBHRAM universitet",
+        "website": "https://www.sambhram.uz",
+        "region_id": 3
+    },
+    {
+        "id": 222,
+        "name": "“Sankt-Peterburg davlat universiteti” Federal davlat budjeti oliy ta’lim muassasasi Toshkent shahridagi filiali",
+        "website": "https://tashkent.spbu.ru/uz",
+        "region_id": 10
+    },
+    {
+        "id": 226,
+        "name": "Sarbon universiteti",
+        "website": "https://sarbon.university/",
+        "region_id": 10
+    },
+    {
+        "id": 16,
+        "name": "Shahrisabz davlat pedagogika instituti",
+        "website": "https://shdpi.uz/ru",
+        "region_id": 4
+    },
+    {
+        "id": 37,
+        "name": "Sharof Rashidov nomidagi Samarqand davlat universiteti",
+        "website": "https://samdu.uz",
+        "region_id": 7
+    },
+    {
+        "id": 179,
+        "name": "Sharof Rashidov nomidagi Samarqand davlat universitetining Urgut filiali",
+        "website": "https://www.samduuf.uz/uz",
+        "region_id": 7
+    },
+    {
+        "id": 240,
+        "name": "Sharq University",
+        "website": "https://sharqedu.uz/",
+        "region_id": 5
+    },
+    {
+        "id": 79,
+        "name": "STARS International University",
+        "website": "https://stars.university/uz",
+        "region_id": 10
+    },
+    {
+        "id": 216,
+        "name": "Tashkent international university",
+        "website": "https://tiu.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 198,
+        "name": "Tashkent international university of education",
+        "website": "https://tiue.uz/uz/",
+        "region_id": 10
+    },
+    {
+        "id": 224,
+        "name": "Tashkent Metropolitan University",
+        "website": "https://tmuni.org/",
+        "region_id": 10
+    },
+    {
+        "id": 241,
+        "name": "Tashkent Tech universiteti",
+        "website": "https://tashkenttech-edu.uz/uz",
+        "region_id": 10
+    },
+    {
+        "id": 134,
+        "name": "TEAM University",
+        "website": "https://teamuni.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 58,
+        "name": "Termiz davlat muhandislik va agrotexnologiyalar universiteti",
+        "website": "https://tdmau.uz/",
+        "region_id": 8
+    },
+    {
+        "id": 14,
+        "name": "Termiz davlat pedagogika instituti",
+        "website": "https://terdpi.uz/",
+        "region_id": 8
+    },
+    {
+        "id": 182,
+        "name": "Termiz davlat universiteti",
+        "website": "http://www.tersu.uz/",
+        "region_id": 8
+    },
+    {
+        "id": 116,
+        "name": "Termiz iqtisodiyot va servis universiteti",
+        "website": "https://tisu.uz/",
+        "region_id": 8
+    },
+    {
+        "id": 214,
+        "name": "The Oxus universiteti",
+        "website": "https://oxusuniversity.uz/main",
+        "region_id": 10
+    },
+    {
+        "id": 183,
+        "name": "TMC INSTITUTE",
+        "website": "https://tmci.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 119,
+        "name": "Toshkent amaliy fanlar universiteti",
+        "website": "https://utas.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 163,
+        "name": "Toshkent arxitektura-qurilish universiteti",
+        "website": "http://taqu.edu.uz",
+        "region_id": 10
+    },
+    {
+        "id": 72,
+        "name": "Toshkent axborot texnologiyalari universiteti",
+        "website": "https://tuit.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 97,
+        "name": "Toshkent axborot texnologiyalari universiteti Samarqand filiali",
+        "website": "https://samtuit.uz/",
+        "region_id": 7
+    },
+    {
+        "id": 56,
+        "name": "Toshkent davlat agrar universiteti",
+        "website": "https://tdau.uz/",
+        "region_id": 11
+    },
+    {
+        "id": 159,
+        "name": "Toshkent davlat iqtisodiyot universiteti",
+        "website": "http://tsue.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 23,
+        "name": "Toshkent davlat iqtisodiyot universiteti Samarqand filiali",
+        "website": "https://sbtsue.uz/uz",
+        "region_id": 7
+    },
+    {
+        "id": 5,
+        "name": "Toshkent davlat o‘zbek tili va adabiyoti universiteti",
+        "website": "https://tsuull.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 162,
+        "name": "Toshkent davlat sharqshunoslik universiteti",
+        "website": "http://tsuos.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 48,
+        "name": "Toshkent davlat texnika universiteti",
+        "website": "http://www.tdtu.uz",
+        "region_id": 10
+    },
+    {
+        "id": 31,
+        "name": "Toshkent davlat tibbiyot universiteti",
+        "website": "https://tma.uz",
+        "region_id": 10
+    },
+    {
+        "id": 239,
+        "name": "Toshkent davlat tibbiyot universiteti Chirchiq filiali",
+        "website": "https://ttachf.uz/?page_id=35",
+        "region_id": 11
+    },
+    {
+        "id": 41,
+        "name": "Toshkent davlat tibbiyot universiteti Termiz filiali",
+        "website": "https://ttatf.uz",
+        "region_id": 8
+    },
+    {
+        "id": 170,
+        "name": "Toshkent davlat transport universiteti",
+        "website": "http://tstu.uz",
+        "region_id": 10
+    },
+    {
+        "id": 82,
+        "name": "Toshkent davlat yuridik universiteti",
+        "website": "http://TSUL.UZ",
+        "region_id": 10
+    },
+    {
+        "id": 44,
+        "name": "Toshkent Farmatsevtika Instituti",
+        "website": "https://pharmi.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 141,
+        "name": "Toshkent gumanitar fanlar universiteti",
+        "website": "https://tgfu.uz/uz/",
+        "region_id": 14
+    },
+    {
+        "id": 130,
+        "name": "Toshkent ijtimoiy innovatsiya universiteti",
+        "website": "https://iiiu.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 88,
+        "name": "Toshkent iqtisodiyot va pedagogika instituti",
+        "website": "https://uztipi.uz/oz",
+        "region_id": 11
+    },
+    {
+        "id": 121,
+        "name": "Toshkent iqtisodiyot va texnologiyalari universiteti",
+        "website": "https://uztitu.uz/oz",
+        "region_id": 10
+    },
+    {
+        "id": 63,
+        "name": "\"Toshkent irrigatsiya va qishloq xo‘jaligini mexanizatsiyalash muhandislari instituti\" Milliy tadqiqot universiteti",
+        "website": "https://tiiame.uz",
+        "region_id": 10
+    },
+    {
+        "id": 177,
+        "name": "Toshkent kimyo-texnologiya instituti",
+        "website": "https://tkti.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 136,
+        "name": "Toshkent kimyo-texnologiya instituti Yangiyer filiali",
+        "website": "https://tktiyf.uz/",
+        "region_id": 9
+    },
+    {
+        "id": 22,
+        "name": "Toshkent kimyo xalqaro universiteti",
+        "website": "https://kiut.uz/uz/",
+        "region_id": 10
+    },
+    {
+        "id": 169,
+        "name": "Toshkent menedjment va iqtisodiyot instituti",
+        "website": "https://timeedu.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 207,
+        "name": "Toshkent shahridagi Adju universiteti",
+        "website": "http://ajou.uz/en",
+        "region_id": 10
+    },
+    {
+        "id": 168,
+        "name": "Toshkent shahridagi “A.I.Gersen nomidagi Rossiya Davlat pedagogika universiteti” Federal davlat budjeti oliy ta’lim muassasasi filiali",
+        "website": "https://uzb.mgimo.ru/",
+        "region_id": 10
+    },
+    {
+        "id": 206,
+        "name": "Toshkent shahridagi Amiti universiteti",
+        "website": "https://amity.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 215,
+        "name": "Toshkent shahridagi Belarus-Oʼzbekiston qoʼshma tarmoqlararo amaliy texnik kvalifikatsiyalar instituti",
+        "website": "https://sbumiptk.uz",
+        "region_id": 11
+    },
+    {
+        "id": 208,
+        "name": "Toshkent shahridagi Inha Universiteti",
+        "website": "http://www.inha.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 242,
+        "name": "Toshkent shahridagi N.E. Bauman nomidagi Moskva davlat texnika universiteti filiali",
+        "website": "",
+        "region_id": 10
+    },
+    {
+        "id": 87,
+        "name": "Toshkent shahridagi Puchon universiteti",
+        "website": "http://www.but.uz",
+        "region_id": 10
+    },
+    {
+        "id": 223,
+        "name": "Toshkent shahridagi «S.A. Gerasimov nomidagi Butunrossiya davlat kinematografiya instituti» federal davlat budjeti oliy ta’lim muassasasi filiali",
+        "website": "https://vgik.uz/uz",
+        "region_id": 10
+    },
+    {
+        "id": 66,
+        "name": "Toshkent shahridagi Singapur Menejmentni rivojlantirish instituti",
+        "website": "http://www.mdis.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 54,
+        "name": "Toshkent shahridagi Turin politexnika universiteti",
+        "website": "http://polito.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 107,
+        "name": "Toshkent shahridagi Turkiyaning Iqtisodiyot va texnologiyalar universiteti filiali",
+        "website": "https://tobbetu.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 204,
+        "name": "Toshkent shahridagi Vebster universitetining taʼlim dasturlarini amalga oshirish markazi",
+        "website": "https://www.webster.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 167,
+        "name": "Toshkent toʻqimachilik va yengil sanoat instituti",
+        "website": "https://web.ttyesi.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 213,
+        "name": "Toshkent Xalqaro moliyaviy boshqaruv va texnologiyalar universiteti",
+        "website": "https://tift.uz/about.php",
+        "region_id": 10
+    },
+    {
+        "id": 55,
+        "name": "Toshkent Xalqaro Vestminster Universiteti",
+        "website": "http://www.westminster.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 181,
+        "name": "Turan International University",
+        "website": "https://tiu-edu.uz/",
+        "region_id": 6
+    },
+    {
+        "id": 238,
+        "name": "Turkiy davlatlar xalqaro universiteti",
+        "website": "https://iuts.co.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 76,
+        "name": "Turon universiteti",
+        "website": "http://turonuniversity.uz",
+        "region_id": 4
+    },
+    {
+        "id": 146,
+        "name": "University of Business and Science",
+        "website": "https://ubsuzbekistan.uz/about.html",
+        "region_id": 6
+    },
+    {
+        "id": 210,
+        "name": "University of economics and pedagogy",
+        "website": "https://uniep.uz/",
+        "region_id": 1
+    },
+    {
+        "id": 2,
+        "name": "University of management and future technologies",
+        "website": "https://umft.uz",
+        "region_id": 10
+    },
+    {
+        "id": 173,
+        "name": "Urganch davlat pedagogika instituti",
+        "website": "https://urspi.uz/uz",
+        "region_id": 13
+    },
+    {
+        "id": 180,
+        "name": "Urganch davlat tibbiyot instituti",
+        "website": "https://urgfiltma.uz",
+        "region_id": 13
+    },
+    {
+        "id": 185,
+        "name": "Urganch davlat universiteti",
+        "website": "http://www.urdu.uz",
+        "region_id": 13
+    },
+    {
+        "id": 20,
+        "name": "Urganch Innovatsion Universiteti",
+        "website": "https://www.uriu.uz/",
+        "region_id": 13
+    },
+    {
+        "id": 71,
+        "name": "Urganch RANCH texnologiya universiteti",
+        "website": "https://utu-ranch.uz/",
+        "region_id": 13
+    },
+    {
+        "id": 244,
+        "name": "Xalqaro ijtimoiy innovatsiyalar universiteti",
+        "website": "https://www.iusi.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 46,
+        "name": "Xalqaro innovatsion universitet",
+        "website": "https://xiuedu.uz/ru/",
+        "region_id": 4
+    },
+    {
+        "id": 91,
+        "name": "Xalqaro Nordik universiteti",
+        "website": "https://nordicuniversity.org/index.uz.html",
+        "region_id": 10
+    },
+    {
+        "id": 110,
+        "name": "Xalqaro qishloq xo'jaligi universiteti",
+        "website": "https://www.iau.uz",
+        "region_id": 11
+    },
+    {
+        "id": 94,
+        "name": "Yangi Asr Universiteti",
+        "website": "https://yangiasr.uz/uz/",
+        "region_id": 10
+    },
+    {
+        "id": 154,
+        "name": "Yangi O'zbekiston universiteti",
+        "website": "https://newuu.uz/en",
+        "region_id": 10
+    },
+    {
+        "id": 21,
+        "name": "Yunus Rajabiy nomidagi O‘zbek milliy musiqa sanʼati instituti",
+        "website": "https://uzmmsi.uz/",
+        "region_id": 10
+    },
+    {
+        "id": 209,
+        "name": "Zarmed Universiteti",
+        "website": "https://zarmeduniver.com/uz/bosh-sahifa-uz/",
+        "region_id": 2
+    }
+]

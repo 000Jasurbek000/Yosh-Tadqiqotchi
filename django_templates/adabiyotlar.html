@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Adabiyotlar - Yosh Tadqiqotchi{% endblock %}
+
+{% block extra_head %}
+<style>
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.scroll-section {
+    opacity: 0;
+    transform: translateY(80px) scale(0.95);
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.scroll-section.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Container */
+.lit-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 24px;
+}
+
+/* Filter bar */
+.lit-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(139, 92, 246, 0.08);
+    padding: 18px 24px;
+    margin-bottom: 32px;
+}
+.lit-search {
+    flex: 1 1 240px;
+    padding: 10px 16px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.lit-search:focus { border-color: #8b5cf6; box-shadow: 0 0 0 3px rgba(139,92,246,0.12); }
+.lit-filter-select {
+    padding: 10px 14px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 14px;
+    background: #fafafa;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.lit-filter-select:focus { border-color: #8b5cf6; }
+.lit-filter-btn {
+    padding: 10px 22px;
+    background: linear-gradient(135deg, #8b5cf6, #d946ef);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.lit-filter-btn:hover {
+    background: linear-gradient(135deg, #7c3aed, #c026d3);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(139, 92, 246, 0.4);
+}
+.lit-clear {
+    color: #9CA3AF;
+    font-size: 14px;
+    text-decoration: none;
+    padding: 10px 14px;
+}
+.lit-clear:hover { color: #8b5cf6; }
+
+/* Grid */
+.lit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 28px;
+}
+
+/* Card */
+.lit-card {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(139, 92, 246, 0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+.lit-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(135deg, #8b5cf6, #d946ef);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.lit-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 48px rgba(139, 92, 246, 0.18);
+}
+.lit-card:hover::before { opacity: 1; }
+
+.lit-cover {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    background: #f6f3fb;
+}
+.lit-cover-placeholder {
+    width: 100%;
+    height: 220px;
+    background: linear-gradient(135deg, #f3e8ff, #fae8ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8b5cf6;
+    font-size: 56px;
+}
+.lit-body {
+    padding: 16px 18px 18px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.lit-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1f1b2d;
+    line-height: 1.4;
+    margin: 0;
+}
+.lit-author {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
+}
+.lit-author span { color: #8b5cf6; font-weight: 600; }
+.lit-field-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(217,70,239,0.12));
+    color: #8b5cf6;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+    align-self: flex-start;
+    margin-top: 4px;
+}
+.lit-description {
+    font-size: 12.5px;
+    color: #7b7b8a;
+    margin: 4px 0 0;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.lit-read-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 10px 0;
+    background: linear-gradient(135deg, #8b5cf6, #d946ef);
+    color: #fff !important;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none !important;
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.25);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.lit-read-btn:hover {
+    background: linear-gradient(135deg, #7c3aed, #c026d3);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(139, 92, 246, 0.4);
+}
+.lit-type-icon {
+    font-size: 11px;
+    background: rgba(255,255,255,0.22);
+    border-radius: 5px;
+    padding: 2px 7px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+}
+
+/* Results info */
+.lit-results-info {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 18px;
+}
+.lit-results-info strong { color: #8b5cf6; }
+
+/* Empty state */
+.lit-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: #9CA3AF;
+}
+.lit-empty-icon { font-size: 56px; margin-bottom: 14px; color: #8b5cf6; }
+.lit-empty p { font-size: 16px; }
+</style>
+{% endblock %}
+
+{% block content %}
+    <section class="subpage-hero stipendiya-hero scroll-section">
+        <div class="subpage-hero-inner">
+            <div class="subpage-hero-text">
+                <div class="subpage-breadcrumb">
+                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <span>//</span>
+                    <span>Ilmiy nashrlar va bazalar</span>
+                    <span>//</span>
+                    <span>Adabiyotlar</span>
+                </div>
+                <h1 class="title subpage-title">Adabiyotlar</h1>
+                <p class="subtitle subpage-subtitle">
+                    Ilmiy va o'quv adabiyotlari to'plami — darsliklar, o'quv qo'llanmalar, ilmiy maqolalar va tadqiqot materiallarini jamlagan elektron kutubxona.
+
+                </p>
+            </div>
+            <div class="subpage-hero-illustration">
+                <div class="subpage-hero-pill">
+                    <span class="badge" style="margin-bottom: 0;">
+                        <i class="fas fa-book"></i>
+                        <span>Adabiyotlar</span>
+                    </span>
+                </div>
+                <div class="subpage-hero-image-wrapper">
+                    <img src="{% static 'assets/stipendia.jpg' %}" alt="Adabiyotlar" class="subpage-hero-image" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="scroll-section">
+        <div class="lit-container">
+
+            <!-- Filter -->
+            <form method="get" class="lit-filter-bar">
+                <input
+                    type="text"
+                    name="q"
+                    class="lit-search"
+                    placeholder="Kitob nomi yoki muallif bo'yicha qidirish..."
+                    value="{{ search_query|default:'' }}"
+                >
+                <select name="field" class="lit-filter-select">
+                    <option value="">Barcha sohalar</option>
+                    {% for val, label in field_choices %}
+                        {% if val %}
+                            <option value="{{ val }}" {% if active_field == val %}selected{% endif %}>{{ label }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <button type="submit" class="lit-filter-btn">Qidirish</button>
+                {% if search_query or active_field %}
+                    <a href="{% url 'main:adabiyotlar' %}" class="lit-clear">Tozalash ✕</a>
+                {% endif %}
+            </form>
+
+            <!-- Results info -->
+            {% if search_query or active_field %}
+            <p class="lit-results-info">
+                <strong>{{ books|length }}</strong> ta natija topildi
+                {% if search_query %} — "<em>{{ search_query }}</em>"{% endif %}
+            </p>
+            {% endif %}
+
+            <!-- Grid -->
+            <div class="lit-grid">
+                {% for book in books %}
+                <div class="lit-card">
+                    {% if book.cover_image %}
+                        <img class="lit-cover" src="{{ book.cover_image.url }}" alt="{{ book.title }}">
+                    {% else %}
+                        <div class="lit-cover-placeholder">📖</div>
+                    {% endif %}
+                    <div class="lit-body">
+                        <h3 class="lit-title">{{ book.title }}</h3>
+                        <p class="lit-author">Muallif: <span>{{ book.author }}</span></p>
+                        {% if book.field %}
+                            <span class="lit-field-badge">{{ book.get_field_display }}</span>
+                        {% endif %}
+                        {% if book.description %}
+                            <p class="lit-description">{{ book.description }}</p>
+                        {% endif %}
+                        {% if book.get_read_url %}
+                            <a
+                                href="{{ book.get_read_url }}"
+                                class="lit-read-btn"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                {% if book.file %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 10v6m0 0-3-3m3 3 3-3M3 17a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2H7l-4 4v6z"/></svg>
+                                    O'qish
+                                    <span class="lit-type-icon">{{ book.file.name|slice:"-3:"|upper }}</span>
+                                {% else %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                    O'qish
+                                {% endif %}
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="lit-empty">
+                    <div class="lit-empty-icon"><i class="fas fa-book-open"></i></div>
+                    <p>Hozircha adabiyotlar qo'shilmagan.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    const scrollSections = document.querySelectorAll('.scroll-section');
+    scrollSections.forEach(section => observer.observe(section));
+})();
+</script>
+{% endblock %}

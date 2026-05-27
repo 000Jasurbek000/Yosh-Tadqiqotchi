@@ -1,0 +1,77 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}Bazani tozalash | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; Bazani tozalash
+</div>
+{% endblock %}
+
+{% block content %}
+<style>
+.cl-wrap { max-width: 720px; margin: 20px auto; background:#fff; border:1px solid #fecaca; border-radius:10px; padding:28px 32px; box-shadow: 0 4px 20px rgba(239,68,68,0.08); }
+.cl-wrap h1 { margin: 0 0 6px; font-size:22px; color:#991b1b; display:flex; align-items:center; gap:10px; }
+.cl-wrap .sub { color:#6b7280; font-size:14px; margin:0 0 22px; }
+.cl-danger { background:#fef2f2; border:1px solid #fecaca; border-left:4px solid #ef4444; color:#7f1d1d; padding:16px 18px; border-radius:8px; margin-bottom:22px; font-size:14px; line-height:1.7; }
+.cl-danger b { color:#991b1b; }
+.cl-danger ul { margin: 8px 0 0 22px; padding:0; }
+.cl-field { margin-bottom: 18px; }
+.cl-field label { display:block; font-weight:600; margin-bottom:6px; color:#374151; font-size:14px; }
+.cl-input { width:100%; padding:12px 14px; border:2px solid #fecaca; border-radius:8px; font-size:15px; font-weight:600; text-align:center; letter-spacing:1.5px; color:#991b1b; }
+.cl-input:focus { outline:none; border-color:#ef4444; }
+.cl-btns { display:flex; gap:10px; margin-top: 6px; }
+.btn-clear { background: linear-gradient(135deg,#ef4444,#dc2626); color:#fff; border:none; padding:12px 28px; border-radius:8px; font-size:15px; font-weight:700; cursor:pointer; transition: all 0.2s; }
+.btn-clear:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(239,68,68,0.4); }
+.btn-cancel { padding:12px 28px; border-radius:8px; font-size:15px; font-weight:600; color:#374151; text-decoration:none; border:1px solid #e5e7eb; background:#fff; }
+.btn-cancel:hover { background:#f9fafb; }
+.cl-option { display:flex; gap:12px; align-items:flex-start; padding:16px 18px; background:#fff7ed; border:1px solid #fed7aa; border-left:4px solid #f97316; border-radius:8px; margin-bottom:18px; }
+.cl-option input[type=checkbox] { margin-top:4px; width:18px; height:18px; cursor:pointer; }
+.cl-option label { font-size:14px; color:#7c2d12; line-height:1.6; cursor:pointer; }
+.cl-opt-desc { display:block; margin-top:4px; color:#9a3412; font-size:13px; }
+</style>
+
+<div class="cl-wrap">
+    <h1>🗑️ Bazani tozalash</h1>
+    <p class="sub">Bu amal qaytarib bo'lmaydi. Iltimos diqqat bilan o'qing.</p>
+
+    <div class="cl-danger">
+        <b>⚠️ XAVF — Bu amal qaytarib bo'lmaydi!</b>
+        <ul>
+            <li>Barcha asosiy ma'lumotlar (e'lonlar, kurslar, stipendiyalar, olimpiadalar, jurnallar, adabiyotlar va boshq.) <b>butunlay o'chiriladi</b>.</li>
+            <li>Tozalashdan oldin joriy baza avtomatik <code>db_backups/</code> papkasiga zaxiralanadi.</li>
+            <li>Foydalanuvchilarni o'chirish ixtiyoriy — pastdagi katakcha orqali boshqaring.</li>
+        </ul>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="cl-option">
+            <input type="checkbox" name="delete_users" id="delete_users" value="yes">
+            <label for="delete_users">
+                <b>Oddiy foydalanuvchilarni ham o'chirish</b><br>
+                <span class="cl-opt-desc">
+                    Belgilanmasa — barcha foydalanuvchilar <b>saqlanadi</b>.<br>
+                    Belgilansa — faqat oddiy foydalanuvchilar o'chiriladi.
+                    <b>Adminlar (staff va superuser) har doim saqlanadi</b>.
+                </span>
+            </label>
+        </div>
+
+        <div class="cl-field">
+            <label for="confirm_text">Tasdiqlash uchun quyidagi katakka katta harflar bilan <b>TOZALASH</b> deb yozing:</label>
+            <input type="text" name="confirm_text" id="confirm_text" class="cl-input" placeholder="TOZALASH" autocomplete="off" required>
+        </div>
+
+        <div class="cl-btns">
+            <button type="submit" class="btn-clear" onclick="return confirm('Bazani tozalashni xohlaysizmi? Bu amal qaytarib boʻlmaydi!');">
+                Ha, bazani tozalash
+            </button>
+            <a href="{% url 'admin:index' %}" class="btn-cancel">Bekor qilish</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

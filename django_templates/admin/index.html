@@ -1,0 +1,114 @@
+{% extends "admin/index.html" %}
+{% load i18n static %}
+
+{% block content %}
+<style>
+.db-panel {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    width: 100%;
+    box-sizing: border-box;
+}
+.db-panel h2 {
+    margin: 0 0 8px;
+    font-size: 19px;
+    color: #111827 !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+}
+.db-panel .db-subtitle {
+    font-size: 14px;
+    color: #4b5563 !important;
+    margin: 0 0 20px;
+    line-height: 1.55;
+}
+.db-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+.db-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none !important;
+    color: #ffffff !important;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    line-height: 1.2;
+}
+.db-btn,
+.db-btn:link,
+.db-btn:visited,
+.db-btn:hover,
+.db-btn:focus,
+.db-btn:active {
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+.db-btn span,
+.db-btn .db-icon {
+    color: #ffffff !important;
+}
+.db-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    color: #ffffff !important;
+}
+.db-btn-stats    { background: linear-gradient(135deg,#8b5cf6,#d946ef) !important; }
+.db-btn-download { background: linear-gradient(135deg,#10b981,#059669) !important; }
+.db-btn-upload   { background: linear-gradient(135deg,#3b82f6,#2563eb) !important; }
+.db-btn-clear    { background: linear-gradient(135deg,#ef4444,#dc2626) !important; }
+.db-btn-olymp    { background: linear-gradient(135deg,#f59e0b,#d97706) !important; }
+.db-btn-olymp-excel { background: linear-gradient(135deg,#0ea5e9,#0284c7) !important; }
+.db-icon { font-size: 17px; color: #ffffff !important; }
+</style>
+
+<div class="db-panel">
+    <h2><span class="db-icon">📊</span> Statistika va baza boshqaruvi</h2>
+    <p class="db-subtitle">Toʻliq statistika, chartlar, Excel hisobot va SQLite baza ustida amallar.</p>
+    <div class="db-actions">
+        <a href="{% url 'admin:statistics' %}" class="db-btn db-btn-stats">
+            <span class="db-icon">📊</span> Statistika
+        </a>
+        <a href="{% url 'admin:db_download' %}" class="db-btn db-btn-download">
+            <span class="db-icon">⬇️</span> Bazani yuklab olish
+        </a>
+        <a href="{% url 'admin:db_upload' %}" class="db-btn db-btn-upload">
+            <span class="db-icon">⬆️</span> Baza yuklash
+        </a>
+        <a href="{% url 'admin:db_clear' %}" class="db-btn db-btn-clear">
+            <span class="db-icon">🗑️</span> Bazani tozalash
+        </a>
+    </div>
+</div>
+
+<div class="db-panel">
+    <h2><span class="db-icon">🏆</span> Olimpiada arizalari</h2>
+    <p class="db-subtitle">Iqtidor Yo'li sahifasi orqali yuborilgan olimpiada arizalarini ko'rish va Excel formatda yuklab olish.</p>
+    <div class="db-actions">
+        <a href="{% url 'admin:main_olympiadapplication_changelist' %}" class="db-btn db-btn-olymp">
+            <span class="db-icon">📋</span> Arizalarni ko'rish
+        </a>
+        <a href="{% url 'admin:olympiad_applications_excel' %}" class="db-btn db-btn-olymp-excel">
+            <span class="db-icon">📊</span> Barchasini Excel
+        </a>
+        <a href="{% url 'admin:main_olympiadprogram_changelist' %}" class="db-btn db-btn-stats">
+            <span class="db-icon">⚙️</span> Olimpiada dasturlari
+        </a>
+    </div>
+</div>
+
+{{ block.super }}
+{% endblock %}

@@ -16,20 +16,42 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
+# .env faylini yuklash (GitHub/production uchun maxfiy kalitlar shu yerda)
+_env_path = BASE_DIR / '.env'
+if _env_path.exists():
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(_env_path)
+    except ImportError:
+        pass
+
+
+def _env_bool(name, default=False):
+    return os.environ.get(name, str(default)).lower() in ('1', 'true', 'yes', 'on')
+
+
+def _env_list(name, default=''):
+    raw = os.environ.get(name, default)
+    return [x.strip() for x in raw.split(',') if x.strip()]
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-s*(=&6ozvgz8u#vfddf6perq!v1#mz3x0z8557b$$5=xb(+r8d'
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-dev-only-change-before-production',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = _env_bool('DEBUG', True)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = _env_list('ALLOWED_HOSTS', '127.0.0.1,localhost,*')
 
 # CSRF settings
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']
-CSRF_COOKIE_SECURE = False
+CSRF_TRUSTED_ORIGINS = _env_list(
+    'CSRF_TRUSTED_ORIGINS',
+    'http://127.0.0.1:8000,http://localhost:8000',
+)
+CSRF_COOKIE_SECURE = _env_bool('CSRF_COOKIE_SECURE', False)
 CSRF_COOKIE_HTTPONLY = False
 
 
@@ -48,6 +70,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,28 +103,24 @@ WSGI_APPLICATION = 'xalikova_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "yoshtaqq_yoshtadqiqotchiDb",
-        "USER": "yoshtaqq_xalikova",
-        "PASSWORD": "Umida_3087",
-        "HOST": "localhost",
-        "PORT": "5432",
-        "OPTIONS": {"sslmode": "require"},
+if os.environ.get('DB_ENGINE') == 'postgresql':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', ''),
+            'USER': os.environ.get('DB_USER', ''),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+        }
     }
-}
-
-
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -137,11 +156,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+if DEBUG:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+else:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Custom User Model
 AUTH_USER_MODEL = 'main.User'
@@ -302,3 +325,25 @@ JAZZMIN_UI_TWEAKS = {
     # Admin logo o'lchami
     "custom_css": "admin/custom_admin.css",
 }
+
+# Email sozlamalari (.env dan olinadi — GitHubga parol yuborilmaydi)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = _env_bool('EMAIL_USE_TLS', True)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'noreply@localhost')
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', DEFAULT_FROM_EMAIL)
+
+# RapidAPI — Tadqiqotchi AI chatbot
+RAPIDAPI_KEY = os.environ.get('RAPIDAPI_KEY', '')
+CHAT_API_URL = os.environ.get('CHAT_API_URL', 'https://chatgpt-42.p.rapidapi.com/conversationgpt4-2')
+CHAT_API_HOST = os.environ.get('CHAT_API_HOST', 'chatgpt-42.p.rapidapi.com')
+CHAT_API_TIMEOUT = int(os.environ.get('CHAT_API_TIMEOUT', '30'))
+CHAT_API_RETRIES = int(os.environ.get('CHAT_API_RETRIES', '2'))
+
+# Production qo'shimcha sozlamalar
+SERVE_MEDIA = _env_bool('SERVE_MEDIA', DEBUG)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') if not DEBUG else None
+SESSION_COOKIE_SECURE = _env_bool('SESSION_COOKIE_SECURE', not DEBUG)

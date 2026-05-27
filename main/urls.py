@@ -42,11 +42,22 @@ urlpatterns = [
     path('respublika-konferensiyalar/', views.RespublikaKonferensiyalarView.as_view(), name='respublika_konferensiyalar'),
     path('dissertatsiyalar-banki/', views.DissertatsiyalarBankiView.as_view(), name='dissertatsiyalar_banki'),
     path('maqolalar-banki/', views.MaqolalarBankiView.as_view(), name='maqolalar_banki'),
-    
+    path('adabiyotlar/', views.AdabiyotlarView.as_view(), name='adabiyotlar'),
+
     # Xizmatlar
     path('service/', views.ServiceView.as_view(), name='service'),
     path('maqola-jurnal-tavsiyasi/', views.MaqolaJurnalTavsiyasiView.as_view(), name='maqola_jurnal_tavsiyasi'),
     path('ilmiy-nizomlar/', views.IlmiyNizomlarView.as_view(), name='ilmiy_nizomlar'),
+    path('platforma-haqida/', views.PlatformaHaqidaView.as_view(), name='platforma_haqida'),
+    path('iqtidor-yoli/', views.IqtidorYoliView.as_view(), name='iqtidor_yoli'),
+    path('ilmiy-rahbarlar/', views.IlmiyRahbarlarView.as_view(), name='ilmiy_rahbarlar'),
+    path('ilmiy-rahbarlar/<int:supervisor_id>/murojaat/', views.send_supervisor_request, name='send_supervisor_request'),
+    path('supervisor/decision/<uuid:token>/<str:action>/', views.supervisor_decision, name='supervisor_decision'),
+
+    # Olimpiada dasturi (Iqtidor Yo'li kartochkalari)
+    path('olimpiada/<str:code>/', views.OlympiadProgramDetailView.as_view(), name='olympiad_program'),
+    path('olimpiada/<str:code>/ariza/', views.submit_olympiad_application, name='submit_olympiad_application'),
+    path('volontyor/ariza/', views.submit_volunteer_application, name='submit_volunteer_application'),
     
     # Auth
     path('login/', views.login_view, name='login'),
@@ -62,4 +73,7 @@ urlpatterns = [
     path('assessment-test/', views.assessment_test_view, name='assessment_test'),
     path('assessment-test/start/', views.start_assessment_test, name='start_assessment_test'),
     path('assessment-test/submit/', views.submit_assessment_test, name='submit_assessment_test'),
+
+    # Chatbot
+    path('chat/', views.chat_view, name='chat'),
 ]

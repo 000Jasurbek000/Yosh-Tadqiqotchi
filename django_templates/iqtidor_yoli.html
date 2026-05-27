@@ -1,0 +1,510 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Iqtidor Yo'li - Yosh Tadqiqotchi{% endblock %}
+
+{% block extra_head %}
+<style>
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.scroll-section {
+    opacity: 0;
+    transform: translateY(60px) scale(0.97);
+    transition: opacity 0.9s cubic-bezier(0.4,0,0.2,1), transform 0.9s cubic-bezier(0.4,0,0.2,1);
+}
+.scroll-section.visible { opacity: 1; transform: none; }
+
+.iy-container { max-width: 1200px; margin: 40px auto 80px; padding: 0 24px; }
+
+/* Section block */
+.iy-section {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    box-shadow: 0 10px 40px rgba(139, 92, 246, 0.08);
+    padding: 32px 36px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+}
+.iy-section::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #8b5cf6, #d946ef);
+}
+.iy-section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+.iy-section-number {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #8b5cf6, #d946ef);
+    color: #fff;
+    font-size: 22px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(139,92,246,0.3);
+    flex-shrink: 0;
+}
+.iy-section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1f1b2d;
+    margin: 0;
+    line-height: 1.3;
+}
+
+/* Bo'lim 1 — ilmiy tadqiqot */
+.iy-grid-2 {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+.iy-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.iy-list li {
+    padding: 10px 0;
+    color: #4b4b5a;
+    font-size: 14.5px;
+    line-height: 1.6;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+.iy-list li::before {
+    content: counter(item) ")";
+    counter-increment: item;
+    color: #8b5cf6;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.iy-list { counter-reset: item; }
+
+.iy-helper {
+    color: #555;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0 0 18px;
+}
+.iy-warning,
+.iy-note {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-left: 4px solid #ef4444;
+    color: #991b1b;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+.iy-warning { margin-top: 18px; margin-bottom: 0; }
+.iy-warning b,
+.iy-note b { color: #7f1d1d; }
+.iy-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 26px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff !important;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none !important;
+    box-shadow: 0 10px 24px rgba(59,130,246,0.3);
+    transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    width: 100%;
+}
+.iy-cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(59,130,246,0.4);
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+/* Bo'lim 2 — olimpiada kartochkalari */
+.iy-olympiad-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 22px;
+    margin-top: 22px;
+}
+.iy-olympiad-card {
+    background: #fff;
+    border: 1px solid #e8eaf6;
+    border-radius: 16px;
+    padding: 22px 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    min-height: 180px;
+}
+.iy-olympiad-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px rgba(139,92,246,0.16);
+    border-color: rgba(139,92,246,0.35);
+}
+.iy-olympiad-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+}
+.iy-olympiad-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 26px;
+    flex-shrink: 0;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+}
+.iy-c-1 { background: linear-gradient(135deg, #10b981, #059669); }
+.iy-c-2 { background: linear-gradient(135deg, #f97316, #ea580c); }
+.iy-c-3 { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+.iy-c-4 { background: linear-gradient(135deg, #ec4899, #db2777); }
+.iy-c-5 { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+.iy-c-6 { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+.iy-c-7 { background: linear-gradient(135deg, #f43f5e, #e11d48); }
+.iy-c-8 { background: linear-gradient(135deg, #facc15, #ca8a04); }
+.iy-olympiad-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1f1b2d;
+    line-height: 1.45;
+    margin: 0;
+}
+.iy-olympiad-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: auto;
+}
+.iy-action {
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none !important;
+    transition: all 0.2s;
+    color: #fff !important;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    line-height: 1.3;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+.iy-action:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(0,0,0,0.14); }
+.iy-action-base   { background: #3b82f6; }
+.iy-action-base:hover { background: #2563eb; }
+.iy-action-apply  { background: #f97316; }
+.iy-action-apply:hover { background: #ea580c; }
+
+/* Bo'lim 3 — volontyor */
+.iy-volunteer-wrap {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 28px;
+    align-items: center;
+    margin-top: 14px;
+}
+.iy-volunteer-text .iy-helper { font-size: 14.5px; }
+.iy-volunteer-image {
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+}
+.iy-volunteer-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 16px;
+}
+.iy-volunteer-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+.iy-volunteer-actions .iy-action { flex: 0 1 auto; padding: 13px 28px; font-size: 14px; }
+
+@media (max-width: 880px) {
+    .iy-grid-2 { grid-template-columns: 1fr; }
+    .iy-volunteer-wrap { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <section class="subpage-hero stipendiya-hero scroll-section">
+        <div class="subpage-hero-inner">
+            <div class="subpage-hero-text">
+                <div class="subpage-breadcrumb">
+                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <span>//</span>
+                    <span>Iqtidorli Talabamisiz?</span>
+                    <span>//</span>
+                    <span>Iqtidor Yo'li</span>
+                </div>
+                <h1 class="title subpage-title">Iqtidorli talabani qiziqishiga qarab yo'naltirish</h1>
+                <p class="subtitle subpage-subtitle">
+                    O'zingizga mos yo'nalishni tanlang va imkoniyatlardan foydalaning!
+                </p>
+            </div>
+            <div class="subpage-hero-illustration">
+                <div class="subpage-hero-pill">
+                    <span class="badge" style="margin-bottom: 0;">
+                        <i class="fas fa-star"></i>
+                        <span>Iqtidor Yo'li</span>
+                    </span>
+                </div>
+                <div class="subpage-hero-image-wrapper">
+                    <img src="{% static 'assets/iqtidor_yoli.png' %}" alt="Iqtidor Yo'li" class="subpage-hero-image" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="iy-container">
+
+        <!-- =========== 1. Ilmiy tadqiqot =========== -->
+        <div class="iy-section scroll-section">
+            <div class="iy-section-header">
+                <div class="iy-section-number">1</div>
+                <h2 class="iy-section-title">Ilmiy tadqiqot faoliyati bilan shug'ullanish istagida bo'lgan talabalar uchun</h2>
+            </div>
+
+            <div class="iy-grid-2">
+                <div>
+                    <p class="iy-helper">Agar bu bo'limni tanlasangiz quyidagi imkoniyatlarga ega bo'lasiz:</p>
+                    <ol class="iy-list">
+                        <li>Prezident va nomli davlat stipendiyalari tanlovlariga tayyorlash</li>
+                        <li>Rektor stipendiyasiga tanlovlariga tayyorlash</li>
+                        <li>Fitrat stipendiyasiga tayyorlov</li>
+                        <li>Mutaxassisligiga oid tadqiqotlar olib borish imkoniyati</li>
+                    </ol>
+                </div>
+                <div>
+                    <p class="iy-helper"><strong>Faoliyatni boshlash uchun ilmiy rahbar tanlang:</strong></p>
+                    <a href="{% url 'main:ilmiy_rahbarlar' %}" class="iy-cta-btn">
+                        <i class="fas fa-user-tie"></i> Faoliyatni boshlash uchun ilmiy rahbar tanlang
+                    </a>
+                    <div class="iy-warning">
+                        <b>⚠️ Diqqat! Izoh:</b> Ilmiy rahbar tanlashda o'z mutaxassisligingiz yoki ta'lim
+                        yo'nalishingiz doirasida tanlashingiz maqsadga muvofiq.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========== 2. Fan olimpiadalari =========== -->
+        <div class="iy-section scroll-section">
+            <div class="iy-section-header">
+                <div class="iy-section-number">2</div>
+                <h2 class="iy-section-title">Fan olimpiadalari markaziga a'zo bo'lish</h2>
+            </div>
+
+            <div class="iy-note">
+                <b>Izoh:</b> Agar bu bo'limni tanlasangiz siz xalqaro va respublika darajasidagi fan
+                olimpiadalarida ishtirok etish uchun tayyorlov kurslarida malakangizni oshirasiz va
+                olimpiada jarayonlarida ishtirok etish imkoniyatiga ega bo'lasiz.
+            </div>
+            <p class="iy-helper">
+                <b>Fan olimpiadalari tarmog'idan quyidagi birini o'zingizning ta'lim yo'nalishingiz yoki mutaxassisligingizdan kelib chiqib tanlang!</b>
+            </p>
+
+            <div class="iy-olympiad-grid">
+
+                <!-- 1 -->
+                <div class="iy-olympiad-card">
+                    <div class="iy-olympiad-head">
+                        <div class="iy-olympiad-icon iy-c-1"><i class="fas fa-square-root-variable"></i></div>
+                        <h3 class="iy-olympiad-name">1. Xalqaro matematika fan olimpiadalariga tayyorlov</h3>
+                    </div>
+                    <div class="iy-olympiad-actions">
+                        <a href="{% url 'main:olympiad_program' code='matematika' %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
+                        <a href="{% url 'main:olympiad_program' code='matematika' %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
+                    </div>
+                </div>
+
+                <!-- 2 -->
+                <div class="iy-olympiad-card">
+                    <div class="iy-olympiad-head">
+                        <div class="iy-olympiad-icon iy-c-2"><i class="fas fa-flask"></i></div>
+                        <h3 class="iy-olympiad-name">2. Xalqaro kimyo fan olimpiadalariga tayyorlov</h3>
+                    </div>
+                    <div class="iy-olympiad-actions">
+                        <a href="{% url 'main:olympiad_program' code='kimyo' %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
+                        <a href="{% url 'main:olympiad_program' code='kimyo' %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
+                    </div>
+                </div>
+
+                <!-- 3 -->
+                <div class="iy-olympiad-card">
+                    <div class="iy-olympiad-head">
+                        <div class="iy-olympiad-icon iy-c-3"><i class="fas fa-language"></i></div>
+                        <h3 class="iy-olympiad-name">3. Xalqaro ingliz tili fan olimpiadalariga tayyorlov</h3>
+                    </div>
+                    <div class="iy-olympiad-actions">
+                        <a href="{% url 'main:olympiad_program' code='ingliz_tili' %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
+                        <a href="{% url 'main:olympiad_program' code='ingliz_tili' %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
+                    </div>
+                </div>
+
+                <!-- 4 -->
+                <div class="iy-olympiad-card">
+                    <div class="iy-olympiad-head">
+                        <div class="iy-olympiad-icon iy-c-4"><i class="fas fa-brain"></i></div>
+                        <h3 class="iy-olympiad-name">4. Xalqaro falsafa fan olimpiadasiga tayyorlov</h3>
+                    </div>
+                    <div class="iy-olympiad-actions">
+                        <a href="{% url 'main:olympiad_program' code='falsafa' %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
+                        <a href="{% url 'main:olympiad_program' code='falsafa' %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
+                    </div>
+                </div>
+
+                <!-- 5 -->
+                <div class="iy-olympiad-card">
+                    <div class="iy-olympiad-head">
+                        <div class="iy-olympiad-icon iy-c-5"><i class="fas fa-chart-line"></i></div>
+                        <h3 class="iy-olympiad-name">5. Xalqaro iqtisodiyotga oid fanlar olimpiadasiga tayyorlov</h3>
+                    </div>
+                    <div class="iy-olympiad-actions">
+                        <a href="{% url 'main:olympiad_program' code='iqtisodiyot' %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
+                        <a href="{% url 'main:olympiad_program' code='iqtisodiyot' %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
+                    </div>
+                </div>
+
+                <!-- 6 -->
+                <div class="iy-olympiad-card">
+                    <div class="iy-olympiad-head">
+                        <div class="iy-olympiad-icon iy-c-6"><i class="fas fa-atom"></i></div>
+                        <h3 class="iy-olympiad-name">6. Xalqaro fizika fan olimpiadasiga tayyorlov</h3>
+                    </div>
+                    <div class="iy-olympiad-actions">
+                        <a href="{% url 'main:olympiad_program' code='fizika' %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
+                        <a href="{% url 'main:olympiad_program' code='fizika' %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
+                    </div>
+                </div>
+
+                <!-- 7 -->
+                <div class="iy-olympiad-card">
+                    <div class="iy-olympiad-head">
+                        <div class="iy-olympiad-icon iy-c-7"><i class="fas fa-laptop-code"></i></div>
+                        <h3 class="iy-olympiad-name">7. Xalqaro IT olimpiadalariga tayyorlov</h3>
+                    </div>
+                    <div class="iy-olympiad-actions">
+                        <a href="{% url 'main:olympiad_program' code='it' %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
+                        <a href="{% url 'main:olympiad_program' code='it' %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
+                    </div>
+                </div>
+
+                <!-- 8 -->
+                <div class="iy-olympiad-card">
+                    <div class="iy-olympiad-head">
+                        <div class="iy-olympiad-icon iy-c-8"><i class="fas fa-lightbulb"></i></div>
+                        <h3 class="iy-olympiad-name">8. Xalqaro ilmiy-innovatsion mazmundagi tanlovlarga tayyorlov</h3>
+                    </div>
+                    <div class="iy-olympiad-actions">
+                        <a href="{% url 'main:olympiad_program' code='innovatsiya' %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
+                        <a href="{% url 'main:olympiad_program' code='innovatsiya' %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- =========== 3. Volontyor jamoasi =========== -->
+        <div class="iy-section scroll-section">
+            <div class="iy-section-header">
+                <div class="iy-section-number">3</div>
+                <h2 class="iy-section-title">BuxDU iqtidorli talabalar VOLONTYOR JAMOASI'ga a'zolik</h2>
+            </div>
+
+            <div class="iy-volunteer-wrap">
+                <div class="iy-volunteer-text">
+                    <div class="iy-note">
+                        <b>Izoh:</b> Volontyorlar jamoasiga a'zo bo'lish uchun asosiy shartlar —
+                        ingliz tili yoki rus tilini mukammal bilish va Buxoro davlat universitetida
+                        tahsil olayotgan davrda bo'lishingiz shart.
+                    </div>
+
+                    <div class="iy-volunteer-actions">
+                        {% if volunteer_application %}
+                            <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:12px;padding:16px 20px;max-width:420px;">
+                                <p style="margin:0 0 8px;font-weight:700;color:#4338ca;">
+                                    <i class="fas fa-check-circle"></i> Arizangiz yuborilgan
+                                </p>
+                                <p style="margin:0 0 6px;font-size:13.5px;color:#4b5563;">
+                                    Volontyor jamoasiga arizangiz holati:
+                                </p>
+                                {% if volunteer_application.status == 'new' %}
+                                    <span style="display:inline-block;background:#dbeafe;color:#1e40af;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">Yangi</span>
+                                {% elif volunteer_application.status == 'reviewed' %}
+                                    <span style="display:inline-block;background:#fef3c7;color:#92400e;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">Ko'rib chiqildi</span>
+                                {% elif volunteer_application.status == 'approved' %}
+                                    <span style="display:inline-block;background:#d1fae5;color:#065f46;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">Tasdiqlandi</span>
+                                {% else %}
+                                    <span style="display:inline-block;background:#fee2e2;color:#991b1b;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">Rad etildi</span>
+                                {% endif %}
+                                <p style="margin:8px 0 0;font-size:12px;color:#6b7280;">
+                                    Yuborilgan: {{ volunteer_application.created_at|date:"d.m.Y H:i" }}
+                                </p>
+                            </div>
+                            {% if volunteer_application.status == 'rejected' %}
+                            <form method="post" action="{% url 'main:submit_volunteer_application' %}" style="margin-top:12px;"
+                                  onsubmit="return confirm('Volontyor jamoasiga qayta ariza yuborilsinmi?');">
+                                {% csrf_token %}
+                                <button type="submit" class="iy-action iy-action-apply">
+                                    <i class="fas fa-redo"></i> Qayta ariza yuborish
+                                </button>
+                            </form>
+                            {% endif %}
+                        {% else %}
+                            <form method="post" action="{% url 'main:submit_volunteer_application' %}"
+                                  onsubmit="return confirm('Volontyor jamoasiga ariza yuborilsinmi?');">
+                                {% csrf_token %}
+                                <button type="submit" class="iy-action iy-action-apply">
+                                    <i class="fas fa-envelope-open-text"></i> A'zo bo'lish uchun murojaat
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="iy-volunteer-image">
+                    <img src="{% static 'assets/volunteer_team.png' %}" alt="Volontyor jamoasi" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.12, rootMargin: '0px 0px -80px 0px' });
+    document.querySelectorAll('.scroll-section').forEach(el => observer.observe(el));
+})();
+</script>
+{% endblock %}

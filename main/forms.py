@@ -1,6 +1,7 @@
+import os
+import json
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-import requests
 from .models import (
     User, Question, Answer, Course, Module, Announcement, 
     Survey, StateScholarship, BuxduScholarship, Olympiad, 
@@ -9,27 +10,22 @@ from .models import (
 
 
 def get_university_choices():
-    """API dan OTMlar ro'yxatini olish"""
+    """universities.json faylidan OTMlar ro'yxatini olish"""
     try:
-        response = requests.get('https://prof-emis.edu.uz/api/v2/integration/stat/public/university?limit=10000', timeout=5)
-        if response.status_code == 200:
-            data = response.json()
-            universities = [('', 'O\'qigan/O\'qiyotgan joyingizni tanlang')]
-            
-            # API to'g'ridan-to'g'ri list qaytaradi
-            if isinstance(data, list):
-                for item in data:
-                    # name_uz, name_en, name_ru kalitlaridan birini olish
-                    name = item.get('name_uz') or item.get('name_en') or item.get('name_ru')
-                    if name:
-                        universities.append((name, name))
-            
-            universities.append(('Boshqa', 'Boshqa'))
-            return universities
+        json_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'xalikova_project', 'universities.json')
+        with open(json_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        universities = [('', 'O\'qigan/O\'qiyotgan joyingizni tanlang')]
+        for item in data:
+            name = item.get('name')
+            if name:
+                universities.append((name, name))
+        universities.append(('Boshqa', 'Boshqa'))
+        return universities
     except Exception as e:
-        print(f"API dan OTM ma'lumotlarini olishda xatolik: {e}")
+        print(f"universities.json dan ma'lumotlarini olishda xatolik: {e}")
     
-    # Agar API ishlamasa, default ro'yxat
+    # Agar fayl o'qilmasa, default ro'yxat
     return [
         ('', 'O\'qigan/O\'qiyotgan joyingizni tanlang'),
         ('Toshkent davlat universiteti', 'Toshkent davlat universiteti'),
@@ -39,6 +35,18 @@ def get_university_choices():
         ('Boshqa', 'Boshqa'),
     ]
 
+
+BUXDU_FACULTIES = [
+    'Fizika-matematika va axborot texnologiyalari',
+    'Filologiya',
+    'Xorijiy tillar',
+    'Tarix va Yuridik',
+    "Sport va san'at",
+    'Iqtisodiyot va turizm',
+    'Tabiiy fanlar va agrobiotexnologiya',
+]
+
+FACULTY_CHOICES = BUXDU_FACULTIES  # JS uchun ishlatiladi
 
 REGION_CHOICES = [
     ('', 'Yashash xududingizni tanlang'),
@@ -79,30 +87,36 @@ class UserRegisterForm(UserCreationForm):
         'class': 'form-input',
         'placeholder': 'Familiyangiz'
     }))
-    phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={
+    phone_number = forms.CharField(max_length=20, required=True, widget=forms.TextInput(attrs={
         'class': 'form-input',
         'placeholder': '+998 XX XXX XX XX',
         'id': 'phone_number'
     }))
-    residence_region = forms.ChoiceField(choices=REGION_CHOICES, required=False, widget=forms.Select(attrs={
+    residence_region = forms.ChoiceField(choices=REGION_CHOICES, required=True, widget=forms.Select(attrs={
         'class': 'form-input',
     }))
-    university = forms.ChoiceField(choices=[], required=False, widget=forms.Select(attrs={
+    university = forms.ChoiceField(choices=[], required=True, widget=forms.Select(attrs={
         'class': 'form-input',
+        'id': 'id_university',
     }))
-    academic_degree = forms.ChoiceField(choices=DEGREE_CHOICES, required=False, widget=forms.Select(attrs={
+    faculty = forms.CharField(max_length=200, required=False, widget=forms.TextInput(attrs={
+        'class': 'form-input',
+        'id': 'id_faculty',
+        'placeholder': 'Fakultetingizni kiriting yoki tanlang',
+        'list': 'buxdu-faculties-list',
+        'autocomplete': 'off',
+    }))
+    academic_degree = forms.ChoiceField(choices=DEGREE_CHOICES, required=True, widget=forms.Select(attrs={
         'class': 'form-input',
     }))
 
     class Meta:
         model = User
-        fields = ['email', 'first_name', 'last_name', 'phone_number', 'residence_region', 'university', 'academic_degree', 'password1', 'password2']
+        fields = ['email', 'first_name', 'last_name', 'phone_number', 'residence_region', 'university', 'faculty', 'academic_degree', 'password1', 'password2']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Dinamik OTM choices
         self.fields['university'].choices = get_university_choices()
-        
         self.fields['password1'].widget.attrs.update({
             'class': 'form-input',
             'placeholder': 'Parol'
@@ -111,6 +125,30 @@ class UserRegisterForm(UserCreationForm):
             'class': 'form-input',
             'placeholder': 'Parolni tasdiqlang'
         })
+
+    def clean(self):
+        cleaned_data = super().clean()
+        university = cleaned_data.get('university')
+        faculty = cleaned_data.get('faculty')
+        residence_region = cleaned_data.get('residence_region')
+
+        if not residence_region or residence_region == '':
+            self.add_error('residence_region', 'Yashash xududi majburiy.')
+
+        if not university or university == '':
+            self.add_error('university', 'O\'qigan/O\'qiyotgan joyni tanlash majburiy.')
+
+        if university == 'Buxoro davlat universiteti' and (not faculty or faculty == ''):
+            self.add_error('faculty', 'BuxDU tanlanganda fakultetni tanlash majburiy.')
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.faculty = self.cleaned_data.get('faculty', '')
+        if commit:
+            user.save()
+        return user
 
 
 class UserLoginForm(AuthenticationForm):
@@ -134,6 +172,14 @@ class UserUpdateForm(forms.ModelForm):
     }))
     university = forms.ChoiceField(choices=[], required=False, widget=forms.Select(attrs={
         'class': 'form-input',
+        'id': 'id_university',
+    }))
+    faculty = forms.CharField(max_length=200, required=False, widget=forms.TextInput(attrs={
+        'class': 'form-input',
+        'id': 'id_faculty',
+        'placeholder': 'Fakultetingizni kiriting yoki tanlang',
+        'list': 'buxdu-faculties-list',
+        'autocomplete': 'off',
     }))
     academic_degree = forms.ChoiceField(choices=DEGREE_CHOICES, required=False, widget=forms.Select(attrs={
         'class': 'form-input',
@@ -145,7 +191,7 @@ class UserUpdateForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'phone_number', 'residence_region', 'university', 'academic_degree', 'profile_image']
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'residence_region', 'university', 'faculty', 'academic_degree', 'profile_image']
         widgets = {
             'first_name': forms.TextInput(attrs={
                 'class': 'form-input',
@@ -161,10 +207,9 @@ class UserUpdateForm(forms.ModelForm):
                 'id': 'phone_number'
             }),
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Dinamik OTM choices
         self.fields['university'].choices = get_university_choices()
 
 

@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
+from django.urls import path
 from .models import (
     User, Announcement, Course, Survey, TalentedStudentDatabase,
     StateScholarship, BuxduScholarship, BuxduWinnerDatabase,
@@ -9,8 +10,35 @@ from .models import (
     Conference, DissertationBank, ArticleBank, ResearcherRegulation,
     Module, Question, Answer, UserCourseProgress,
     UserModuleProgress, UserTestResult, Certificate, TestSet,
-    AssessmentTest, AssessmentTestResult
+    AssessmentTest, AssessmentTestResult, Literature, ScientificSupervisor,
+    SupervisorRequest, OlympiadProgram, OlympiadApplication
 )
+from . import admin_db
+from . import admin_stats
+from .utils_display import format_assessment_status
+
+
+# Admin URL larga "Baza boshqaruvi" va "Statistika" sahifalarini qo'shamiz
+_original_get_urls = admin.site.get_urls
+
+
+def _custom_get_urls():
+    from . import admin_olympiad
+    custom_urls = [
+        path('database/download/', admin.site.admin_view(admin_db.download_db), name='db_download'),
+        path('database/upload/',   admin.site.admin_view(admin_db.upload_db),   name='db_upload'),
+        path('database/clear/',    admin.site.admin_view(admin_db.clear_db),    name='db_clear'),
+        path('statistics/',         admin.site.admin_view(admin_stats.statistics_view),  name='statistics'),
+        path('statistics/excel/',   admin.site.admin_view(admin_stats.statistics_excel), name='statistics_excel'),
+        path('olympiad-applications/excel/', admin.site.admin_view(admin_olympiad.olympiad_applications_excel), name='olympiad_applications_excel'),
+    ]
+    return custom_urls + _original_get_urls()
+
+
+admin.site.get_urls = _custom_get_urls
+admin.site.site_header = "Yosh Tadqiqotchi — Admin panel"
+admin.site.site_title = "Yosh Tadqiqotchi"
+admin.site.index_title = "Boshqaruv paneli"
 
 
 @admin.register(User)
@@ -338,3 +366,233 @@ class AssessmentTestResultAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
+
+@admin.register(Literature)
+class LiteratureAdmin(admin.ModelAdmin):
+    list_display = ('title', 'author', 'field', 'has_file', 'has_url', 'cover_preview', 'created_at')
+    list_filter = ('field', 'created_at')
+    search_fields = ('title', 'author', 'description')
+    readonly_fields = ('cover_preview', 'created_at', 'updated_at')
+    fieldsets = (
+        ('Asosiy ma\'lumotlar', {
+            'fields': ('title', 'author', 'field', 'description')
+        }),
+        ('Manba', {
+            'fields': ('file', 'url'),
+            'description': 'Fayl yoki Internet manzilidan birini kiriting.'
+        }),
+        ('Muqova rasmi', {
+            'fields': ('cover_image', 'cover_preview')
+        }),
+        ('Vaqt', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+    def cover_preview(self, obj):
+        if obj.cover_image:
+            return format_html('<img src="{}" style="height:60px;border-radius:4px;">', obj.cover_image.url)
+        return '—'
+    cover_preview.short_description = 'Muqova'
+
+    def has_file(self, obj):
+        return bool(obj.file)
+    has_file.boolean = True
+    has_file.short_description = 'Fayl'
+
+    def has_url(self, obj):
+        return bool(obj.url)
+    has_url.boolean = True
+    has_url.short_description = 'URL'
+
+
+@admin.register(ScientificSupervisor)
+class ScientificSupervisorAdmin(admin.ModelAdmin):
+    list_display = ('order', 'full_name', 'position', 'specialty', 'phone', 'email',
+                    'photo_preview', 'capacity_display', 'is_active')
+    list_filter = ('is_active',)
+    search_fields = ('full_name', 'position', 'specialty', 'email', 'phone')
+    list_editable = ('is_active',)
+    readonly_fields = ('photo_preview', 'created_at', 'capacity_display')
+    fieldsets = (
+        ('Asosiy ma\'lumotlar', {
+            'fields': ('full_name', 'position', 'specialty', 'photo', 'photo_preview')
+        }),
+        ('Aloqa', {
+            'fields': ('phone', 'email')
+        }),
+        ('Sig\'im (talabalar soni)', {
+            'fields': ('max_students', 'capacity_display'),
+            'description': 'Bu rahbar qabul qila oladigan eng ko\'p talabalar soni.'
+        }),
+        ('Sozlamalar', {
+            'fields': ('order', 'is_active', 'created_at')
+        }),
+    )
+
+    def photo_preview(self, obj):
+        if obj.photo:
+            return format_html('<img src="{}" style="height:60px;border-radius:50%;">', obj.photo.url)
+        return '—'
+    photo_preview.short_description = 'Rasm'
+
+    def capacity_display(self, obj):
+        if not obj.pk:
+            return '—'
+        accepted = obj.accepted_count
+        total = obj.max_students
+        color = '#10b981' if accepted < total else '#ef4444'
+        return format_html(
+            '<span style="color:{};font-weight:700;">{}/{}</span>',
+            color, accepted, total
+        )
+    capacity_display.short_description = 'Qabul qilingan / Maks.'
+
+
+@admin.register(SupervisorRequest)
+class SupervisorRequestAdmin(admin.ModelAdmin):
+    list_display = ('id', 'student', 'supervisor', 'status_badge', 'created_at', 'decided_at')
+    list_filter = ('status', 'supervisor', 'created_at')
+    search_fields = ('student__email', 'student__first_name', 'student__last_name',
+                     'supervisor__full_name')
+    readonly_fields = ('token', 'created_at', 'decided_at')
+    date_hierarchy = 'created_at'
+    fields = ('student', 'supervisor', 'status', 'decision_reason',
+              'token', 'created_at', 'decided_at')
+
+    def status_badge(self, obj):
+        colors = {'pending': '#f59e0b', 'accepted': '#10b981', 'rejected': '#ef4444'}
+        return format_html(
+            '<span style="background:{};color:#fff;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;">{}</span>',
+            colors.get(obj.status, '#6b7280'), obj.get_status_display()
+        )
+    status_badge.short_description = 'Holat'
+
+
+# ───────────────────────────── Olimpiada dasturi ─────────────────────────────
+@admin.register(OlympiadProgram)
+class OlympiadProgramAdmin(admin.ModelAdmin):
+    list_display = ('code', 'title', 'applications_count', 'has_task_file', 'is_active', 'updated_at')
+    list_filter  = ('is_active', 'code')
+    search_fields = ('title', 'short_intro', 'required_skills', 'knowledge_areas')
+    list_editable = ('is_active',)
+    readonly_fields = ('created_at', 'updated_at', 'applications_count')
+    fieldsets = (
+        ('Asosiy ma\'lumotlar', {
+            'fields': ('code', 'title', 'short_intro', 'is_active')
+        }),
+        ('Talab va ko\'nikmalar', {
+            'fields': ('required_skills', 'knowledge_areas', 'self_check_text'),
+            'description': 'Bu olimpiadaga arizachilar uchun kerakli bilim va ko\'nikmalar'
+        }),
+        ('Topshiriqlar fayli', {
+            'fields': ('task_file',),
+            'description': 'PDF, Word yoki boshqa formatdagi topshiriqlar to\'plamini yuklang'
+        }),
+        ('Qo\'shimcha', {
+            'fields': ('additional_info', 'applications_count', 'created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+    def applications_count(self, obj):
+        if not obj.pk:
+            return 0
+        return obj.applications.count()
+    applications_count.short_description = 'Arizalar soni'
+
+    def has_task_file(self, obj):
+        return bool(obj.task_file)
+    has_task_file.boolean = True
+    has_task_file.short_description = 'Fayl bor'
+
+
+# ───────────────────────────── Olimpiada arizalari ─────────────────────────────
+@admin.register(OlympiadApplication)
+class OlympiadApplicationAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user_info', 'application_target', 'application_type', 'status_badge', 'created_at')
+    list_filter  = ('status', 'application_type', 'olympiad', 'created_at')
+    search_fields = ('user__email', 'user__first_name', 'user__last_name',
+                     'user__phone_number', 'olympiad__title', 'motivation')
+    readonly_fields = ('user', 'application_type', 'olympiad', 'motivation', 'created_at', 'updated_at',
+                       'user_full_info')
+    date_hierarchy = 'created_at'
+    list_editable = ('status_badge',) if False else ()
+    actions = ['mark_reviewed', 'mark_approved', 'mark_rejected', 'export_to_excel']
+    change_list_template = 'admin/main/olympiadapplication/change_list.html'
+
+    fieldsets = (
+        ('Foydalanuvchi ma\'lumotlari', {
+            'fields': ('user_full_info',)
+        }),
+        ('Ariza ma\'lumotlari', {
+            'fields': ('user', 'application_type', 'olympiad', 'motivation', 'created_at', 'updated_at')
+        }),
+        ('Admin qarori', {
+            'fields': ('status', 'admin_note')
+        }),
+    )
+
+    def application_target(self, obj):
+        return obj.display_title
+    application_target.short_description = 'Olimpiada'
+
+    def user_info(self, obj):
+        u = obj.user
+        full_name = (u.get_full_name() or u.username).strip()
+        return format_html(
+            '<div><strong>{}</strong><br><small style="color:#6b7280;">{}</small></div>',
+            full_name, u.email or u.phone_number or '—'
+        )
+    user_info.short_description = 'Foydalanuvchi'
+
+    def user_full_info(self, obj):
+        if not obj.pk:
+            return '—'
+        u = obj.user
+        html = f"""
+        <div style="background:#f9fafb;padding:14px 18px;border-radius:8px;border:1px solid #e5e7eb;">
+            <table style="width:100%;border-collapse:collapse;">
+                <tr><td style="padding:4px 8px;color:#6b7280;width:200px;">F.I.O</td><td style="padding:4px 8px;"><strong>{u.get_full_name() or '—'}</strong></td></tr>
+                <tr><td style="padding:4px 8px;color:#6b7280;">Email</td><td style="padding:4px 8px;">{u.email or '—'}</td></tr>
+                <tr><td style="padding:4px 8px;color:#6b7280;">Telefon</td><td style="padding:4px 8px;">{u.phone_number or '—'}</td></tr>
+                <tr><td style="padding:4px 8px;color:#6b7280;">Universitet</td><td style="padding:4px 8px;">{u.university or '—'}</td></tr>
+                <tr><td style="padding:4px 8px;color:#6b7280;">Fakultet</td><td style="padding:4px 8px;">{getattr(u, 'faculty', '') or '—'}</td></tr>
+                <tr><td style="padding:4px 8px;color:#6b7280;">Daraja</td><td style="padding:4px 8px;">{u.get_academic_degree_display() if u.academic_degree else '—'}</td></tr>
+                <tr><td style="padding:4px 8px;color:#6b7280;">Talantli status</td><td style="padding:4px 8px;">{format_assessment_status(u)}</td></tr>
+            </table>
+        </div>
+        """
+        return mark_safe(html)
+    user_full_info.short_description = 'Foydalanuvchi to\'liq ma\'lumoti'
+
+    def status_badge(self, obj):
+        colors = {
+            'new': '#3b82f6',
+            'reviewed': '#f59e0b',
+            'approved': '#10b981',
+            'rejected': '#ef4444',
+        }
+        return format_html(
+            '<span style="background:{};color:#fff;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;">{}</span>',
+            colors.get(obj.status, '#6b7280'), obj.get_status_display()
+        )
+    status_badge.short_description = 'Holat'
+
+    @admin.action(description='Belgilangan arizalarni "Ko\'rib chiqildi" qilish')
+    def mark_reviewed(self, request, queryset):
+        queryset.update(status='reviewed')
+
+    @admin.action(description='Belgilangan arizalarni "Tasdiqlash"')
+    def mark_approved(self, request, queryset):
+        queryset.update(status='approved')
+
+    @admin.action(description='Belgilangan arizalarni "Rad etish"')
+    def mark_rejected(self, request, queryset):
+        queryset.update(status='rejected')
+
+    @admin.action(description='Excel formatda yuklab olish')
+    def export_to_excel(self, request, queryset):
+        from .admin_olympiad import generate_applications_excel
+        return generate_applications_excel(queryset)

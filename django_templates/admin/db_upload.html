@@ -1,0 +1,68 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}Bazani yuklash | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; Baza yuklash
+</div>
+{% endblock %}
+
+{% block content %}
+<style>
+.up-wrap { max-width: 720px; margin: 20px auto; background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:28px 32px; }
+.up-wrap h1 { margin: 0 0 6px; font-size:22px; color:#1f1b2d; }
+.up-wrap .sub { color:#6b7280; font-size:14px; margin:0 0 22px; }
+.up-warn { background:#fff7ed; border:1px solid #fed7aa; border-left:4px solid #f97316; color:#9a3412; padding:14px 18px; border-radius:8px; margin-bottom:20px; font-size:14px; line-height:1.6; }
+.up-warn b { color:#7c2d12; }
+.up-field { margin-bottom: 18px; }
+.up-field label { display:block; font-weight:600; margin-bottom:6px; color:#374151; font-size:14px; }
+.up-file { display:block; width:100%; padding:10px 12px; border:2px dashed #c7d2fe; border-radius:8px; background:#f5f7ff; font-size:14px; cursor:pointer; }
+.up-confirm { display:flex; align-items:flex-start; gap:10px; padding:14px; background:#f3f4f6; border-radius:8px; margin-bottom:22px; }
+.up-confirm input { margin-top:3px; }
+.up-confirm label { font-size:14px; color:#374151; line-height:1.6; cursor:pointer; }
+.up-btns { display:flex; gap:10px; }
+.btn-submit { background: linear-gradient(135deg,#3b82f6,#2563eb); color:#fff; border:none; padding:11px 26px; border-radius:8px; font-size:15px; font-weight:600; cursor:pointer; transition: all 0.2s; }
+.btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(59,130,246,0.3); }
+.btn-cancel { padding:11px 26px; border-radius:8px; font-size:15px; font-weight:600; color:#6b7280; text-decoration:none; border:1px solid #e5e7eb; background:#fff; }
+.btn-cancel:hover { background:#f9fafb; }
+</style>
+
+<div class="up-wrap">
+    <h1>⬆️ Baza yuklash (Upload)</h1>
+    <p class="sub">Oflayn to'ldirgan SQLite bazangizni serverga yuklang.</p>
+
+    <div class="up-warn">
+        <b>ℹ️ Diqqat!</b><br>
+        • Yuklangan bazadagi ma'lumotlar joriy bazaga <b>import qilinadi</b>.<br>
+        • <b>Foydalanuvchilar (sayt foydalanuvchilari va adminlar) o'zgarmaydi</b> — joriy baza foydalanuvchilari saqlanadi.<br>
+        • Boshqa jadvallar (e'lonlar, kurslar, stipendiyalar va h.k.) yuklangan ma'lumotlar bilan almashtiriladi.<br>
+        • Avvalgi baza avtomatik <code>db_backups/</code> papkasiga zaxiralanadi.<br>
+        • Faqat <code>.sqlite3</code> formatdagi fayl qabul qilinadi.
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="up-field">
+            <label for="database_file">SQLite fayl tanlang:</label>
+            <input type="file" name="database_file" id="database_file" accept=".sqlite3,.db,.sqlite" class="up-file" required>
+        </div>
+
+        <div class="up-confirm">
+            <input type="checkbox" name="confirm" id="confirm" value="yes" required>
+            <label for="confirm">
+                Men joriy bazadagi ma'lumotlar (foydalanuvchilardan tashqari) <b>almashtirilishi</b>ga
+                roziman va avval ma'lumotlarni yuklab olib zaxiraladim.
+            </label>
+        </div>
+
+        <div class="up-btns">
+            <button type="submit" class="btn-submit">Yuklash va import qilish</button>
+            <a href="{% url 'admin:index' %}" class="btn-cancel">Bekor qilish</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

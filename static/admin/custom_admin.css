@@ -12,13 +12,11 @@
     font-size: 1.5rem !important;
 }
 
-/* Login sahifasida logo */
 .login-box .login-logo img {
     max-height: 80px !important;
     max-width: 200px !important;
 }
 
-/* Sidebar logo */
 .brand-link {
     padding: 0.5rem !important;
 }
@@ -33,8 +31,116 @@
     width: auto;
 }
 
-/* Admin panel asosiy logo */
 .main-header .navbar-brand img {
     max-height: 40px !important;
     width: auto !important;
+}
+
+/* ===== Maxsus admin panellar — to'liq kenglik va o'qiladigan ranglar ===== */
+
+/* Jazzmin kontent maydonini toraytirmaslik */
+.content-wrapper > .content,
+.content-wrapper > .content-header {
+    max-width: none !important;
+}
+
+/* Baza boshqaruvi va olimpiada panellari */
+.db-panel {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.db-panel h2,
+.db-panel .db-subtitle {
+    color: #1f2937 !important;
+}
+
+.db-panel .db-subtitle {
+    color: #4b5563 !important;
+}
+
+/* Jazzmin `a` rangini override — tugmalarda oq matn */
+.db-panel .db-btn,
+.db-panel .db-btn:link,
+.db-panel .db-btn:visited,
+.db-panel .db-btn:hover,
+.db-panel .db-btn:focus,
+.db-panel .db-btn:active {
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+.db-panel .db-btn span,
+.db-panel .db-btn .db-icon {
+    color: #ffffff !important;
+}
+
+/* Statistika sahifasi — to'liq kenglik */
+.stats-page .content-wrapper > .content {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+}
+
+.stats-wrap {
+    width: 100%;
+    max-width: none !important;
+    margin: 0 0 32px !important;
+    padding: 0 4px 8px !important;
+    box-sizing: border-box;
+}
+
+.stats-wrap .stats-header h1,
+.stats-wrap .stats-header .meta {
+    color: #ffffff !important;
+}
+
+.stats-wrap .stats-header .meta {
+    opacity: 0.95 !important;
+}
+
+.stats-wrap .btn-excel,
+.stats-wrap .btn-excel:link,
+.stats-wrap .btn-excel:visited,
+.stats-wrap .btn-excel:hover {
+    color: #7c3aed !important;
+    background: #ffffff !important;
+}
+
+.stats-wrap .kpi-label {
+    color: #374151 !important;
+}
+
+.stats-wrap .kpi-value {
+    color: #111827 !important;
+}
+
+.stats-wrap .kpi-sub {
+    color: #4b5563 !important;
+}
+
+.stats-wrap .chart-block h3,
+.stats-wrap .data-table-block h3 {
+    color: #111827 !important;
+}
+
+.stats-wrap .data-table th {
+    color: #374151 !important;
+}
+
+.stats-wrap .data-table td {
+    color: #1f2937 !important;
+}
+
+.stats-wrap .data-table td.num {
+    color: #7c3aed !important;
+}
+
+/* Breadcrumbs o'qilishi */
+.breadcrumbs,
+.breadcrumbs a {
+    color: #374151 !important;
+}
+
+.breadcrumbs a:hover {
+    color: #7c3aed !important;
 }

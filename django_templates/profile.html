@@ -121,27 +121,43 @@
     
     .profile-info-list {
         list-style: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
     }
-    
+
     .profile-info-item {
         display: flex;
-        justify-content: space-between;
-        padding: 12px 0;
-        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        flex-direction: column;
+        gap: 4px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background: rgba(148, 163, 184, 0.05);
+        border: 1px solid rgba(148, 163, 184, 0.08);
+        transition: background 0.2s;
     }
-    
-    .profile-info-item:last-child {
-        border-bottom: none;
+
+    .profile-info-item:hover {
+        background: rgba(148, 163, 184, 0.1);
     }
-    
+
+    .profile-info-item.full-width {
+        grid-column: 1 / -1;
+    }
+
     .info-label {
         color: var(--text-secondary);
-        font-size: 14px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
-    
+
     .info-value {
         color: var(--text-primary);
-        font-weight: 500;
+        font-weight: 600;
+        font-size: 15px;
+        line-height: 1.4;
     }
     
     .empty-state {
@@ -184,6 +200,14 @@
         
         .profile-grid {
             grid-template-columns: 1fr;
+        }
+
+        .profile-info-list {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-info-item.full-width {
+            grid-column: 1;
         }
     }
 </style>
@@ -234,6 +258,14 @@
                     {{ user.university }}
                 </span>
                 {% endif %}
+                {% if user.faculty %}
+                <span class="profile-badge" style="background: rgba(20, 184, 166, 0.1); color: #14b8a6; border: 1px solid rgba(20, 184, 166, 0.2);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                    {{ user.faculty }}
+                </span>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -260,7 +292,7 @@
                     <span class="info-label">Familiya</span>
                     <span class="info-value">{{ user.last_name }}</span>
                 </li>
-                <li class="profile-info-item">
+                <li class="profile-info-item full-width">
                     <span class="info-label">Email</span>
                     <span class="info-value">{{ user.email }}</span>
                 </li>
@@ -276,16 +308,22 @@
                     <span class="info-value">{{ user.residence_region }}</span>
                 </li>
                 {% endif %}
-                {% if user.university %}
-                <li class="profile-info-item">
-                    <span class="info-label">O'qigan/O'qiyotgan joy</span>
-                    <span class="info-value">{{ user.university }}</span>
-                </li>
-                {% endif %}
                 {% if user.academic_degree %}
                 <li class="profile-info-item">
                     <span class="info-label">Ilmiy daraja</span>
                     <span class="info-value">{{ user.get_academic_degree_display }}</span>
+                </li>
+                {% endif %}
+                {% if user.university %}
+                <li class="profile-info-item full-width">
+                    <span class="info-label">O'qigan/O'qiyotgan joy</span>
+                    <span class="info-value">{{ user.university }}</span>
+                </li>
+                {% endif %}
+                {% if user.faculty %}
+                <li class="profile-info-item full-width">
+                    <span class="info-label">Fakultet</span>
+                    <span class="info-value">{{ user.faculty }}</span>
                 </li>
                 {% endif %}
             </ul>
@@ -391,6 +429,142 @@
         </div>
     </div>
     
+    <!-- Ilmiy rahbarlar va so'rovlar -->
+    {% if supervisor_requests %}
+    <div class="profile-card" style="grid-column: 1 / -1;">
+        <div class="profile-card-header">
+            <div class="profile-card-icon" style="background: linear-gradient(135deg,#8b5cf6,#d946ef);">
+                <i class="fas fa-user-tie" style="color:#fff;"></i>
+            </div>
+            <h2 class="profile-card-title">Ilmiy rahbarlik so'rovlari</h2>
+        </div>
+        <div class="profile-card-body">
+            {% if accepted_supervisors %}
+                <div style="background:linear-gradient(135deg,#d1fae5,#a7f3d0);border-radius:14px;padding:18px 22px;margin-bottom:18px;border-left:5px solid #10b981;">
+                    <p style="margin:0 0 10px;font-size:13px;font-weight:700;color:#065f46;text-transform:uppercase;letter-spacing:0.5px;">
+                        <i class="fas fa-check-circle"></i> Sizning rahbar(lar)ingiz
+                    </p>
+                    <div style="display:flex;flex-wrap:wrap;gap:12px;">
+                        {% for sup in accepted_supervisors %}
+                        <div style="background:#fff;border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;min-width:240px;box-shadow:0 4px 12px rgba(16,185,129,0.15);">
+                            {% if sup.photo %}
+                                <img src="{{ sup.photo.url }}" style="width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid #10b981;">
+                            {% else %}
+                                <div style="width:46px;height:46px;border-radius:50%;background:#d1fae5;color:#10b981;display:flex;align-items:center;justify-content:center;"><i class="fas fa-user-tie"></i></div>
+                            {% endif %}
+                            <div>
+                                <div style="font-size:14px;font-weight:700;color:#065f46;">{{ sup.full_name }}</div>
+                                <div style="font-size:12px;color:#6b7280;">{{ sup.position }}</div>
+                                {% if sup.email %}<div style="font-size:11px;color:#10b981;margin-top:2px;"><i class="fas fa-envelope"></i> {{ sup.email }}</div>{% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div style="overflow-x:auto;">
+                <table style="width:100%;border-collapse:collapse;font-size:14px;">
+                    <thead>
+                        <tr style="background:#f9fafb;border-bottom:2px solid #e5e7eb;">
+                            <th style="padding:12px 14px;text-align:left;font-weight:700;color:#4b5563;">Rahbar</th>
+                            <th style="padding:12px 14px;text-align:center;font-weight:700;color:#4b5563;">Holat</th>
+                            <th style="padding:12px 14px;text-align:left;font-weight:700;color:#4b5563;">Yuborilgan</th>
+                            <th style="padding:12px 14px;text-align:left;font-weight:700;color:#4b5563;">Javob</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in supervisor_requests %}
+                        <tr style="border-bottom:1px solid #f3f4f6;">
+                            <td style="padding:12px 14px;">
+                                <div style="font-weight:700;color:#1f1b2d;">{{ req.supervisor.full_name }}</div>
+                                <div style="font-size:12px;color:#6b7280;">{{ req.supervisor.position }}</div>
+                            </td>
+                            <td style="padding:12px 14px;text-align:center;">
+                                {% if req.status == 'pending' %}
+                                    <span style="background:#fef3c7;color:#92400e;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">
+                                        <i class="fas fa-hourglass-half"></i> Kutilmoqda
+                                    </span>
+                                {% elif req.status == 'accepted' %}
+                                    <span style="background:#d1fae5;color:#065f46;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">
+                                        <i class="fas fa-check-circle"></i> Qabul qilindi
+                                    </span>
+                                {% else %}
+                                    <span style="background:#fee2e2;color:#991b1b;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">
+                                        <i class="fas fa-times-circle"></i> Rad etildi
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td style="padding:12px 14px;color:#6b7280;font-size:13px;">{{ req.created_at|date:"d.m.Y H:i" }}</td>
+                            <td style="padding:12px 14px;color:#6b7280;font-size:13px;">
+                                {% if req.decided_at %}{{ req.decided_at|date:"d.m.Y H:i" }}{% else %}—{% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Olimpiada va volontyor arizalari -->
+    {% if olympiad_applications %}
+    <div class="profile-card" style="grid-column: 1 / -1;">
+        <div class="profile-card-header">
+            <div class="profile-card-icon" style="background: linear-gradient(135deg,#f59e0b,#d97706);">
+                <i class="fas fa-trophy" style="color:#fff;"></i>
+            </div>
+            <h2 class="profile-card-title">Olimpiada va volontyor arizalari</h2>
+        </div>
+        <div class="profile-card-body">
+            <div style="overflow-x:auto;">
+                <table style="width:100%;border-collapse:collapse;font-size:14px;">
+                    <thead>
+                        <tr style="background:#f9fafb;border-bottom:2px solid #e5e7eb;">
+                            <th style="padding:12px 14px;text-align:left;font-weight:700;color:#4b5563;">Yo'nalish</th>
+                            <th style="padding:12px 14px;text-align:center;font-weight:700;color:#4b5563;">Holat</th>
+                            <th style="padding:12px 14px;text-align:left;font-weight:700;color:#4b5563;">Yuborilgan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in olympiad_applications %}
+                        <tr style="border-bottom:1px solid #f3f4f6;">
+                            <td style="padding:12px 14px;">
+                                <div style="font-weight:700;color:#1f1b2d;">{{ app.display_title }}</div>
+                                {% if app.motivation %}
+                                <div style="font-size:12px;color:#6b7280;margin-top:4px;">{{ app.motivation|truncatewords:12 }}</div>
+                                {% endif %}
+                            </td>
+                            <td style="padding:12px 14px;text-align:center;">
+                                {% if app.status == 'new' %}
+                                    <span style="background:#dbeafe;color:#1e40af;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">
+                                        <i class="fas fa-clock"></i> Yangi
+                                    </span>
+                                {% elif app.status == 'reviewed' %}
+                                    <span style="background:#fef3c7;color:#92400e;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">
+                                        <i class="fas fa-eye"></i> Ko'rib chiqildi
+                                    </span>
+                                {% elif app.status == 'approved' %}
+                                    <span style="background:#d1fae5;color:#065f46;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">
+                                        <i class="fas fa-check-circle"></i> Tasdiqlandi
+                                    </span>
+                                {% else %}
+                                    <span style="background:#fee2e2;color:#991b1b;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">
+                                        <i class="fas fa-times-circle"></i> Rad etildi
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td style="padding:12px 14px;color:#6b7280;font-size:13px;">{{ app.created_at|date:"d.m.Y H:i" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- User Courses Section -->
     {% if courses_data %}
     <div class="profile-card" style="grid-column: 1 / -1;">

@@ -1,16 +1,26 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import TemplateView
+from django.urls import reverse as reverse_url
+from django.views.generic import TemplateView, View
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from django.core.mail import send_mail, EmailMessage
+from django.conf import settings as django_settings
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+import json as json_module
+from .chat_api import call_chat_api
 from .forms import UserRegisterForm, UserLoginForm, UserUpdateForm
 from .models import (Olympiad, StateScholarship, BuxduScholarship, Course, ArticleBank, Announcement, User, 
                      Survey, TalentedStudentDatabase, BuxduWinnerDatabase, BuxduOlympiadWinner, BuxduOlympiad,
                      OakDatabase, Conference, DissertationBank, ResearcherRegulation, UserCourseProgress, 
-                     UserModuleProgress, UserTestResult, Question, AssessmentTest, AssessmentTestResult)
+                     UserModuleProgress, UserTestResult, Question, AssessmentTest, AssessmentTestResult,
+                     Literature, ScientificSupervisor, SupervisorRequest, OlympiadProgram, OlympiadApplication)
+from django.utils import timezone
 
 
 def index_view(request):
@@ -552,13 +562,492 @@ class MaqolalarBankiView(TemplateView):
         return context
 
 
+class PlatformaHaqidaView(TemplateView):
+    template_name = 'platforma_haqida.html'
+
+
+class IqtidorYoliView(LoginRequiredMixin, TemplateView):
+    template_name = 'iqtidor_yoli.html'
+    login_url = '/login/'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.warning(request, "Iqtidor Yo'li sahifasiga kirish uchun login qiling.")
+            return redirect('main:login')
+
+        # Faqat iqtidorli talabalar kira oladi (adminlar bundan mustasno)
+        is_admin = request.user.is_staff or request.user.is_superuser
+        if not is_admin and request.user.assessment_status != 'iqtidorli':
+            messages.warning(
+                request,
+                "Iqtidor Yo'li sahifasi faqat iqtidorli talabalar uchun. "
+                "Avval saralash testidan o'tib iqtidorli holatga ega bo'ling."
+            )
+            return redirect('main:assessment_test')
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['volunteer_application'] = OlympiadApplication.objects.filter(
+            user=self.request.user,
+            application_type='volunteer',
+        ).order_by('-created_at').first()
+        return context
+
+
+class IlmiyRahbarlarView(TemplateView):
+    template_name = 'ilmiy_rahbarlar.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        supervisors = list(ScientificSupervisor.objects.filter(is_active=True))
+
+        user_status = {}
+        accepted_supervisor = None
+        if self.request.user.is_authenticated:
+            user_requests = SupervisorRequest.objects.filter(
+                student=self.request.user
+            ).select_related('supervisor')
+            for r in user_requests:
+                existing = user_status.get(r.supervisor_id)
+                if existing is None or (existing == 'rejected' and r.status != 'rejected'):
+                    user_status[r.supervisor_id] = r.status
+                if r.status == 'accepted':
+                    accepted_supervisor = r.supervisor
+
+        context['supervisors'] = supervisors
+        context['user_status'] = user_status
+        context['accepted_supervisor'] = accepted_supervisor
+        return context
+
+
+@login_required(login_url='/login/')
+def send_supervisor_request(request, supervisor_id):
+    if request.method != 'POST':
+        return redirect('main:ilmiy_rahbarlar')
+
+    supervisor = get_object_or_404(ScientificSupervisor, pk=supervisor_id, is_active=True)
+    user = request.user
+
+    if not supervisor.email:
+        messages.error(request, f"{supervisor.full_name} email manzili kiritilmagan. Murojaat yuborib bo'lmaydi.")
+        return redirect('main:ilmiy_rahbarlar')
+
+    # Talabaning allaqachon ilmiy rahbari bor-yo'qligini tekshirish
+    existing_accepted = SupervisorRequest.objects.filter(
+        student=user, status='accepted'
+    ).select_related('supervisor').first()
+    if existing_accepted:
+        messages.error(
+            request,
+            f"Sizda allaqachon ilmiy rahbar bor: {existing_accepted.supervisor.full_name}. "
+            f"Rahbarni o'zgartirish uchun admin bilan bog'laning."
+        )
+        return redirect('main:ilmiy_rahbarlar')
+
+    # Sig'im tekshiruvi
+    if supervisor.is_full:
+        messages.error(
+            request,
+            f"{supervisor.full_name} hozircha to'liq band ({supervisor.max_students} ta talaba). Murojaat yuborib bo'lmaydi."
+        )
+        return redirect('main:ilmiy_rahbarlar')
+
+    # Allaqachon mavjud so'rov tekshiruvi (shu rahbarga)
+    existing = SupervisorRequest.objects.filter(
+        student=user, supervisor=supervisor, status='pending'
+    ).first()
+    if existing:
+        messages.warning(request, f"{supervisor.full_name}ga avval yuborilgan murojaat hali javob kutmoqda.")
+        return redirect('main:ilmiy_rahbarlar')
+
+    # Yangi so'rov yaratish
+    sup_request = SupervisorRequest.objects.create(student=user, supervisor=supervisor)
+
+    full_name = f"{user.first_name or ''} {user.last_name or ''}".strip() or user.username
+    degree = user.get_academic_degree_display() if user.academic_degree else '—'
+
+    # Accept / Reject havolalari
+    base_url = request.build_absolute_uri('/').rstrip('/')
+    accept_url = base_url + reverse_url('main:supervisor_decision', args=[sup_request.token, 'accept'])
+    reject_url = base_url + reverse_url('main:supervisor_decision', args=[sup_request.token, 'reject'])
+
+    subject = f"Rahbarlik so'rovi — {full_name}"
+
+    # HTML email
+    html_body = f"""
+    <!DOCTYPE html>
+    <html><head><meta charset="UTF-8"></head>
+    <body style="font-family:Arial,sans-serif;background:#f5f3ff;margin:0;padding:30px 0;">
+      <div style="max-width:620px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.08);">
+        <div style="background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff;padding:28px 32px;">
+          <h1 style="margin:0;font-size:22px;">🎓 Yangi rahbarlik so'rovi</h1>
+          <p style="margin:6px 0 0;opacity:0.92;font-size:14px;">Yosh Tadqiqotchi platformasi</p>
+        </div>
+
+        <div style="padding:28px 32px;">
+          <p style="font-size:15px;color:#1f1b2d;margin:0 0 16px;">
+            Assalomu alaykum, hurmatli <b>{supervisor.full_name}</b>!
+          </p>
+          <p style="font-size:14px;color:#4b4b5a;line-height:1.6;margin:0 0 22px;">
+            Sizga Yosh Tadqiqotchi platformasi orqali yangi rahbarlik so'rovi keldi.
+            Quyida talabaning ma'lumotlari ko'rsatilgan. Iltimos, murojaatni
+            <b>qabul qiling</b> yoki <b>rad eting</b>.
+          </p>
+
+          <table style="width:100%;border-collapse:collapse;background:#f9fafb;border-radius:10px;overflow:hidden;font-size:14px;color:#1f1b2d;">
+            <tr><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;width:35%;color:#6b7280;">F.I.O</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;font-weight:600;">{full_name}</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;color:#6b7280;">Email</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;"><a href="mailto:{user.email}" style="color:#8b5cf6;text-decoration:none;">{user.email or '—'}</a></td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;color:#6b7280;">Telefon</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;">{user.phone_number or '—'}</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;color:#6b7280;">Universitet</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;">{user.university or '—'}</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;color:#6b7280;">Fakultet</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;">{user.faculty or '—'}</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;color:#6b7280;">Ilmiy daraja</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;">{degree}</td></tr>
+            <tr><td style="padding:10px 14px;color:#6b7280;">Yashash xududi</td><td style="padding:10px 14px;">{user.residence_region or '—'}</td></tr>
+          </table>
+
+          <div style="background:#f5f3ff;border-left:4px solid #8b5cf6;padding:14px 18px;border-radius:8px;margin:22px 0;font-size:13.5px;color:#4b4b5a;line-height:1.65;">
+            <b>Murojaat mazmuni:</b><br>
+            Men, {full_name}, sizning ilmiy-pedagogik tajribangiz va mutaxassisligingiz bilan tanishib chiqdim.
+            Sizdan iltimos qilaman — meni o'z rahbarligingizga qabul qilishingiz va ilmiy tadqiqot
+            faoliyatim bo'yicha yo'naltirishingizni so'rayman.
+          </div>
+
+          <p style="font-size:14px;color:#4b4b5a;margin:24px 0 14px;text-align:center;">
+            Iltimos, quyidagi tugmalardan birini bosing:
+          </p>
+
+          <table style="width:100%;margin:0 auto;">
+            <tr>
+              <td style="padding:6px;text-align:center;">
+                <a href="{accept_url}" style="display:inline-block;background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:13px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;box-shadow:0 8px 20px rgba(16,185,129,0.3);">
+                  ✓ Qabul qilish
+                </a>
+              </td>
+              <td style="padding:6px;text-align:center;">
+                <a href="{reject_url}" style="display:inline-block;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;padding:13px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;box-shadow:0 8px 20px rgba(239,68,68,0.3);">
+                  ✗ Rad etish
+                </a>
+              </td>
+            </tr>
+          </table>
+
+          <p style="font-size:12px;color:#9ca3af;margin:24px 0 0;text-align:center;line-height:1.5;">
+            Bu xat avtomatik tarzda Yosh Tadqiqotchi platformasidan yuborildi.<br>
+            Talaba bilan to'g'ridan-to'g'ri bog'lanish uchun bu xatga javob yozing.
+          </p>
+        </div>
+      </div>
+    </body></html>
+    """
+
+    # Oddiy text variant
+    text_body = (
+        f"Assalomu alaykum, hurmatli {supervisor.full_name}!\n\n"
+        f"Sizga yangi rahbarlik so'rovi keldi.\n\n"
+        f"Talaba: {full_name}\n"
+        f"Email: {user.email or '—'}\n"
+        f"Telefon: {user.phone_number or '—'}\n"
+        f"Universitet: {user.university or '—'}\n"
+        f"Fakultet: {user.faculty or '—'}\n\n"
+        f"Qabul qilish: {accept_url}\n"
+        f"Rad etish: {reject_url}\n"
+    )
+
+    try:
+        email_msg = EmailMessage(
+            subject=subject,
+            body=html_body,
+            from_email=django_settings.DEFAULT_FROM_EMAIL,
+            to=[supervisor.email],
+            reply_to=[user.email] if user.email else None,
+        )
+        email_msg.content_subtype = 'html'
+        email_msg.send(fail_silently=False)
+        messages.success(
+            request,
+            f"Murojaatingiz {supervisor.full_name}ga muvaffaqiyatli yuborildi. "
+            f"Javob kelguncha kuting. Profilingizda holatini kuzatishingiz mumkin."
+        )
+    except Exception as e:
+        sup_request.delete()
+        messages.error(request, f"Xatolik yuz berdi: {e}")
+
+    return redirect('main:ilmiy_rahbarlar')
+
+
+def supervisor_decision(request, token, action):
+    """Email orqali kelgan link bilan rahbar so'rovni qabul/rad qiladi."""
+    sup_request = get_object_or_404(SupervisorRequest, token=token)
+    supervisor = sup_request.supervisor
+    student = sup_request.student
+
+    # Allaqachon javob berilgan bo'lsa
+    if sup_request.status != 'pending':
+        return render(request, 'supervisor_decision.html', {
+            'request_obj': sup_request,
+            'supervisor': supervisor,
+            'student': student,
+            'already_decided': True,
+        })
+
+    if action not in ('accept', 'reject'):
+        return render(request, 'supervisor_decision.html', {
+            'invalid': True,
+        })
+
+    # POST — yakuniy qaror
+    if request.method == 'POST':
+        full_name = f"{student.first_name or ''} {student.last_name or ''}".strip() or student.username
+
+        if action == 'accept':
+            # Sig'im qayta tekshirish
+            if supervisor.is_full:
+                return render(request, 'supervisor_decision.html', {
+                    'request_obj': sup_request,
+                    'supervisor': supervisor,
+                    'student': student,
+                    'full_error': True,
+                })
+
+            # Talabada allaqachon rahbar bor-yo'qligini tekshirish
+            already_has = SupervisorRequest.objects.filter(
+                student=student, status='accepted'
+            ).select_related('supervisor').first()
+            if already_has:
+                return render(request, 'supervisor_decision.html', {
+                    'request_obj': sup_request,
+                    'supervisor': supervisor,
+                    'student': student,
+                    'student_has_supervisor': True,
+                    'current_supervisor': already_has.supervisor,
+                })
+
+            sup_request.status = 'accepted'
+            sup_request.decided_at = timezone.now()
+            sup_request.save()
+
+            # Talabaning boshqa kutilayotgan so'rovlarini avtomatik rad etish
+            SupervisorRequest.objects.filter(
+                student=student, status='pending'
+            ).exclude(pk=sup_request.pk).update(
+                status='rejected',
+                decided_at=timezone.now(),
+                decision_reason='Talaba boshqa rahbar bilan ishlay boshladi (avtomatik)'
+            )
+
+            # Talabaga xabar yuborish
+            try:
+                accept_email_body = (
+                    f"Assalomu alaykum, {full_name}!\n\n"
+                    f"Xush xabar — {supervisor.full_name} sizning rahbarlik so'rovingizni "
+                    f"qabul qildi.\n\n"
+                    f"Rahbar bilan bog'lanish:\n"
+                    f"  Email: {supervisor.email or '—'}\n"
+                    f"  Telefon: {supervisor.phone or '—'}\n\n"
+                    f"Iloji bo'lsa, rahbar bilan bog'lanib, keyingi qadamlarni muhokama qiling.\n\n"
+                    f"Hurmat bilan,\n"
+                    f"Yosh Tadqiqotchi platformasi"
+                )
+                send_mail(
+                    subject=f"Rahbarlik so'rovingiz qabul qilindi — {supervisor.full_name}",
+                    message=accept_email_body,
+                    from_email=django_settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[student.email] if student.email else [],
+                    fail_silently=True,
+                )
+            except Exception:
+                pass
+
+        else:  # reject
+            sup_request.status = 'rejected'
+            sup_request.decided_at = timezone.now()
+            sup_request.save()
+
+            try:
+                reject_email_body = (
+                    f"Assalomu alaykum, {full_name}.\n\n"
+                    f"Afsuski, {supervisor.full_name} sizning rahbarlik so'rovingizni "
+                    f"qabul qila olmadi.\n\n"
+                    f"Boshqa ilmiy rahbarga murojaat qilib ko'rishingiz mumkin.\n\n"
+                    f"Hurmat bilan,\n"
+                    f"Yosh Tadqiqotchi platformasi"
+                )
+                send_mail(
+                    subject=f"Rahbarlik so'rovi haqida — {supervisor.full_name}",
+                    message=reject_email_body,
+                    from_email=django_settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[student.email] if student.email else [],
+                    fail_silently=True,
+                )
+            except Exception:
+                pass
+
+        return render(request, 'supervisor_decision.html', {
+            'request_obj': sup_request,
+            'supervisor': supervisor,
+            'student': student,
+            'done': True,
+            'action': action,
+        })
+
+    # GET — tasdiqlash sahifasi
+    return render(request, 'supervisor_decision.html', {
+        'request_obj': sup_request,
+        'supervisor': supervisor,
+        'student': student,
+        'action': action,
+        'confirm_needed': True,
+    })
+
+
+class AdabiyotlarView(TemplateView):
+    template_name = 'adabiyotlar.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        field_filter = self.request.GET.get('field', '')
+        search = self.request.GET.get('q', '').strip()
+        qs = Literature.objects.all()
+        if field_filter:
+            qs = qs.filter(field=field_filter)
+        if search:
+            qs = qs.filter(title__icontains=search) | qs.filter(author__icontains=search)
+        context['books'] = qs
+        context['field_choices'] = Literature.FIELD_CHOICES
+        context['active_field'] = field_filter
+        context['search_query'] = search
+        return context
+
+
 # Xizmatlar
-class ServiceView(TemplateView):
+class ServiceView(LoginRequiredMixin, View):
     template_name = 'service.html'
+    login_url = '/login/'
+
+    def get(self, request):
+        user = request.user
+        context = {
+            'prefill_name': f"{user.last_name} {user.first_name}",
+            'prefill_email': user.email or '',
+            'prefill_phone': user.phone_number or '',
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        user = request.user
+        full_name = request.POST.get('full_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        notes = request.POST.get('notes', '').strip()
+        service_type = request.POST.get('serviceType', 'edit')
+        publisher = request.POST.get('publisher', '')
+        article_type = request.POST.get('article_type', '')
+        tariff = request.POST.get('tariff', '')
+        total_price = request.POST.get('total_price', '')
+        extras = request.POST.getlist('extras')
+
+        service_label = 'Tarjima' if service_type == 'translate' else 'Tahrirlash'
+        extras_text = '\n   '.join(f'• {e}' for e in extras) if extras else 'Yo\'q'
+
+        subject = f"Maqola tahriri/tarjima so'rovi — {full_name}"
+        body = f"""Yangi buyurtma keldi!
+
+👤 Foydalanuvchi: {user.get_full_name()} ({user.email})
+🏫 Universitet  : {user.university or 'Ko\'rsatilmagan'}
+🎓 Fakultet     : {user.faculty or 'Ko\'rsatilmagan'}
+
+━━━ BUYURTMA MA'LUMOTLARI ━━━
+Xizmat turi          : {service_label}
+Nashriyot / standart : {publisher}
+Maqola turi          : {article_type}
+Tarif                : {tariff}
+Qo'shimcha opsiyalar : {extras_text}
+Jami narx            : {total_price} UZS
+
+━━━ MUROJAAT MA'LUMOTLARI ━━━
+F.I.O   : {full_name}
+Email   : {email}
+Izoh    : {notes or 'Yo\'q'}
+"""
+        try:
+            msg = EmailMessage(
+                subject=subject,
+                body=body,
+                from_email=django_settings.DEFAULT_FROM_EMAIL,
+                to=[django_settings.ADMIN_EMAIL],
+            )
+            uploaded_file = request.FILES.get('article_file')
+            if uploaded_file:
+                msg.attach(uploaded_file.name, uploaded_file.read(), uploaded_file.content_type)
+            msg.send(fail_silently=False)
+            messages.success(request, 'Buyurtmangiz muvaffaqiyatli yuborildi! Tez orada siz bilan bog\'lanamiz.')
+        except Exception:
+            messages.error(request, 'Xabar yuborishda xatolik yuz berdi. Qayta urinib ko\'ring.')
+
+        context = {
+            'prefill_name': full_name,
+            'prefill_email': email,
+            'prefill_phone': user.phone_number or '',
+        }
+        return render(request, self.template_name, context)
 
 
-class MaqolaJurnalTavsiyasiView(TemplateView):
+class MaqolaJurnalTavsiyasiView(LoginRequiredMixin, View):
     template_name = 'maqola_jurnal_tavsiyasi.html'
+    login_url = '/login/'
+
+    def get(self, request):
+        user = request.user
+        context = {
+            'prefill_name': f"{user.last_name} {user.first_name}",
+            'prefill_email': user.email or '',
+            'prefill_phone': user.phone_number or '',
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        user = request.user
+        full_name = request.POST.get('full_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        article_topic = request.POST.get('article_topic', '').strip()
+
+        subject = f"Maqolaga mos jurnal tavsiyasi so'rovi — {full_name}"
+        body = f"""Yangi jurnal tavsiyasi so'rovi keldi!
+
+📌 Xizmat turi: Maqola mazmuniga mos jurnalni tavsiya etish
+
+👤 Foydalanuvchi: {user.get_full_name()} ({user.email})
+🏫 Universitet  : {user.university or 'Ko\'rsatilmagan'}
+🎓 Fakultet     : {user.faculty or 'Ko\'rsatilmagan'}
+
+━━━ MUROJAAT MA'LUMOTLARI ━━━
+F.I.O          : {full_name}
+Email          : {email}
+Telefon        : {phone or 'Ko\'rsatilmagan'}
+Maqola mavzusi : {article_topic or 'Ko\'rsatilmagan'}
+"""
+        try:
+            msg = EmailMessage(
+                subject=subject,
+                body=body,
+                from_email=django_settings.DEFAULT_FROM_EMAIL,
+                to=[django_settings.ADMIN_EMAIL],
+            )
+            uploaded_file = request.FILES.get('article_file')
+            if uploaded_file:
+                msg.attach(uploaded_file.name, uploaded_file.read(), uploaded_file.content_type)
+            msg.send(fail_silently=False)
+            messages.success(request, 'So\'rovingiz muvaffaqiyatli yuborildi! Tez orada siz bilan bog\'lanamiz.')
+        except Exception:
+            messages.error(request, 'Xabar yuborishda xatolik yuz berdi. Qayta urinib ko\'ring.')
+
+        context = {
+            'prefill_name': full_name,
+            'prefill_email': email,
+            'prefill_phone': phone,
+        }
+        return render(request, self.template_name, context)
 
 
 class IlmiyNizomlarView(TemplateView):
@@ -682,6 +1171,17 @@ def profile_view(request):
                 'minutes': (wait_seconds % 3600) // 60
             }
     
+    # Ilmiy rahbarlik so'rovlari
+    supervisor_requests = SupervisorRequest.objects.filter(
+        student=request.user
+    ).select_related('supervisor').order_by('-created_at')
+    accepted_supervisors = [r.supervisor for r in supervisor_requests if r.status == 'accepted']
+
+    # Olimpiada va volontyor arizalari
+    olympiad_applications = OlympiadApplication.objects.filter(
+        user=request.user
+    ).select_related('olympiad').order_by('-created_at')
+
     context = {
         'user': request.user,
         'courses_data': courses_data,
@@ -689,6 +1189,9 @@ def profile_view(request):
         'assessment_results': assessment_results,
         'can_take_assessment': can_take_assessment,
         'assessment_wait_time': assessment_wait_time,
+        'supervisor_requests': supervisor_requests,
+        'accepted_supervisors': accepted_supervisors,
+        'olympiad_applications': olympiad_applications,
     }
     return render(request, 'profile.html', context)
 
@@ -913,3 +1416,228 @@ def submit_assessment_test(request):
     except Exception as e:
         print(f"Assessment test submission error: {e}")
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+@csrf_exempt
+@require_POST
+def chat_view(request):
+    try:
+        data = json_module.loads(request.body)
+        user_message = data.get('message', '').strip()
+        history = data.get('history', [])
+        if not user_message:
+            return JsonResponse({'reply': 'Xabar bo\'sh bo\'lmasligi kerak.'})
+
+        system_prompt = """
+Siz "Tadqiqotchi AI" nomli ilmiy-tadqiqot yordamchisisiz.
+
+O'ZINGIZ HAQIDA:
+- Ismingiz: Tadqiqotchi AI
+- Siz ilmiy tadqiqot, ta'lim va akademik mavzularda yordam beradigan AI yordamchisiz.
+- "ChatGPT", "OpenAI" yoki boshqa kompaniya nomini tilga olmang.
+
+SUHBAT QOIDALARI:
+- Suhbat tarixini eslab qoling. Foydalanuvchining oldingi savollariga va sizning oldingi javoblaringizga asoslanib javob bering.
+- Masalan, agar foydalanuvchi "magistrlik nima" deb so'ragan, keyin "uni qanday olaman" desa — magistrlik darajasini qanday olish haqida javob bering, o'zingiz haqingizda emas.
+
+JAVOB BERISH QOIDALARI:
+1. Javob 500 belgidan oshmasin — qisqa, aniq va tushunarli yozing.
+2. Hech qachon havola, manba, URL yoki "Batafsil..." kabi qo'shimcha qo'shmang.
+3. Markdown formatdan foydalaning: muhim so'zlar uchun **bold** ishlatsangiz mumkin.
+4. Agar ma'lumot topilmasa, "Kechirasiz, bu mavzu bo'yicha aniq ma'lumot topa olmadim." deb ayting.
+5. O'zbek tilida javob bering. Foydalanuvchi boshqa tilda yozsa — shu tilda javob bering.
+"""
+
+        # Suhbat tarixini API formatiga keltirish (oxirgi 10 ta xabar)
+        messages_list = []
+        for h in history[-10:]:
+            role = h.get('role')
+            content = h.get('content', '').strip()
+            if role in ('user', 'assistant') and content:
+                messages_list.append({"role": role, "content": content})
+        messages_list.append({"role": "user", "content": user_message})
+
+        reply, error = call_chat_api(messages_list, system_prompt)
+        if error:
+            return JsonResponse({'reply': error})
+        return JsonResponse({'reply': reply})
+
+    except json_module.JSONDecodeError:
+        return JsonResponse({'reply': 'Noto\'g\'ri so\'rov formati.'})
+    except Exception as e:
+        print(f"Chat error: {e}")
+        return JsonResponse({'reply': 'Xatolik yuz berdi. Qayta urinib ko\'ring.'})
+
+
+# ──────────────────────────── Olimpiada dasturi ────────────────────────────
+class OlympiadProgramDetailView(LoginRequiredMixin, View):
+    """Iqtidor Yo'li sahifasidan olimpiada kartochkasi bosilganda
+    ushbu olimpiadaga oid topshiriqlar bazasi va ariza yuborish sahifasi."""
+    login_url = 'main:login'
+    template_name = 'olympiad_program.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect(self.login_url)
+        # Faqat iqtidorli yoki admin ko'ra oladi
+        if not (request.user.is_staff or request.user.assessment_status == 'iqtidorli'):
+            messages.warning(request, "Bu sahifaga faqat saralash testidan o'tgan iqtidorli talabalar kira oladi.")
+            return redirect('main:iqtidor_yoli')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, code):
+        # OlympiadProgram.OLYMPIAD_CHOICES dagi mavjud kodlardan ekanligini tekshiramiz
+        valid_codes = [c[0] for c in OlympiadProgram.OLYMPIAD_CHOICES]
+        if code not in valid_codes:
+            messages.error(request, "Bunday olimpiada topilmadi.")
+            return redirect('main:iqtidor_yoli')
+
+        program = OlympiadProgram.objects.filter(code=code, is_active=True).first()
+        if not program:
+            # Admin hali bu olimpiada uchun ma'lumotlarni kiritmagan
+            display_title = dict(OlympiadProgram.OLYMPIAD_CHOICES).get(code, 'Olimpiada')
+            return render(request, 'olympiad_program_not_ready.html', {
+                'olympiad_title': display_title,
+                'olympiad_code': code,
+            })
+
+        existing_application = OlympiadApplication.objects.filter(
+            user=request.user, olympiad=program, application_type='olympiad'
+        ).order_by('-created_at').first()
+        context = {
+            'program': program,
+            'existing_application': existing_application,
+        }
+        return render(request, self.template_name, context)
+
+
+def _send_application_admin_email(user, application, target_title, email_heading):
+    """Olimpiada/volontyor arizasi haqida adminga email yuborish."""
+    try:
+        u = user
+        full_name = u.get_full_name() or u.username
+        motivation = application.motivation or ''
+        subject = f"{email_heading} — {target_title}"
+        html_body = f"""
+        <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;background:#f9fafb;padding:24px;">
+            <div style="background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                <h2 style="color:#4f46e5;margin:0 0 8px;">{email_heading}</h2>
+                <p style="color:#6b7280;margin:0 0 18px;">Yosh Tadqiqotchi platformasi orqali yangi ariza yuborildi.</p>
+
+                <div style="background:#eef2ff;padding:14px 18px;border-radius:8px;margin-bottom:18px;">
+                    <strong style="color:#4338ca;">Olimpiada:</strong> {target_title}
+                </div>
+
+                <h3 style="color:#1f2937;margin:0 0 10px;">Foydalanuvchi ma'lumotlari</h3>
+                <table style="width:100%;border-collapse:collapse;">
+                    <tr><td style="padding:6px 0;color:#6b7280;width:160px;">F.I.O</td><td style="padding:6px 0;"><strong>{full_name}</strong></td></tr>
+                    <tr><td style="padding:6px 0;color:#6b7280;">Email</td><td style="padding:6px 0;">{u.email or '—'}</td></tr>
+                    <tr><td style="padding:6px 0;color:#6b7280;">Telefon</td><td style="padding:6px 0;">{u.phone_number or '—'}</td></tr>
+                    <tr><td style="padding:6px 0;color:#6b7280;">Universitet</td><td style="padding:6px 0;">{u.university or '—'}</td></tr>
+                    <tr><td style="padding:6px 0;color:#6b7280;">Fakultet</td><td style="padding:6px 0;">{getattr(u, 'faculty', '') or '—'}</td></tr>
+                    <tr><td style="padding:6px 0;color:#6b7280;">Daraja</td><td style="padding:6px 0;">{u.get_academic_degree_display() if u.academic_degree else '—'}</td></tr>
+                </table>
+
+                <h3 style="color:#1f2937;margin:18px 0 10px;">Motivatsiya</h3>
+                <div style="background:#f3f4f6;padding:14px 18px;border-radius:8px;color:#1f2937;white-space:pre-wrap;">
+                    {motivation or 'Foydalanuvchi qo\'shimcha matn yozmagan.'}
+                </div>
+
+                <p style="margin:24px 0 0;color:#6b7280;font-size:13px;">
+                    Arizani admin panelda ko'rish: Admin → Olimpiada arizalari → #{application.id}
+                </p>
+            </div>
+        </div>
+        """
+        msg = EmailMessage(
+            subject=subject,
+            body=html_body,
+            from_email=django_settings.DEFAULT_FROM_EMAIL,
+            to=[django_settings.DEFAULT_FROM_EMAIL],
+            reply_to=[u.email] if u.email else None,
+        )
+        msg.content_subtype = 'html'
+        msg.send(fail_silently=True)
+    except Exception as e:
+        print(f"Application email error: {e}")
+
+
+@login_required(login_url='main:login')
+@require_POST
+def submit_olympiad_application(request, code):
+    """Ariza yuborish — DB ga yozadi va adminga email yuboradi."""
+    program = get_object_or_404(OlympiadProgram, code=code, is_active=True)
+
+    if not (request.user.is_staff or request.user.assessment_status == 'iqtidorli'):
+        messages.error(request, "Faqat iqtidorli talabalar ariza topshira oladi.")
+        return redirect('main:iqtidor_yoli')
+
+    # Takroriy arizani oldini olish (yangi yoki ko'rib chiqilayotgan ariza bo'lsa)
+    duplicate = OlympiadApplication.objects.filter(
+        user=request.user,
+        olympiad=program,
+        application_type='olympiad',
+        status__in=['new', 'reviewed']
+    ).first()
+    if duplicate:
+        messages.warning(request,
+            f"Siz allaqachon ushbu olimpiadaga ariza yuborgansiz. Holati: «{duplicate.get_status_display()}». "
+            "Admin ko'rib chiqishini kuting.")
+        return redirect('main:olympiad_program', code=code)
+
+    motivation = (request.POST.get('motivation') or '').strip()
+
+    application = OlympiadApplication.objects.create(
+        user=request.user,
+        application_type='olympiad',
+        olympiad=program,
+        motivation=motivation or None,
+    )
+
+    _send_application_admin_email(
+        request.user, application, program.title, '🏆 Yangi olimpiada arizasi'
+    )
+
+    messages.success(request,
+        f"✅ Arizangiz muvaffaqiyatli yuborildi! «{program.title}» olimpiadasi uchun "
+        "admin tomonidan ko'rib chiqilgach javob beriladi.")
+    return redirect('main:olympiad_program', code=code)
+
+
+@login_required(login_url='main:login')
+@require_POST
+def submit_volunteer_application(request):
+    """Volontyor jamoasiga ariza — sahifasiz, to'g'ridan-to'g'ri yuboriladi."""
+    if not (request.user.is_staff or request.user.assessment_status == 'iqtidorli'):
+        messages.error(request, "Faqat iqtidorli talabalar ariza topshira oladi.")
+        return redirect('main:iqtidor_yoli')
+
+    duplicate = OlympiadApplication.objects.filter(
+        user=request.user,
+        application_type='volunteer',
+        status__in=['new', 'reviewed'],
+    ).first()
+    if duplicate:
+        messages.warning(request,
+            f"Siz allaqachon volontyor jamoasiga ariza yuborgansiz. "
+            f"Holati: «{duplicate.get_status_display()}». Admin ko'rib chiqishini kuting.")
+        return redirect('main:iqtidor_yoli')
+
+    motivation = (request.POST.get('motivation') or '').strip()
+    target_title = OlympiadApplication.VOLUNTEER_TITLE
+
+    application = OlympiadApplication.objects.create(
+        user=request.user,
+        application_type='volunteer',
+        olympiad=None,
+        motivation=motivation or None,
+    )
+
+    _send_application_admin_email(
+        request.user, application, target_title, '🤝 Yangi volontyor arizasi'
+    )
+
+    messages.success(request,
+        "✅ Volontyor jamoasiga arizangiz muvaffaqiyatli yuborildi! "
+        "Admin tomonidan ko'rib chiqilgach javob beriladi.")
+    return redirect('main:iqtidor_yoli')

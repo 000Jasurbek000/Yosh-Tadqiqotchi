@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ olympiad_title }} — Tayyorlash bosqichida{% endblock %}
+
+{% block extra_head %}
+<style>
+.nr-container { max-width: 900px; margin: 60px auto 80px; padding: 0 24px; }
+.nr-card {
+    background: #fff;
+    border: 1px solid #fde68a;
+    border-left: 6px solid #f59e0b;
+    border-radius: 18px;
+    padding: 42px 44px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(245,158,11,0.12);
+}
+.nr-icon {
+    font-size: 64px;
+    color: #f59e0b;
+    margin-bottom: 18px;
+}
+.nr-card h2 {
+    color: #92400e;
+    font-size: 1.5rem;
+    margin: 0 0 12px;
+}
+.nr-card p {
+    color: #78350f;
+    line-height: 1.7;
+    font-size: 15px;
+    margin: 0 0 18px;
+}
+.nr-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 28px;
+    background: #f59e0b;
+    color: #fff !important;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 14.5px;
+    text-decoration: none !important;
+    transition: all 0.2s;
+}
+.nr-back:hover { background: #d97706; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(245,158,11,0.3); }
+</style>
+{% endblock %}
+
+{% block content %}
+    <section class="subpage-hero stipendiya-hero">
+        <div class="subpage-hero-inner">
+            <div class="subpage-hero-text">
+                <div class="subpage-breadcrumb">
+                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <span>//</span>
+                    <a href="{% url 'main:iqtidor_yoli' %}">Iqtidor Yo'li</a>
+                    <span>//</span>
+                    <span>Topshiriqlar bazasi</span>
+                </div>
+                <h1 class="title subpage-title">{{ olympiad_title }}</h1>
+                <p class="subtitle subpage-subtitle">Olimpiada uchun topshiriqlar bazasi</p>
+            </div>
+            <div class="subpage-hero-illustration">
+                <div class="subpage-hero-pill">
+                    <span class="badge" style="margin-bottom: 0;">
+                        <i class="fas fa-clock"></i>
+                        <span>Tez orada</span>
+                    </span>
+                </div>
+                <div class="subpage-hero-image-wrapper">
+                    <img src="{% static 'assets/iqtidor_yoli.png' %}" alt="Topshiriqlar bazasi" class="subpage-hero-image" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="nr-container">
+        <div class="nr-card">
+            <div class="nr-icon"><i class="fas fa-hourglass-half"></i></div>
+            <h2>Tez orada tayyor bo'ladi</h2>
+            <p>
+                Hozircha ushbu olimpiada uchun topshiriqlar bazasi va batafsil ma'lumotlar admin
+                tomonidan kiritilmoqda. Iltimos, biroz vaqtdan keyin yana tashrif buyuring.
+            </p>
+            <a href="{% url 'main:iqtidor_yoli' %}" class="nr-back">
+                <i class="fas fa-arrow-left"></i> Iqtidor Yo'li sahifasiga qaytish
+            </a>
+        </div>
+    </div>
+{% endblock %}

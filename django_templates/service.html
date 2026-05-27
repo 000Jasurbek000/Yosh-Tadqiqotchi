@@ -661,6 +661,10 @@
   <section class="stipendiya-table-section scroll-section">
     <div class="stipendiya-container">
 
+        <form id="order-form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="tariff" id="hidden-tariff" value="Standart (x1.0)">
+        <input type="hidden" name="total_price" id="hidden-total" value="120 000">
         <main class="grid-layout">
             <!-- CHAP TOMON: 1-2 qadam -->
             <section class="column-left" aria-label="1 va 2-qadam">
@@ -669,7 +673,7 @@
                         <p id="service-card-title" class="card-title">1-qadam</p>
                         <h2 class="card-heading">Xizmat turini va standartni tanlang</h2>
                         <p class="card-subtext">
-                            Avval qaysi xizmat kerakligini tanlang, so'ng nashriyot va maqola turini belgilang.
+                            Avval qaysi xizmat kerakligini tanlang, so'ng nashriyot standartini va maqola turini belgilang.
                         </p>
 
                         <!-- Xizmat tanlash -->
@@ -724,21 +728,21 @@
                                     <label class="field-label" for="publisher-select">
                                         Nashriyot / standart
                                     </label>
-                                    <select id="publisher-select" aria-required="true">
-                                        <option value="oak">OAK</option>
-                                        <option value="scholar">Google Scholar</option>
-                                        <option value="scopus">Scopus</option>
+                                    <select id="publisher-select" name="publisher" aria-required="true">
+                                        <option value="OAK">OAK</option>
+                                        <option value="Google Scholar">Google Scholar</option>
+                                        <option value="Scopus">Scopus</option>
                                     </select>
                                 </div>
                                 <div class="field">
                                     <label class="field-label" for="article-type">
                                         Maqola turi
                                     </label>
-                                    <select id="article-type">
-                                        <option value="maqola">Ilmiy maqola</option>
-                                        <option value="tezis">Konferensiya tezisi</option>
-                                        <option value="dissertatsiya">Dissertatsiya bo'limi</option>
-                                        <option value="boshqa">Boshqa</option>
+                                    <select id="article-type" name="article_type">
+                                        <option value="Ilmiy maqola">Ilmiy maqola</option>
+                                        <option value="Konferensiya tezisi">Konferensiya tezisi</option>
+                                        <option value="Dissertatsiya bo'limi">Dissertatsiya bo'limi</option>
+                                        <option value="Boshqa">Boshqa</option>
                                     </select>
                                 </div>
                             </div>
@@ -756,7 +760,7 @@
                                         Fayl tanlanmagan
                                     </p>
                                     <input id="file-input" class="upload-input" type="file"
-                                           accept=".pdf,.docx,.doc" />
+                                           name="article_file" accept=".pdf,.docx,.doc" />
                                 </label>
                             </div>
 
@@ -765,7 +769,7 @@
                                 <span class="field-label">Qo'shimcha opsiyalar (har biri +30 000 so'm)</span>
                                 <div class="extras-list">
                                     <label class="extra-item">
-                                        <input type="checkbox" class="extra-option" value="plagiat" />
+                                        <input type="checkbox" class="extra-option" name="extras" value="Plagiat bo'yicha tavsiya" />
                                         <span>
                                             <span class="extra-label-title">Plagiat bo'yicha tavsiya</span><br />
                                             <span class="extra-label-note">
@@ -774,7 +778,7 @@
                                         </span>
                                     </label>
                                     <label class="extra-item">
-                                        <input type="checkbox" class="extra-option" value="annotatsiya" />
+                                        <input type="checkbox" class="extra-option" name="extras" value="Annotatsiya va kalit so'zlarni yaxshilash" />
                                         <span>
                                             <span class="extra-label-title">
                                                 Annotatsiya va kalit so'zlarni yaxshilash
@@ -842,8 +846,8 @@
                         <p class="card-title">3-qadam</p>
                         <h2 class="card-heading">Hisob-kitob paneli</h2>
                         <p class="card-subtext">
-                            Tanlovlaringizga qarab jami narx avtomatik yangilanadi. Bu demo maqsadida
-                            shartli hisob-kitob bo'lib, real shartnomada o'zgarishi mumkin.
+                            Tanlovlaringizga qarab jami narx avtomatik yangilanadi.
+                            Real shartnomada narx o'zgarishi mumkin.
                         </p>
 
                         <div class="summary-row">
@@ -887,11 +891,11 @@
                         <p class="card-title">4-qadam</p>
                         <h2 class="card-heading">To'lov va buyurtma</h2>
                         <p class="card-subtext">
-                            Hozircha to'lov onlayn amalga oshirilmaydi. Buyurtma qoldirilgach,
+                            To'lov onlayn amalga oshirilmaydi. Buyurtma qoldirilgach,
                             siz bilan alohida bog'laniladi.
                         </p>
 
-                        <div class="payment-methods" aria-label="To'lov usullari (demo)">
+                        <div class="payment-methods" aria-label="To'lov usullari">
                             <span class="pay-pill">
                                 <i class="fa-solid fa-qrcode"></i>
                                 Click
@@ -906,23 +910,38 @@
                             </span>
                         </div>
                         <p class="payment-note">
-                            To'lov hozircha saytda amalga oshirilmaydi, keyinchalik qo'shiladi.
+                            Buyurtma yuborilgach, to'lov tafsilotlari siz bilan alohida kelishiladi.
                         </p>
 
-                        <form id="order-form" aria-label="Buyurtma formasi">
+                        {% if messages %}
+                        <div style="margin-bottom: 12px;">
+                            {% for message in messages %}
+                            <div style="padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 6px;
+                                background: {% if message.tags == 'success' %}rgba(34,197,94,0.15){% else %}rgba(239,68,68,0.15){% endif %};
+                                border: 1px solid {% if message.tags == 'success' %}rgba(34,197,94,0.4){% else %}rgba(239,68,68,0.4){% endif %};
+                                color: {% if message.tags == 'success' %}#22c55e{% else %}#ef4444{% endif %};">
+                                {{ message }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div aria-label="Buyurtma formasi">
                             <div class="field-row" style="margin-top: 10px;">
                                 <div class="field">
                                     <label class="field-label" for="full-name">
                                         F.I.O (talaba / muallif)
                                     </label>
-                                    <input id="full-name" type="text" required
+                                    <input id="full-name" name="full_name" type="text" required
+                                           value="{{ prefill_name }}"
                                            placeholder="Familiya Ism Otasining ismi" />
                                 </div>
                                 <div class="field">
                                     <label class="field-label" for="email">
                                         Email
                                     </label>
-                                    <input id="email" type="email" required
+                                    <input id="email" name="email" type="email" required
+                                           value="{{ prefill_email }}"
                                            placeholder="example@university.uz" />
                                 </div>
                             </div>
@@ -931,7 +950,7 @@
                                 <label class="field-label" for="notes">
                                     Izoh (ixtiyoriy)
                                 </label>
-                                <textarea id="notes" rows="3"
+                                <textarea id="notes" name="notes" rows="3"
                                           placeholder="Maqola haqida qisqacha, maxsus talablar, muddatlar va h.k."></textarea>
                             </div>
 
@@ -945,13 +964,14 @@
                                     Tanlovlarni tiklash
                                 </button>
                             </div>
-                            
-                        </form>
+                        </div>
                     </div>
                 </article>
             </section>
-        </div>
+        </main>
+        </form>
       </div>
+    </div>
   </section>
 {% endblock %}
 
@@ -1082,6 +1102,7 @@
         tariffCards.forEach((c) => c.classList.remove("active"));
         card.classList.add("active");
         recalc();
+        syncHiddenInputs();
       });
     });
 
@@ -1101,10 +1122,6 @@
     }
 
     if (uploadArea && fileInput) {
-      uploadArea.addEventListener("click", () => {
-        fileInput.click();
-      });
-
       fileInput.addEventListener("change", (e) => {
         const file = e.target.files[0];
         setFileName(file);
@@ -1144,14 +1161,26 @@
       });
     }
 
+    // ====== SYNC HIDDEN INPUTS (tariff + total) ======
+    function syncHiddenInputs() {
+      const activeTariff = document.querySelector('.tariff-card.active');
+      const tariffName = activeTariff?.querySelector('.tariff-name')?.textContent || 'Standart';
+      const tariffMult = activeTariff?.dataset.multiplier || '1.0';
+      const hTariff = document.getElementById('hidden-tariff');
+      if (hTariff) hTariff.value = `${tariffName} (x${tariffMult})`;
+
+      const totalEl = document.getElementById('summary-total');
+      const hTotal = document.getElementById('hidden-total');
+      if (hTotal && totalEl) hTotal.value = totalEl.textContent.trim();
+    }
+
     // ====== FORM SUBMIT ======
     const orderForm = document.getElementById("order-form");
     const resetBtn = document.getElementById("resetFormBtn");
 
     if (orderForm) {
-      orderForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        alert("Buyurtma qabul qilindi (demo). Keyinroq to'liq funksionallik qo'shiladi.");
+      orderForm.addEventListener("submit", () => {
+        syncHiddenInputs();
       });
     }
 

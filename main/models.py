@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -16,6 +17,7 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=20, blank=True, null=True, verbose_name='Telefon raqam')
     residence_region = models.CharField(max_length=100, blank=True, null=True, verbose_name='Yashash xudud')
     university = models.CharField(max_length=200, blank=True, null=True, verbose_name='O\'qigan/O\'qiyotgan joy')
+    faculty = models.CharField(max_length=200, blank=True, null=True, verbose_name='Fakultet')
     academic_degree = models.CharField(max_length=20, choices=DEGREE_CHOICES, blank=True, default='', verbose_name='Ilmiy daraja')
     status = models.CharField(max_length=50, default='talaba', verbose_name='Status')
     profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True, verbose_name='Profil rasmi')
@@ -661,3 +663,183 @@ class AssessmentTestResult(models.Model):
     def __str__(self):
         return f"{self.user} - {self.course.name} sertifikati"
 
+
+# Ilmiy rahbarlar
+class ScientificSupervisor(models.Model):
+    full_name    = models.CharField(max_length=255, verbose_name='F.I.O')
+    position     = models.CharField(max_length=255, verbose_name='Lavozimi', help_text='Masalan: Fizika-matematika fanlari doktori, professor')
+    photo        = models.ImageField(upload_to='supervisors/', blank=True, null=True, verbose_name='Rasmi')
+    phone        = models.CharField(max_length=30, blank=True, null=True, verbose_name='Telefon raqami')
+    email        = models.EmailField(blank=True, null=True, verbose_name='Email')
+    specialty    = models.CharField(max_length=255, blank=True, null=True, verbose_name='Mutaxassisligi/Yo\'nalishi')
+    max_students = models.PositiveIntegerField(default=5, verbose_name='Maks. talabalar soni', help_text='Bu rahbar qabul qila oladigan eng ko\'p talabalar soni')
+    is_active    = models.BooleanField(default=True, verbose_name='Faol')
+    order        = models.PositiveIntegerField(default=0, verbose_name='Tartib raqami')
+    created_at   = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'scientific_supervisors'
+        verbose_name = 'Ilmiy rahbar'
+        verbose_name_plural = 'Ilmiy rahbarlar'
+        ordering = ['order', 'full_name']
+
+    def __str__(self):
+        return self.full_name
+
+    @property
+    def accepted_count(self):
+        return self.requests.filter(status='accepted').count()
+
+    @property
+    def is_full(self):
+        return self.accepted_count >= self.max_students
+
+
+# Olimpiada dasturlari (Iqtidor Yo'li olimpiada kartochkalari uchun)
+class OlympiadProgram(models.Model):
+    OLYMPIAD_CHOICES = [
+        ('matematika',   '1. Xalqaro matematika fan olimpiadalariga tayyorlov'),
+        ('kimyo',        '2. Xalqaro kimyo fan olimpiadalariga tayyorlov'),
+        ('ingliz_tili',  '3. Xalqaro ingliz tili fan olimpiadalariga tayyorlov'),
+        ('falsafa',      '4. Xalqaro falsafa fan olimpiadasiga tayyorlov'),
+        ('iqtisodiyot',  '5. Xalqaro iqtisodiyotga oid fanlar olimpiadasiga tayyorlov'),
+        ('fizika',       '6. Xalqaro fizika fan olimpiadasiga tayyorlov'),
+        ('it',           '7. Xalqaro IT olimpiadalariga tayyorlov'),
+        ('innovatsiya',  '8. Xalqaro ilmiy-innovatsion mazmundagi tanlovlarga tayyorlov'),
+    ]
+
+    code             = models.CharField(max_length=30, choices=OLYMPIAD_CHOICES, unique=True, verbose_name='Olimpiada kodi')
+    title            = models.CharField(max_length=255, verbose_name='Sarlavha')
+    short_intro      = models.TextField(verbose_name='Qisqacha kirish', help_text='Olimpiada haqida qisqa tanishtirish')
+    required_skills  = models.TextField(blank=True, verbose_name='Talab qilingan ko\'nikmalar', help_text='Bu olimpiadaga arizachilar uchun zarur ko\'nikmalar')
+    knowledge_areas  = models.TextField(blank=True, verbose_name='Bilim sohalari', help_text='Tekshiriladigan bilim sohalari va mavzular')
+    self_check_text  = models.TextField(blank=True, verbose_name='O\'zini tekshirish uchun matn', help_text='Talaba o\'z bilimlarini sinash uchun namunaviy savollar va mavzular')
+    task_file        = models.FileField(upload_to='olympiad_tasks/', blank=True, null=True, verbose_name='Topshiriqlar fayli', help_text='PDF, Word yoki boshqa formatdagi topshiriqlar to\'plami')
+    additional_info  = models.TextField(blank=True, verbose_name='Qo\'shimcha ma\'lumot')
+    is_active        = models.BooleanField(default=True, verbose_name='Faol')
+    created_at       = models.DateTimeField(auto_now_add=True)
+    updated_at       = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'olympiad_programs'
+        verbose_name = 'Olimpiada dasturi'
+        verbose_name_plural = 'Olimpiada dasturlari'
+        ordering = ['code']
+
+    def __str__(self):
+        return self.title
+
+
+# Olimpiada va volontyor arizalari
+class OlympiadApplication(models.Model):
+    STATUS_CHOICES = [
+        ('new',      'Yangi'),
+        ('reviewed', 'Ko\'rib chiqildi'),
+        ('approved', 'Tasdiqlandi'),
+        ('rejected', 'Rad etildi'),
+    ]
+    APPLICATION_TYPE_CHOICES = [
+        ('olympiad',  'Olimpiada'),
+        ('volunteer', 'Volontyor'),
+    ]
+    VOLUNTEER_TITLE = "Volontyor uchun ariza"
+
+    user             = models.ForeignKey('User', on_delete=models.CASCADE, related_name='olympiad_applications', verbose_name='Foydalanuvchi')
+    application_type = models.CharField(max_length=20, choices=APPLICATION_TYPE_CHOICES, default='olympiad', verbose_name='Ariza turi')
+    olympiad         = models.ForeignKey(OlympiadProgram, on_delete=models.CASCADE, related_name='applications', null=True, blank=True, verbose_name='Olimpiada')
+    motivation       = models.TextField(blank=True, null=True, verbose_name='Motivatsiya / Qo\'shimcha matn')
+    status           = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new', verbose_name='Holat')
+    admin_note       = models.TextField(blank=True, null=True, verbose_name='Admin izohi')
+    created_at       = models.DateTimeField(auto_now_add=True, verbose_name='Yuborilgan vaqt')
+    updated_at       = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'olympiad_applications'
+        verbose_name = 'Olimpiada arizasi'
+        verbose_name_plural = 'Olimpiada arizalari'
+        ordering = ['-created_at']
+
+    @property
+    def display_title(self):
+        if self.application_type == 'volunteer':
+            return self.VOLUNTEER_TITLE
+        return self.olympiad.title if self.olympiad_id else '—'
+
+    def __str__(self):
+        return f"{self.user} → {self.display_title}"
+
+
+# Ilmiy rahbarlik so'rovlari
+class SupervisorRequest(models.Model):
+    STATUS_CHOICES = [
+        ('pending',  'Kutish'),
+        ('accepted', 'Qabul qilindi'),
+        ('rejected', 'Rad etildi'),
+    ]
+    student         = models.ForeignKey('User', on_delete=models.CASCADE, related_name='supervisor_requests', verbose_name='Talaba')
+    supervisor      = models.ForeignKey(ScientificSupervisor, on_delete=models.CASCADE, related_name='requests', verbose_name='Ilmiy rahbar')
+    status          = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name='Holat')
+    token           = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    decision_reason = models.TextField(blank=True, null=True, verbose_name='Qaror sababi')
+    created_at      = models.DateTimeField(auto_now_add=True, verbose_name='Yuborilgan')
+    decided_at      = models.DateTimeField(null=True, blank=True, verbose_name='Qaror qabul qilingan')
+
+    class Meta:
+        db_table = 'supervisor_requests'
+        verbose_name = 'Rahbarlik so\'rovi'
+        verbose_name_plural = 'Rahbarlik so\'rovlari'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.student} → {self.supervisor} ({self.get_status_display()})"
+
+
+# Adabiyotlar
+class Literature(models.Model):
+    FIELD_CHOICES = [
+        ('', 'Soha tanlang'),
+        ('matematika', 'Matematika'),
+        ('fizika', 'Fizika'),
+        ('kimyo', 'Kimyo'),
+        ('biologiya', 'Biologiya'),
+        ('informatika', 'Informatika va axborot texnologiyalari'),
+        ('tarix', 'Tarix'),
+        ('filologiya', 'Filologiya'),
+        ('xorijiy_tillar', 'Xorijiy tillar'),
+        ('iqtisodiyot', 'Iqtisodiyot'),
+        ('huquq', 'Huquq'),
+        ('tibbiyot', 'Tibbiyot'),
+        ('pedagogika', 'Pedagogika'),
+        ('psixologiya', 'Psixologiya'),
+        ('sport', 'Sport va jismoniy tarbiya'),
+        ('texnika', 'Texnika va texnologiya'),
+        ('qishloq_xojaligi', 'Qishloq xo\'jaligi'),
+        ('san_at', 'San\'at va dizayn'),
+        ('boshqa', 'Boshqa'),
+    ]
+
+    title = models.CharField(max_length=500, verbose_name='Kitob/Adabiyot nomi')
+    author = models.CharField(max_length=300, verbose_name='Muallif')
+    field = models.CharField(max_length=100, choices=FIELD_CHOICES, default='', verbose_name='Soha')
+    cover_image = models.ImageField(upload_to='literature/covers/', blank=True, null=True, verbose_name='Muqova rasmi')
+    file = models.FileField(upload_to='literature/files/', blank=True, null=True, verbose_name='Fayl (PDF/PPT/Word)')
+    url = models.URLField(blank=True, null=True, verbose_name='Internet manzili')
+    description = models.TextField(blank=True, null=True, verbose_name='Qisqacha tavsif')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'literature'
+        verbose_name = 'Adabiyot'
+        verbose_name_plural = 'Adabiyotlar'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.title} — {self.author}"
+
+    def get_read_url(self):
+        if self.url:
+            return self.url
+        if self.file:
+            return self.file.url
+        return None

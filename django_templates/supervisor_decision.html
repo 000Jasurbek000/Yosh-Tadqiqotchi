@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Rahbarlik so'rovi - Yosh Tadqiqotchi{% endblock %}
+
+{% block extra_head %}
+<style>
+.dec-wrap { max-width: 640px; margin: 60px auto 80px; padding: 0 20px; }
+.dec-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 20px 50px rgba(139,92,246,0.12);
+    overflow: hidden;
+}
+.dec-head {
+    padding: 30px 32px;
+    text-align: center;
+    color: #fff;
+}
+.dec-head.accept { background: linear-gradient(135deg, #10b981, #059669); }
+.dec-head.reject { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.dec-head.info   { background: linear-gradient(135deg, #8b5cf6, #d946ef); }
+.dec-head h1 { margin: 0 0 8px; font-size: 24px; font-weight: 800; }
+.dec-head p  { margin: 0; opacity: 0.92; font-size: 14px; }
+.dec-icon { font-size: 56px; margin-bottom: 10px; }
+
+.dec-body { padding: 30px 36px 36px; }
+.dec-section { margin-bottom: 22px; }
+.dec-section-title { font-size: 13px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.6px; margin: 0 0 10px; }
+.dec-row { display: flex; padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 14.5px; }
+.dec-row:last-child { border-bottom: none; }
+.dec-row .label { width: 40%; color: #6b7280; }
+.dec-row .value { flex: 1; color: #1f1b2d; font-weight: 600; }
+
+.dec-actions { display: flex; gap: 12px; margin-top: 22px; }
+.dec-btn {
+    flex: 1;
+    padding: 14px 22px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    transition: all 0.25s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.dec-btn-accept { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 20px rgba(16,185,129,0.3); }
+.dec-btn-accept:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(16,185,129,0.4); color:#fff; }
+.dec-btn-reject { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 8px 20px rgba(239,68,68,0.3); }
+.dec-btn-reject:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(239,68,68,0.4); color:#fff; }
+.dec-btn-cancel { background: #f3f4f6; color: #4b5563 !important; }
+.dec-btn-cancel:hover { background: #e5e7eb; }
+
+.dec-status-badge {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 16px;
+    font-size: 12.5px;
+    font-weight: 700;
+}
+.dec-status-pending  { background: #fef3c7; color: #92400e; }
+.dec-status-accepted { background: #d1fae5; color: #065f46; }
+.dec-status-rejected { background: #fee2e2; color: #991b1b; }
+
+.dec-msg {
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.55;
+    margin-bottom: 18px;
+}
+.dec-msg.warn  { background: #fef3c7; color: #92400e; border-left: 4px solid #f59e0b; }
+.dec-msg.error { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dec-wrap">
+    <div class="dec-card">
+
+    {% if invalid %}
+        <div class="dec-head reject">
+            <div class="dec-icon">⚠️</div>
+            <h1>Yaroqsiz havola</h1>
+            <p>Ushbu havola noto'g'ri yoki muddati o'tgan.</p>
+        </div>
+
+    {% elif already_decided %}
+        <div class="dec-head info">
+            <div class="dec-icon">ℹ️</div>
+            <h1>Bu so'rov yopilgan</h1>
+            <p>Ushbu murojaatga avval javob berilgan.</p>
+        </div>
+        <div class="dec-body">
+            <div class="dec-section">
+                <p class="dec-section-title">Joriy holat</p>
+                <span class="dec-status-badge dec-status-{{ request_obj.status }}">
+                    {{ request_obj.get_status_display }}
+                </span>
+            </div>
+            <div class="dec-section">
+                <p class="dec-section-title">Talaba</p>
+                <p style="margin:0;font-size:15px;font-weight:600;">{{ student.first_name }} {{ student.last_name|default:student.username }}</p>
+                <p style="margin:4px 0 0;font-size:13px;color:#6b7280;">{{ student.email }}</p>
+            </div>
+            <div class="dec-section">
+                <p class="dec-section-title">Qaror qabul qilingan</p>
+                <p style="margin:0;color:#4b4b5a;">{{ request_obj.decided_at|date:"d.m.Y H:i" }}</p>
+            </div>
+        </div>
+
+    {% elif done %}
+        {% if action == 'accept' %}
+        <div class="dec-head accept">
+            <div class="dec-icon">✅</div>
+            <h1>Murojaat qabul qilindi</h1>
+            <p>Talabaga xabar yuborildi.</p>
+        </div>
+        {% else %}
+        <div class="dec-head reject">
+            <div class="dec-icon">❌</div>
+            <h1>Murojaat rad etildi</h1>
+            <p>Talabaga xabar yuborildi.</p>
+        </div>
+        {% endif %}
+        <div class="dec-body">
+            <p style="text-align:center;color:#4b4b5a;font-size:15px;line-height:1.6;margin:0;">
+                <b>{{ student.first_name }} {{ student.last_name|default:student.username }}</b> ga avtomatik xabar yuborildi.<br>
+                {% if action == 'accept' %}
+                    Endi siz uning rasmiy ilmiy rahbarisiz.
+                {% else %}
+                    Talaba boshqa rahbar tanlash imkoniyatiga ega.
+                {% endif %}
+            </p>
+        </div>
+
+    {% elif full_error %}
+        <div class="dec-head reject">
+            <div class="dec-icon">⚠️</div>
+            <h1>To'liq band</h1>
+            <p>Talabalar soni maksimal chegaraga yetgan.</p>
+        </div>
+        <div class="dec-body">
+            <div class="dec-msg error">
+                Sizning maksimal talabalar sig'imingiz to'lib bo'lgan. Iltimos admin bilan
+                bog'lanib, sig'imni oshirishni so'rang.
+            </div>
+        </div>
+
+    {% elif student_has_supervisor %}
+        <div class="dec-head reject">
+            <div class="dec-icon">⚠️</div>
+            <h1>Talabada allaqachon rahbar bor</h1>
+            <p>Bu talabaning boshqa ilmiy rahbari mavjud.</p>
+        </div>
+        <div class="dec-body">
+            <div class="dec-msg warn">
+                <b>{{ student.first_name }} {{ student.last_name|default:student.username }}</b>
+                allaqachon <b>{{ current_supervisor.full_name }}</b> rahbarligida ishlamoqda.
+                Murojaat avtomatik tarzda yopildi. Talaba rahbarni o'zgartirmoqchi bo'lsa,
+                admin bilan bog'lanishi kerak.
+            </div>
+        </div>
+
+    {% elif confirm_needed %}
+        {% if action == 'accept' %}
+            <div class="dec-head accept">
+                <div class="dec-icon">🤝</div>
+                <h1>Qabul qilishni tasdiqlang</h1>
+                <p>Tugmani bosib qarorni tasdiqlang</p>
+            </div>
+        {% else %}
+            <div class="dec-head reject">
+                <div class="dec-icon">✋</div>
+                <h1>Rad etishni tasdiqlang</h1>
+                <p>Tugmani bosib qarorni tasdiqlang</p>
+            </div>
+        {% endif %}
+
+        <div class="dec-body">
+            <div class="dec-section">
+                <p class="dec-section-title">Murojaat qiluvchi talaba</p>
+                <div class="dec-row"><span class="label">F.I.O</span><span class="value">{{ student.first_name }} {{ student.last_name|default:student.username }}</span></div>
+                <div class="dec-row"><span class="label">Email</span><span class="value">{{ student.email|default:"—" }}</span></div>
+                <div class="dec-row"><span class="label">Telefon</span><span class="value">{{ student.phone_number|default:"—" }}</span></div>
+                <div class="dec-row"><span class="label">Universitet</span><span class="value">{{ student.university|default:"—" }}</span></div>
+                <div class="dec-row"><span class="label">Fakultet</span><span class="value">{{ student.faculty|default:"—" }}</span></div>
+                {% if student.academic_degree %}
+                <div class="dec-row"><span class="label">Ilmiy daraja</span><span class="value">{{ student.get_academic_degree_display }}</span></div>
+                {% endif %}
+            </div>
+
+            <div class="dec-section">
+                <p class="dec-section-title">Ilmiy rahbar</p>
+                <p style="margin:0;font-size:15px;font-weight:700;color:#8b5cf6;">{{ supervisor.full_name }}</p>
+                <p style="margin:2px 0 0;font-size:13px;color:#6b7280;">{{ supervisor.position }}</p>
+            </div>
+
+            <form method="post" class="dec-actions">
+                {% csrf_token %}
+                {% if action == 'accept' %}
+                    <button type="submit" class="dec-btn dec-btn-accept">
+                        <i class="fas fa-check"></i> Ha, qabul qilaman
+                    </button>
+                {% else %}
+                    <button type="submit" class="dec-btn dec-btn-reject">
+                        <i class="fas fa-times"></i> Ha, rad etaman
+                    </button>
+                {% endif %}
+                <a href="/" class="dec-btn dec-btn-cancel">Bekor qilish</a>
+            </form>
+        </div>
+    {% endif %}
+
+    </div>
+</div>
+{% endblock %}

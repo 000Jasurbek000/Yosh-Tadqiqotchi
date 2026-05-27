@@ -1,0 +1,394 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}Ilmiy rahbarlar - Yosh Tadqiqotchi{% endblock %}
+
+{% block extra_head %}
+<style>
+.scroll-section {
+    opacity: 0;
+    transform: translateY(50px) scale(0.97);
+    transition: opacity 0.85s cubic-bezier(0.4,0,0.2,1), transform 0.85s cubic-bezier(0.4,0,0.2,1);
+}
+.scroll-section.visible { opacity: 1; transform: none; }
+
+.sup-container { max-width: 1200px; margin: 40px auto 80px; padding: 0 24px; }
+
+.sup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.sup-card {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(139,92,246,0.08);
+    padding: 28px 22px 22px;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+    overflow: hidden;
+}
+.sup-card::before {
+    content:'';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 80px;
+    background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(217,70,239,0.1));
+    z-index: 0;
+}
+.sup-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(139,92,246,0.18);
+}
+.sup-photo-wrap {
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8b5cf6, #d946ef);
+    padding: 3px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 8px 20px rgba(139,92,246,0.25);
+}
+.sup-photo {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    background: #f5f3ff;
+}
+.sup-photo-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    background: #f5f3ff;
+    color: #8b5cf6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+}
+.sup-name {
+    font-size: 17px;
+    font-weight: 800;
+    color: #1f1b2d;
+    margin: 0 0 6px;
+    position: relative; z-index: 1;
+}
+.sup-position {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.5;
+    margin: 0 0 8px;
+    min-height: 38px;
+    position: relative; z-index: 1;
+}
+.sup-specialty {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(217,70,239,0.12));
+    color: #8b5cf6;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11.5px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    position: relative; z-index: 1;
+}
+.sup-contacts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    position: relative; z-index: 1;
+}
+.sup-contact {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 12px;
+    background: #f9fafb;
+    border-radius: 10px;
+    font-size: 13px;
+    color: #374151;
+    text-decoration: none;
+    transition: all 0.2s;
+    word-break: break-all;
+}
+.sup-contact:hover {
+    background: linear-gradient(135deg, #8b5cf6, #d946ef);
+    color: #fff;
+    text-decoration: none;
+    transform: translateX(2px);
+}
+.sup-contact i { font-size: 13px; color: #8b5cf6; transition: color 0.2s; flex-shrink: 0; }
+.sup-contact:hover i { color: #fff; }
+
+.sup-request-form { margin-top: 14px; position: relative; z-index: 1; }
+.sup-request-btn {
+    width: 100%;
+    padding: 11px 18px;
+    background: linear-gradient(135deg, #8b5cf6, #d946ef);
+    color: #fff !important;
+    border: none;
+    border-radius: 11px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none !important;
+    box-shadow: 0 8px 20px rgba(139,92,246,0.3);
+    transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.sup-request-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px rgba(139,92,246,0.42);
+    background: linear-gradient(135deg, #7c3aed, #c026d3);
+}
+.sup-login-btn {
+    width: 100%;
+    padding: 11px 18px;
+    background: #f3f4f6;
+    color: #6b7280 !important;
+    border-radius: 11px;
+    font-size: 13.5px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+.sup-login-btn:hover { background: #e5e7eb; color: #4b5563 !important; }
+
+/* Messages */
+.sup-messages { max-width: 800px; margin: 0 auto 22px; padding: 0 24px; }
+.sup-message {
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+    border-left: 4px solid;
+}
+.sup-message.success { background: #f0fdf4; color: #166534; border-color: #10b981; }
+.sup-message.error   { background: #fef2f2; color: #991b1b; border-color: #ef4444; }
+.sup-message.warning { background: #fef3c7; color: #92400e; border-color: #f59e0b; }
+.sup-message.info    { background: #dbeafe; color: #1e3a8a; border-color: #3b82f6; }
+
+/* Status badge va capacity */
+.sup-status-badge {
+    width: 100%;
+    text-align: center;
+    padding: 11px 14px;
+    border-radius: 11px;
+    font-size: 13.5px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+.sup-status-pending  { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.sup-status-accepted { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+.sup-status-rejected { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+.sup-status-full     { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+
+.sup-capacity {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(139,92,246,0.92);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    z-index: 2;
+}
+.sup-capacity.full { background: rgba(239,68,68,0.92); }
+
+.sup-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #9ca3af;
+}
+.sup-empty-icon { font-size: 64px; color: #8b5cf6; margin-bottom: 16px; }
+.sup-empty p { font-size: 16px; }
+</style>
+{% endblock %}
+
+{% block content %}
+    <section class="subpage-hero stipendiya-hero scroll-section">
+        <div class="subpage-hero-inner">
+            <div class="subpage-hero-text">
+                <div class="subpage-breadcrumb">
+                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <span>//</span>
+                    <a href="{% url 'main:iqtidor_yoli' %}">Iqtidor Yo'li</a>
+                    <span>//</span>
+                    <span>Ilmiy rahbarlar</span>
+                </div>
+                <h1 class="title subpage-title">Ilmiy rahbarlar</h1>
+                <p class="subtitle subpage-subtitle">
+                    Tajribali ilmiy rahbarlarimiz bilan tanishing va o'z sohangizdagi
+                    mutaxassis bilan bog'lanib, tadqiqot faoliyatingizni boshlang.
+                </p>
+            </div>
+            <div class="subpage-hero-illustration">
+                <div class="subpage-hero-pill">
+                    <span class="badge" style="margin-bottom: 0;">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Ilmiy rahbarlar</span>
+                    </span>
+                </div>
+                <div class="subpage-hero-image-wrapper">
+                    <img src="{% static 'assets/iqtidor_yoli.png' %}" alt="Ilmiy rahbarlar" class="subpage-hero-image" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% if messages %}
+    <div class="sup-messages">
+        {% for message in messages %}
+            <div class="sup-message {{ message.tags }}">
+                {% if message.tags == 'success' %}<i class="fas fa-check-circle"></i>
+                {% elif message.tags == 'error' %}<i class="fas fa-exclamation-circle"></i>
+                {% endif %}
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if accepted_supervisor %}
+    <div class="sup-messages">
+        <div style="background:linear-gradient(135deg,#d1fae5,#a7f3d0);border:1px solid #6ee7b7;border-left:5px solid #10b981;padding:18px 22px;border-radius:14px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+            {% if accepted_supervisor.photo %}
+                <img src="{{ accepted_supervisor.photo.url }}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid #10b981;flex-shrink:0;">
+            {% else %}
+                <div style="width:56px;height:56px;border-radius:50%;background:#10b981;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;"><i class="fas fa-user-tie"></i></div>
+            {% endif %}
+            <div style="flex:1;min-width:200px;">
+                <div style="font-size:13px;font-weight:700;color:#065f46;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">
+                    <i class="fas fa-check-circle"></i> Sizning ilmiy rahbaringiz
+                </div>
+                <div style="font-size:17px;font-weight:800;color:#065f46;">{{ accepted_supervisor.full_name }}</div>
+                <div style="font-size:13px;color:#047857;">{{ accepted_supervisor.position }}</div>
+            </div>
+            <div style="font-size:12.5px;color:#065f46;background:#fff;padding:10px 14px;border-radius:10px;line-height:1.5;max-width:280px;">
+                <i class="fas fa-info-circle"></i> Boshqa rahbarga murojaat yuborib bo'lmaydi.
+                Rahbar o'zgartirish uchun <b>admin bilan bog'laning</b>.
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="sup-container">
+        <div class="sup-grid scroll-section">
+            {% for sup in supervisors %}
+            <div class="sup-card">
+                <div class="sup-capacity {% if sup.is_full %}full{% endif %}">
+                    <i class="fas fa-users"></i> {{ sup.accepted_count }}/{{ sup.max_students }}
+                </div>
+                <div class="sup-photo-wrap">
+                    {% if sup.photo %}
+                        <img src="{{ sup.photo.url }}" alt="{{ sup.full_name }}" class="sup-photo">
+                    {% else %}
+                        <div class="sup-photo-placeholder"><i class="fas fa-user-tie"></i></div>
+                    {% endif %}
+                </div>
+
+                <h3 class="sup-name">{{ sup.full_name }}</h3>
+                <p class="sup-position">{{ sup.position }}</p>
+
+                {% if sup.specialty %}
+                    <span class="sup-specialty">{{ sup.specialty }}</span>
+                {% endif %}
+
+                <div class="sup-contacts">
+                    {% if sup.phone %}
+                        <a href="tel:{{ sup.phone }}" class="sup-contact">
+                            <i class="fas fa-phone"></i> {{ sup.phone }}
+                        </a>
+                    {% endif %}
+                    {% if sup.email %}
+                        <a href="mailto:{{ sup.email }}" class="sup-contact">
+                            <i class="fas fa-envelope"></i> {{ sup.email }}
+                        </a>
+                    {% endif %}
+                </div>
+
+                <div class="sup-request-form">
+                {% if user.is_authenticated and user_status|get_item:sup.id == 'accepted' %}
+                    {# Bu rahbar — joriy foydalanuvchining rahbari #}
+                    <div class="sup-status-badge sup-status-accepted">
+                        <i class="fas fa-check-circle"></i> Sizning rahbaringiz
+                    </div>
+                {% elif accepted_supervisor %}
+                    {# Talabada boshqa rahbar bor — bu kartochka bloklangan #}
+                    <div class="sup-status-badge sup-status-full">
+                        <i class="fas fa-lock"></i> Murojaat yuborib bo'lmaydi
+                    </div>
+                {% elif sup.is_full %}
+                    <div class="sup-status-badge sup-status-full">
+                        <i class="fas fa-users-slash"></i> To'liq band ({{ sup.accepted_count }}/{{ sup.max_students }})
+                    </div>
+                {% elif user.is_authenticated and user_status|get_item:sup.id == 'pending' %}
+                    <div class="sup-status-badge sup-status-pending">
+                        <i class="fas fa-hourglass-half"></i> Javob kutilmoqda
+                    </div>
+                {% elif sup.email %}
+                    {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'main:send_supervisor_request' sup.id %}" onsubmit="return confirm('{{ sup.full_name }} ga rahbarlik so\'rovi yuborilsinmi?\n\nMurojaat sizning profil ma\'lumotlaringiz bilan email orqali yuboriladi.');">
+                            {% csrf_token %}
+                            <button type="submit" class="sup-request-btn">
+                                <i class="fas fa-paper-plane"></i> Murojaat yuborish
+                            </button>
+                        </form>
+                        {% if user_status|get_item:sup.id == 'rejected' %}
+                        <p style="text-align:center;font-size:11.5px;color:#991b1b;margin:6px 0 0;">
+                            <i class="fas fa-info-circle"></i> Avvalgi murojaat rad etilgan
+                        </p>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'main:login' %}?next={% url 'main:ilmiy_rahbarlar' %}" class="sup-login-btn">
+                            <i class="fas fa-sign-in-alt"></i> Murojaat uchun login qiling
+                        </a>
+                    {% endif %}
+                {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="sup-empty" style="grid-column: 1 / -1;">
+                <div class="sup-empty-icon"><i class="fas fa-user-tie"></i></div>
+                <p>Hozircha ilmiy rahbarlar qo'shilmagan.<br>Admin paneldan ilmiy rahbarlarni qo'shing.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.scroll-section').forEach(el => observer.observe(el));
+})();
+</script>
+{% endblock %}

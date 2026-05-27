@@ -41,3 +41,14 @@ def youtube_embed_url(url):
         return f'https://www.youtube.com/embed/{video_id}?rel=0'
     
     return url
+
+
+@register.filter
+def get_item(d, key):
+    """Lug'atdan kalit bo'yicha qiymat olish: {{ mydict|get_item:key }}"""
+    if d is None:
+        return None
+    try:
+        return d.get(key)
+    except (AttributeError, TypeError):
+        return None
