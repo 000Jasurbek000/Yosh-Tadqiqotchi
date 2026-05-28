@@ -232,9 +232,25 @@ class ArticleBankAdmin(admin.ModelAdmin):
 
 @admin.register(ResearcherRegulation)
 class ResearcherRegulationAdmin(admin.ModelAdmin):
-    list_display = ('regulation_name', 'created_at')
+    list_display = ('regulation_name', 'source_type', 'created_at')
     search_fields = ('regulation_name',)
-    fields = ('regulation_name', 'file')
+    fieldsets = (
+        (None, {
+            'fields': ('regulation_name',),
+        }),
+        ('Manba', {
+            'fields': ('regulation_link', 'file'),
+            'description': 'Havola yoki fayldan birini kiriting. Tashqi sayt havolasi tavsiya etiladi.',
+        }),
+    )
+
+    @admin.display(description='Manba')
+    def source_type(self, obj):
+        if obj.regulation_link:
+            return 'Havola'
+        if obj.file:
+            return 'Fayl'
+        return '—'
 
 
 # Savollar admin (to'liq funksional)

@@ -426,7 +426,19 @@ class ArticleBank(models.Model):
 # 16. Tadqiqotchilar nizomi
 class ResearcherRegulation(models.Model):
     regulation_name = models.CharField(max_length=255, verbose_name='Nizom nomi', help_text='Nizom nomini kiriting')
-    file = models.FileField(upload_to='regulations/', verbose_name='Fayl', help_text='Nizom faylini yuklang (PDF, DOCX)')
+    regulation_link = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name='Nizom havolasi',
+        help_text='Tashqi nizom havolasi (https://...). Fayl yuklash shart emas.',
+    )
+    file = models.FileField(
+        upload_to='regulations/',
+        blank=True,
+        null=True,
+        verbose_name='Fayl',
+        help_text='Yoki nizom faylini yuklang (PDF, DOCX). Havola kiritilsa, fayl ixtiyoriy.',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -437,6 +449,22 @@ class ResearcherRegulation(models.Model):
 
     def __str__(self):
         return self.regulation_name
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if not self.regulation_link and not self.file:
+            raise ValidationError('Fayl yoki havola kamida bittasi bo\'lishi kerak.')
+
+    def get_document_url(self):
+        if self.regulation_link:
+            return self.regulation_link
+        if self.file:
+            return self.file.url
+        return None
+
+    @property
+    def is_external_link(self):
+        return bool(self.regulation_link)
 
 
 # 17. Kurslar

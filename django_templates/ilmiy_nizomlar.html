@@ -39,8 +39,8 @@
                 <h1 class="title subpage-title">Ilmiy tadqiqotchilar uchun NIZOMLAR</h1>
                 <p class="subtitle subpage-subtitle">
                     Ilmiy daraja olish, nashr talablari, iqtidorli talabalar, stipendiyalar va boshqa tartib-taomillar bo'yicha asosiy
-                    nizomlar va yo'riqnomalar fayllari. Foydalanuvchilar bu yerda hech narsa yuklamaydi, faqat tayyor hujjatlarni
-                    yuklab olib tanishib chiqadi.
+                    nizomlar va yo'riqnomalar. Foydalanuvchilar bu yerda hech narsa yuklamaydi, faqat tayyor hujjatlarni
+                    ko'rib tanishib chiqadi.
                 </p>
             </div>
             <div class="subpage-hero-illustration">
@@ -63,8 +63,7 @@
                 <div class="stipendiya-table-header">
                     <h2 class="subtitle">Asosiy nizomlar ro'yxati</h2>
                     <p class="text-muted">
-                        Quyidagi jadvalda nizom nomi va unga mos faylni yuklab olish tugmasi keltirilgan. Hozircha barcha havolalar demo
-                        ko'rinishida bo'lib, keyinchalik haqiqiy PDF yoki DOC fayllar bilan almashtiriladi.
+                        Quyidagi jadvalda nizom nomi va unga mos havola keltirilgan. Havola orqali rasmiy nizom sahifasiga o'tib tanishishingiz mumkin.
                     </p>
                 </div>
                 <div class="stipendiya-table-wrapper">
@@ -73,7 +72,7 @@
                             <tr>
                                 <th style="width: 60px;">T/r</th>
                                 <th>Nizom nomi</th>
-                                <th style="text-align: right;">Faylni yuklab olish</th>
+                                <th style="text-align: right;">Nizom</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -82,7 +81,13 @@
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ regulation.regulation_name }}</td>
                                 <td class="stipendiya-table-action">
-                                    <a href="{{ regulation.file.url }}" target="_blank" class="btn-gradient stipendiya-action-btn" download>Nizom faylini yuklab olish</a>
+                                    {% if regulation.get_document_url %}
+                                        <a href="{{ regulation.get_document_url }}" target="_blank" rel="noopener" class="btn-gradient stipendiya-action-btn">
+                                            {% if regulation.is_external_link %}Nizomni ko'rish{% else %}Nizom faylini ochish{% endif %}
+                                        </a>
+                                    {% else %}
+                                        <span style="color: #999;">—</span>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% empty %}
