@@ -375,7 +375,19 @@ class Conference(models.Model):
     
     type = models.CharField(max_length=20, choices=TYPE_CHOICES, verbose_name='Turi', help_text='Konferensiya turini tanlang')
     name = models.CharField(max_length=255, verbose_name='Nomi', help_text='Konferensiya nomini kiriting')
-    information_letter = models.FileField(upload_to='conferences/info_letters/', verbose_name='Ma\'lumot xati', help_text='Konferensiya haqida ma\'lumot xati (PDF)')
+    information_letter_link = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name='Axborot xati havolasi',
+        help_text='Tashqi axborot xati havolasi (https://...). Fayl yuklash shart emas.',
+    )
+    information_letter = models.FileField(
+        upload_to='conferences/info_letters/',
+        blank=True,
+        null=True,
+        verbose_name='Ma\'lumot xati',
+        help_text='Yoki axborot xati faylini yuklang (PDF). Havola kiritilsa, fayl ixtiyoriy.',
+    )
     organizer_link = models.URLField(verbose_name='Tashkilotchi havolasi', help_text='Tashkilotchi tashkilot sahifasiga havola')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -387,6 +399,17 @@ class Conference(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.get_type_display()})"
+
+    def get_information_letter_url(self):
+        if self.information_letter_link:
+            return self.information_letter_link
+        if self.information_letter:
+            return self.information_letter.url
+        return None
+
+    @property
+    def is_external_letter_link(self):
+        return bool(self.information_letter_link)
 
 
 # 14. Dissertatsiyalar banki

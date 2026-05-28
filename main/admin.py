@@ -209,10 +209,26 @@ class OakDatabaseAdmin(admin.ModelAdmin):
 
 @admin.register(Conference)
 class ConferenceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'type', 'created_at')
+    list_display = ('name', 'type', 'letter_source', 'created_at')
     list_filter = ('type',)
     search_fields = ('name',)
-    fields = ('type', 'name', 'information_letter', 'organizer_link')
+    fieldsets = (
+        (None, {
+            'fields': ('type', 'name', 'organizer_link'),
+        }),
+        ('Axborot xati', {
+            'fields': ('information_letter_link', 'information_letter'),
+            'description': 'Havola yoki PDF fayldan birini kiriting. Tashqi havola tavsiya etiladi.',
+        }),
+    )
+
+    @admin.display(description='Axborot xati')
+    def letter_source(self, obj):
+        if obj.information_letter_link:
+            return 'Havola'
+        if obj.information_letter:
+            return 'Fayl'
+        return '—'
 
 
 @admin.register(DissertationBank)

@@ -83,8 +83,10 @@
                                     <td style="max-width: 300px; word-wrap: break-word; white-space: normal;">{{ conference.name }}</td>
                                     <td class="dynamic-about-text" style="max-width: 400px; word-wrap: break-word; white-space: normal;"></td>
                                     <td class="stipendiya-table-action">
-                                        {% if conference.information_letter %}
-                                        <a href="{{ conference.information_letter.url }}" download class="btn-gradient stipendiya-action-btn">Axborot xatini yuklash</a>
+                                        {% if conference.get_information_letter_url %}
+                                        <a href="{{ conference.get_information_letter_url }}" target="_blank" rel="noopener" class="btn-gradient stipendiya-action-btn">
+                                            {% if conference.is_external_letter_link %}Axborot xatini ko'rish{% else %}Axborot xatini ochish{% endif %}
+                                        </a>
                                         {% else %}
                                         <span class="text-muted">Mavjud emas</span>
                                         {% endif %}
@@ -123,7 +125,7 @@
             icon: '<i class="fas fa-globe"></i>',
             badge: 'Xalqaro konferensiyalar',
             sectionTitle: 'Xalqaro konferensiyalar ro\'yxati',
-            sectionDesc: 'Har bir satrda konferensiya nomi, qisqacha ma\'lumot, axborot xatini yuklab olish va tashkilotchiga ulanish uchun havolalar keltiriladi.',
+            sectionDesc: 'Har bir satrda konferensiya nomi, qisqacha ma\'lumot, axborot xati havolasi va tashkilotchiga ulanish uchun havolalar keltiriladi.',
             aboutHeader: 'Xalqaro konferensiya haqida',
             aboutText: 'Bu xalqaro miqyosdagi konferensiya',
             emptyIcon: 'fas fa-globe',
@@ -135,7 +137,7 @@
             icon: '<i class="fas fa-flag"></i>',
             badge: 'Respublika konferensiyalari',
             sectionTitle: 'Respublika konferensiyalari ro\'yxati',
-            sectionDesc: 'Har bir satrda konferensiya nomi, qisqacha ma\'lumot, axborot xatini yuklab olish va tashkilotchiga ulanish uchun havolalar keltiriladi.',
+            sectionDesc: 'Har bir satrda konferensiya nomi, qisqacha ma\'lumot, axborot xati havolasi va tashkilotchiga ulanish uchun havolalar keltiriladi.',
             aboutHeader: 'Respublika konferensiyasi haqida',
             aboutText: 'Bu respublika miqyosidagi konferensiya',
             emptyIcon: 'fas fa-flag',
