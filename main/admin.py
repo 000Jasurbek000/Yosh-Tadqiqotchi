@@ -125,9 +125,30 @@ class TalentedStudentDatabaseAdmin(admin.ModelAdmin):
 
 @admin.register(StateScholarship)
 class StateScholarshipAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created_at')
+    list_display = ('name', 'regulation_source', 'created_at')
     search_fields = ('name', 'short_description')
-    fields = ('name', 'short_description', 'regulation_link', 'application_link')
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'short_description'),
+        }),
+        ('Nizom', {
+            'fields': ('regulation_link', 'regulation_file'),
+            'description': 'Havola yoki PDF fayldan birini kiriting. Tashqi havola tavsiya etiladi.',
+        }),
+        ('Qo\'shimcha', {
+            'fields': ('application_link',),
+            'classes': ('collapse',),
+            'description': 'Ixtiyoriy. Saytda hozircha ko\'rsatilmaydi.',
+        }),
+    )
+
+    @admin.display(description='Nizom')
+    def regulation_source(self, obj):
+        if obj.regulation_link:
+            return 'Havola'
+        if obj.regulation_file:
+            return 'Fayl'
+        return '—'
 
 
 @admin.register(BuxduScholarship)

@@ -128,8 +128,25 @@ class TalentedStudentDatabase(models.Model):
 class StateScholarship(models.Model):
     name = models.CharField(max_length=255, verbose_name='Stipendiya nomi', help_text='Stipendiya nomini kiriting (masalan: Prezident stipendiyasi)')
     short_description = models.TextField(verbose_name='Qisqacha tavsif', help_text='Stipendiya haqida qisqa ma\'lumot (kimlar uchun, qancha miqdor)')
-    regulation_link = models.URLField(verbose_name='Nizom havolasi', help_text='Stipendiya nizomiga havola (https://...)')
-    application_link = models.URLField(verbose_name='Ariza topshirish havolasi', help_text='Ariza topshirish uchun havola (https://...)')
+    regulation_link = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name='Nizom havolasi',
+        help_text='Stipendiya nizomiga tashqi havola (https://...). Fayl yuklash shart emas.',
+    )
+    regulation_file = models.FileField(
+        upload_to='state_scholarships/regulations/',
+        blank=True,
+        null=True,
+        verbose_name='Nizom fayli',
+        help_text='Yoki nizom faylini yuklang (PDF). Havola kiritilsa, fayl ixtiyoriy.',
+    )
+    application_link = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name='Ariza topshirish havolasi',
+        help_text='Ariza topshirish uchun havola (https://...) — ixtiyoriy',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -140,6 +157,22 @@ class StateScholarship(models.Model):
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if not self.regulation_link and not self.regulation_file:
+            raise ValidationError('Nizom havolasi yoki fayl kamida bittasi bo\'lishi kerak.')
+
+    def get_regulation_url(self):
+        if self.regulation_link:
+            return self.regulation_link
+        if self.regulation_file:
+            return self.regulation_file.url
+        return None
+
+    @property
+    def is_external_regulation_link(self):
+        return bool(self.regulation_link)
 
 
 # 7. BuxDU stipendiyalari
