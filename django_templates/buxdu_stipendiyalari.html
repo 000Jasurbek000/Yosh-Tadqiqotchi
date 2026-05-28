@@ -100,7 +100,7 @@
                 <h1 class="title subpage-title">BuxDU stipendiyalari</h1>
                 <p class="subtitle subpage-subtitle">
                     Buxoro davlat universiteti qoshidagi Rektor stipendiyasi va Fitrat stipendiyasi uchun qisqacha ma'lumot,
-                    nizom fayllari va onlayn ariza havolalari.
+                    nizom havolalari yoki fayllari va onlayn ariza havolalari.
                 </p>
             </div>
             <div class="subpage-hero-illustration">
@@ -139,10 +139,10 @@
                             {{ scholarship.short_description }}
                         </p>
                         <div style="display: flex; flex-direction: column; gap: 8px;">
-                            {% if scholarship.regulation_file %}
-                            <a href="{{ scholarship.regulation_file.url }}" class="btn-gradient stipendiya-action-btn" style="justify-content: flex-start;" download>
-                                <i class="fas fa-file-download"></i>
-                                Nizom faylini yuklab olish
+                            {% if scholarship.get_regulation_url %}
+                            <a href="{{ scholarship.get_regulation_url }}" class="btn-gradient stipendiya-action-btn" style="justify-content: flex-start;" target="_blank" rel="noopener noreferrer">
+                                <i class="fas fa-{% if scholarship.is_external_regulation_link %}external-link-alt{% else %}file-alt{% endif %}"></i>
+                                {% if scholarship.is_external_regulation_link %}Nizomni ko'rish{% else %}Nizom faylini ochish{% endif %}
                             </a>
                             {% endif %}
                             {% if scholarship.application_link %}

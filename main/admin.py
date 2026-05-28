@@ -152,9 +152,29 @@ class StateScholarshipAdmin(admin.ModelAdmin):
 
 @admin.register(BuxduScholarship)
 class BuxduScholarshipAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created_at')
+    list_display = ('name', 'regulation_source', 'created_at')
     search_fields = ('name', 'short_description')
-    fields = ('name', 'short_description', 'regulation_file', 'application_link')
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'short_description'),
+        }),
+        ('Nizom', {
+            'fields': ('regulation_link', 'regulation_file'),
+            'description': 'Havola yoki PDF fayldan birini kiriting. Tashqi havola tavsiya etiladi.',
+        }),
+        ('Ariza', {
+            'fields': ('application_link',),
+            'description': 'Onlayn ariza topshirish uchun havola.',
+        }),
+    )
+
+    @admin.display(description='Nizom')
+    def regulation_source(self, obj):
+        if obj.regulation_link:
+            return 'Havola'
+        if obj.regulation_file:
+            return 'Fayl'
+        return '—'
 
 
 @admin.register(BuxduWinnerDatabase)

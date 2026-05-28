@@ -179,8 +179,25 @@ class StateScholarship(models.Model):
 class BuxduScholarship(models.Model):
     name = models.CharField(max_length=255, verbose_name='Stipendiya nomi', help_text='BuxDU stipendiya nomini kiriting')
     short_description = models.TextField(verbose_name='Qisqacha tavsif', help_text='Stipendiya shartlari va talablari haqida ma\'lumot')
-    regulation_file = models.FileField(upload_to='scholarships/regulations/', verbose_name='Nizom fayli', help_text='Stipendiya nizomini yuklang (PDF, DOCX)')
-    application_link = models.URLField(verbose_name='Ariza topshirish havolasi', help_text='Onlayn ariza topshirish uchun havola')
+    regulation_link = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name='Nizom havolasi',
+        help_text='Stipendiya nizomiga tashqi havola (https://...). Fayl yuklash shart emas.',
+    )
+    regulation_file = models.FileField(
+        upload_to='scholarships/regulations/',
+        blank=True,
+        null=True,
+        verbose_name='Nizom fayli',
+        help_text='Yoki nizom faylini yuklang (PDF, DOCX). Havola kiritilsa, fayl ixtiyoriy.',
+    )
+    application_link = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name='Ariza topshirish havolasi',
+        help_text='Onlayn ariza topshirish uchun havola',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -191,6 +208,22 @@ class BuxduScholarship(models.Model):
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if not self.regulation_link and not self.regulation_file:
+            raise ValidationError('Nizom havolasi yoki fayl kamida bittasi bo\'lishi kerak.')
+
+    def get_regulation_url(self):
+        if self.regulation_link:
+            return self.regulation_link
+        if self.regulation_file:
+            return self.regulation_file.url
+        return None
+
+    @property
+    def is_external_regulation_link(self):
+        return bool(self.regulation_link)
 
 
 # 8. BuxDU sovrindorlar bazasi
