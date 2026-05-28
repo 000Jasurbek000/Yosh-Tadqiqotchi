@@ -83,6 +83,10 @@
     border: 1px solid var(--border-color) !important;
     box-shadow: 0 10px 40px rgba(139, 92, 246, 0.08) !important;
 }
+
+.stipendiya-table-action-left {
+    text-align: left !important;
+}
 </style>
 {% endblock %}
 
@@ -123,8 +127,8 @@
                 <div class="stipendiya-table-header">
                     <h2 class="subtitle">Davlat stipendiyalari ro'yxati</h2>
                     <p class="text-muted">
-                        Har bir satrda stipendiya nomi, qisqacha ma'lumot, nizom silkasi va OTM bosqichida ishtirok etish
-                        uchun ariza havolasi beriladi.
+                        Har bir satrda stipendiya nomi, qisqacha ma'lumot, OTM bosqichida ishtirok etish
+                        uchun ariza havolasi va nizom silkasi beriladi.
                     </p>
                 </div>
                 {% if scholarships %}
@@ -135,8 +139,8 @@
                                     <th style="width: 60px;">T/r</th>
                                     <th>Stipendiya nomi</th>
                                     <th>Stipendiya haqida ma'lumot</th>
-                                    <th>Nizom</th>
                                     <th style="text-align: right;">OTM bosqichi arizasi</th>
+                                    <th>Nizom</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -146,10 +150,10 @@
                                     <td style="word-wrap: break-word; white-space: normal; max-width: 200px;">{{ scholarship.name }}</td>
                                     <td style="word-wrap: break-word; white-space: normal; max-width: 300px;">{{ scholarship.short_description }}</td>
                                     <td class="stipendiya-table-action">
-                                        <a href="{{ scholarship.regulation_link }}" target="_blank" class="btn-gradient stipendiya-action-btn">Nizomni ko'rish</a>
+                                        <a href="{{ scholarship.application_link }}" target="_blank" rel="noopener" class="btn-gradient stipendiya-action-btn">Ariza topshirish</a>
                                     </td>
-                                    <td class="stipendiya-table-action">
-                                        <a href="{{ scholarship.application_link }}" target="_blank" class="btn-gradient stipendiya-action-btn">Ariza topshirish</a>
+                                    <td class="stipendiya-table-action stipendiya-table-action-left">
+                                        <a href="{{ scholarship.regulation_link }}" target="_blank" rel="noopener" class="btn-gradient stipendiya-action-btn">Nizomni ko'rish</a>
                                     </td>
                                 </tr>
                                 {% endfor %}
