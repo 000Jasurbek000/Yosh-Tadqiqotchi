@@ -40,30 +40,16 @@
 }
 
 /* Enhanced table with purple theme */
-.stipendiya-table tr {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
+.davlat-stipendiya-table tr {
+    transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.stipendiya-table tbody tr:hover {
+.davlat-stipendiya-table tbody tr:hover {
     background: rgba(139, 92, 246, 0.05) !important;
-    transform: translateX(4px);
 }
 
-.stipendiya-table tbody tr::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: linear-gradient(135deg, #8b5cf6, #d946ef);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.stipendiya-table tbody tr:hover::before {
-    opacity: 1;
+.davlat-stipendiya-table tbody tr:hover td:first-child {
+    box-shadow: inset 3px 0 0 0 #8b5cf6;
 }
 
 .btn-gradient {
@@ -85,18 +71,25 @@
 }
 
 .davlat-stipendiya-table {
-    table-layout: fixed;
+    table-layout: auto;
+    width: 100%;
 }
 
-.davlat-stipendiya-table .col-tr { width: 60px; }
-.davlat-stipendiya-table .col-name { width: 22%; }
-.davlat-stipendiya-table .col-info { width: auto; }
-.davlat-stipendiya-table .col-nizom { width: 170px; text-align: right; }
+.davlat-stipendiya-table .col-tr { width: 60px; min-width: 60px; }
+.davlat-stipendiya-table .col-name { width: 24%; min-width: 180px; }
+.davlat-stipendiya-table .col-info { width: auto; min-width: 260px; }
+.davlat-stipendiya-table .col-nizom { width: 180px; min-width: 180px; white-space: nowrap; }
+
+.davlat-stipendiya-table thead th.col-nizom,
+.davlat-stipendiya-table tbody td.col-nizom {
+    text-align: right;
+}
 
 .davlat-stipendiya-table tbody td {
     word-wrap: break-word;
+    overflow-wrap: break-word;
     white-space: normal;
-    vertical-align: top;
+    vertical-align: middle;
 }
 </style>
 {% endblock %}
@@ -144,6 +137,12 @@
                 {% if scholarships %}
                     <div class="stipendiya-table-wrapper">
                         <table class="stipendiya-table davlat-stipendiya-table">
+                            <colgroup>
+                                <col class="col-tr">
+                                <col class="col-name">
+                                <col class="col-info">
+                                <col class="col-nizom">
+                            </colgroup>
                             <thead>
                                 <tr>
                                     <th class="col-tr">T/r</th>
