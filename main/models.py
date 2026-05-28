@@ -231,7 +231,19 @@ class BuxduWinnerDatabase(models.Model):
     academic_year = models.CharField(max_length=20, verbose_name='O\'quv yili', help_text='Masalan: 2023-2024')
     scholarship_type = models.CharField(max_length=255, verbose_name='Stipendiya turi', help_text='Stipendiya turini kiriting (masalan: BuxDU rektori stipendiyasi)')
     file_name = models.CharField(max_length=255, verbose_name='Fayl nomi', help_text='G\'oliblar ro\'yxati fayl nomi')
-    file = models.FileField(upload_to='buxdu_winners/', verbose_name='Fayl', help_text='G\'oliblar ro\'yxatini yuklang (PDF, XLSX)')
+    file_link = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name='Fayl havolasi',
+        help_text='Tashqi fayl havolasi (https://...). Fayl yuklash shart emas.',
+    )
+    file = models.FileField(
+        upload_to='buxdu_winners/',
+        blank=True,
+        null=True,
+        verbose_name='Fayl',
+        help_text='Yoki g\'oliblar ro\'yxatini yuklang (PDF, XLSX, DOCX).',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -243,6 +255,23 @@ class BuxduWinnerDatabase(models.Model):
 
     def __str__(self):
         return f"{self.scholarship_type} ({self.academic_year})"
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if not self.file_link and not self.file:
+            raise ValidationError('Fayl havolasi yoki fayl kamida bittasi bo\'lishi kerak.')
+
+    def get_file_url(self):
+        if self.file_link:
+            return self.file_link
+        if self.file:
+            from django.urls import reverse
+            return reverse('main:download_winner_database', args=[self.pk])
+        return None
+
+    @property
+    def is_external_file_link(self):
+        return bool(self.file_link)
 
 
 # 9. Turli olimpiadalar

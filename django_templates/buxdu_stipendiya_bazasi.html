@@ -30,7 +30,7 @@
                 <h1 class="title subpage-title">BuxDU stipendiya sovrindorlari bazasi</h1>
                 <p class="subtitle subpage-subtitle">
                     Har bir o'quv yili va stipendiya turi bo'yicha sovrindor talabalar ro'yxati alohida fayl ko'rinishida
-                    saqlanadi. Foydalanuvchilar ushbu fayllarni erkin yuklab olishi mumkin.
+                    saqlanadi. Faylni havola orqali yoki yuklab olish tugmasi bilan ochishingiz mumkin.
                 </p>
             </div>
             <div class="subpage-hero-illustration">
@@ -54,7 +54,7 @@
                     <h2 class="subtitle">Yillar va stipendiya turlari bo'yicha fayllar</h2>
                     <p class="text-muted">
                         Quyidagi jadvalda har bir o'quv yili va stipendiya turi bo'yicha sovrindorlar ro'yxati uchun alohida fayl
-                        ko'rsatiladi. Hozircha havolalar demo ko'rinishida, keyinchalik haqiqiy fayllar bilan almashtiriladi.
+                        yoki havola ko'rsatiladi.
                     </p>
                 </div>
                 <div class="stipendiya-table-wrapper">
@@ -65,7 +65,7 @@
                                 <th>O'quv yili</th>
                                 <th>Stipendiya turi</th>
                                 <th>Fayl nomi</th>
-                                <th style="text-align: right;">Yuklab olish</th>
+                                <th style="text-align: right;">Fayl</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -76,7 +76,13 @@
                                 <td>{{ database.scholarship_type }}</td>
                                 <td>{{ database.file_name }}</td>
                                 <td class="stipendiya-table-action">
-                                    <a href="{{ database.file.url }}" class="btn-gradient stipendiya-action-btn" download>Yuklab olish</a>
+                                    {% if database.get_file_url %}
+                                        <a href="{{ database.get_file_url }}" class="btn-gradient stipendiya-action-btn" {% if database.is_external_file_link %}target="_blank" rel="noopener"{% endif %}>
+                                            {% if database.is_external_file_link %}Faylni ko'rish{% else %}Yuklab olish{% endif %}
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% empty %}

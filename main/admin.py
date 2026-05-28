@@ -179,10 +179,26 @@ class BuxduScholarshipAdmin(admin.ModelAdmin):
 
 @admin.register(BuxduWinnerDatabase)
 class BuxduWinnerDatabaseAdmin(admin.ModelAdmin):
-    list_display = ('scholarship_type', 'academic_year', 'file_name', 'created_at')
+    list_display = ('scholarship_type', 'academic_year', 'file_name', 'file_source', 'created_at')
     list_filter = ('academic_year', 'scholarship_type')
     search_fields = ('scholarship_type', 'file_name')
-    fields = ('academic_year', 'scholarship_type', 'file_name', 'file')
+    fieldsets = (
+        (None, {
+            'fields': ('academic_year', 'scholarship_type', 'file_name'),
+        }),
+        ('Fayl', {
+            'fields': ('file_link', 'file'),
+            'description': 'Havola yoki fayldan birini kiriting. Tashqi havola tavsiya etiladi.',
+        }),
+    )
+
+    @admin.display(description='Manba')
+    def file_source(self, obj):
+        if obj.file_link:
+            return 'Havola'
+        if obj.file:
+            return 'Fayl'
+        return '—'
 
 
 @admin.register(Olympiad)

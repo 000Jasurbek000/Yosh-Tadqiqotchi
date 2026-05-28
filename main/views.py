@@ -413,6 +413,29 @@ class BuxDUStipendiyaBazasiView(TemplateView):
         return context
 
 
+def download_winner_database(request, database_id):
+    """BuxDU sovrindorlar bazasi faylini yuklab berish (production media muammosini chetlab o'tadi)."""
+    import mimetypes
+    import os
+    from django.http import FileResponse, Http404
+
+    database = get_object_or_404(BuxduWinnerDatabase, pk=database_id)
+    if not database.file:
+        raise Http404('Fayl topilmadi')
+
+    if not database.file.storage.exists(database.file.name):
+        raise Http404('Fayl serverda mavjud emas')
+
+    filename = database.file_name or os.path.basename(database.file.name)
+    content_type, _ = mimetypes.guess_type(filename)
+    if not content_type:
+        content_type = 'application/octet-stream'
+
+    response = FileResponse(database.file.open('rb'), content_type=content_type)
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+
+
 # Olimpiadalar
 class OlimpiadalarView(TemplateView):
     template_name = 'olimpiadalar.html'
