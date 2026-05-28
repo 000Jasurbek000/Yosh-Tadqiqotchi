@@ -135,10 +135,9 @@ class StateScholarshipAdmin(admin.ModelAdmin):
             'fields': ('regulation_link', 'regulation_file'),
             'description': 'Havola yoki PDF fayldan birini kiriting. Tashqi havola tavsiya etiladi.',
         }),
-        ('Qo\'shimcha', {
+        ('Ariza', {
             'fields': ('application_link',),
-            'classes': ('collapse',),
-            'description': 'Ixtiyoriy. Saytda hozircha ko\'rsatilmaydi.',
+            'description': 'OTM bosqichida ariza topshirish uchun havola.',
         }),
     )
 
