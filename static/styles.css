@@ -1656,6 +1656,17 @@ body {
     padding: 24px;
 }
 
+/* Olimpiada rasmi — qat'iy o'lcham, cho'zilmaydi */
+.olympiad-photo {
+    display: block;
+    width: 100%;
+    max-width: 360px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.35);
+}
+
 .olympiad-icon-ring {
     width: 80px;
     height: 80px;
