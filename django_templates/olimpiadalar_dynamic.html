@@ -92,7 +92,7 @@
                         <div class="olympiad-item-inner olympiad-media">
                             <div class="olympiad-media-content">
                                 {% if olympiad.get_image_url %}
-                                    <img src="{{ olympiad.get_image_url }}" alt="{{ olympiad.name }}" class="olympiad-photo">
+                                    <img src="{{ olympiad.get_image_url }}" alt="{{ olympiad.name }}" class="olympiad-photo" style="width:100%;max-width:360px;height:220px;object-fit:cover;border-radius:16px;display:block;flex:0 0 auto;">
                                 {% else %}
                                     <div class="olympiad-icon-ring">
                                         <i class="fas fa-trophy"></i>
