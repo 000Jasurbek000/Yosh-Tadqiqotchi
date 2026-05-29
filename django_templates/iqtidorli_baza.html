@@ -66,7 +66,7 @@
                                     <th>O'quv yili</th>
                                     <th>Fayl nomi</th>
                                     <th>Format</th>
-                                    <th style="text-align: right;">Yuklab olish</th>
+                                    <th style="text-align: right;">Fayl</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -77,7 +77,13 @@
                                     <td>{{ db.file_name }}</td>
                                     <td>{{ db.file_format }}</td>
                                     <td class="stipendiya-table-action">
-                                        <a href="{{ db.file.url }}" class="btn-gradient stipendiya-action-btn" download>Yuklab olish</a>
+                                        {% if db.get_file_url %}
+                                            <a href="{{ db.get_file_url }}" class="btn-gradient stipendiya-action-btn" {% if db.is_external_file_link %}target="_blank" rel="noopener"{% endif %}>
+                                                {% if db.is_external_file_link %}Faylni ko'rish{% else %}Yuklab olish{% endif %}
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}

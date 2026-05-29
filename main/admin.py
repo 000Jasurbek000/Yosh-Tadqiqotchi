@@ -117,10 +117,26 @@ class SurveyAdmin(admin.ModelAdmin):
 
 @admin.register(TalentedStudentDatabase)
 class TalentedStudentDatabaseAdmin(admin.ModelAdmin):
-    list_display = ('academic_year', 'file_name', 'file_format', 'created_at')
+    list_display = ('academic_year', 'file_name', 'file_format', 'file_source', 'created_at')
     list_filter = ('file_format', 'created_at')
     search_fields = ('academic_year', 'file_name')
-    fields = ('academic_year', 'file_name', 'file_format', 'file')
+    fieldsets = (
+        (None, {
+            'fields': ('academic_year', 'file_name', 'file_format'),
+        }),
+        ('Fayl', {
+            'fields': ('file_link', 'file'),
+            'description': 'Havola yoki fayldan birini kiriting. Tashqi havola tavsiya etiladi.',
+        }),
+    )
+
+    @admin.display(description='Manba')
+    def file_source(self, obj):
+        if obj.file_link:
+            return 'Havola'
+        if obj.file:
+            return 'Fayl'
+        return '—'
 
 
 @admin.register(StateScholarship)

@@ -436,6 +436,31 @@ def download_winner_database(request, database_id):
     return response
 
 
+def download_talented_database(request, database_id):
+    """Iqtidorli talabalar bazasi faylini yuklab berish (production media muammosini chetlab o'tadi)."""
+    import mimetypes
+    import os
+    from django.http import FileResponse, Http404
+
+    database = get_object_or_404(TalentedStudentDatabase, pk=database_id)
+    if not database.file:
+        raise Http404('Fayl topilmadi')
+
+    if not database.file.storage.exists(database.file.name):
+        raise Http404('Fayl serverda mavjud emas')
+
+    base_name = database.file_name or os.path.basename(database.file.name)
+    ext = os.path.splitext(database.file.name)[1]
+    filename = base_name if base_name.lower().endswith(ext.lower()) else f"{base_name}{ext}"
+    content_type, _ = mimetypes.guess_type(filename)
+    if not content_type:
+        content_type = 'application/octet-stream'
+
+    response = FileResponse(database.file.open('rb'), content_type=content_type)
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+
+
 # Olimpiadalar
 class OlimpiadalarView(TemplateView):
     template_name = 'olimpiadalar.html'

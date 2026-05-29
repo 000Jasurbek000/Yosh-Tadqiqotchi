@@ -110,7 +110,19 @@ class TalentedStudentDatabase(models.Model):
     academic_year = models.CharField(max_length=50, verbose_name='O\'quv yili', help_text='O\'quv yilini kiriting (masalan: 2023-2024)')
     file_name = models.CharField(max_length=255, verbose_name='Fayl nomi', default='Iqtidorli talabalar ro\'yxati', help_text='Fayl nomi (masalan: Iqtidorli talabalar 2023-2024)')
     file_format = models.CharField(max_length=10, default='PDF', verbose_name='Format', help_text='Fayl formati (PDF, DOCX, XLSX)')
-    file = models.FileField(upload_to='talented_students/', verbose_name='Fayl', help_text='Iqtidorli talabalar ro\'yxatini yuklang (PDF, DOCX, XLSX)')
+    file_link = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name='Fayl havolasi',
+        help_text='Tashqi fayl havolasi (https://...). Fayl yuklash shart emas.',
+    )
+    file = models.FileField(
+        upload_to='talented_students/',
+        blank=True,
+        null=True,
+        verbose_name='Fayl',
+        help_text='Yoki iqtidorli talabalar ro\'yxatini yuklang (PDF, DOCX, XLSX).',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -122,6 +134,23 @@ class TalentedStudentDatabase(models.Model):
 
     def __str__(self):
         return f"{self.academic_year} - {self.file_name}"
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if not self.file_link and not self.file:
+            raise ValidationError('Fayl havolasi yoki fayl kamida bittasi bo\'lishi kerak.')
+
+    def get_file_url(self):
+        if self.file_link:
+            return self.file_link
+        if self.file:
+            from django.urls import reverse
+            return reverse('main:download_talented_database', args=[self.pk])
+        return None
+
+    @property
+    def is_external_file_link(self):
+        return bool(self.file_link)
 
 
 # 6. Davlat stipendiyalari
