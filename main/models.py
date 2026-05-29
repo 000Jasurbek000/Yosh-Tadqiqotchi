@@ -318,7 +318,19 @@ class Olympiad(models.Model):
     short_description = models.TextField(verbose_name='Qisqacha tavsif', help_text='Olimpiada haqida qisqa ma\'lumot')
     image = models.ImageField(upload_to='olympiads/images/', blank=True, null=True, verbose_name='Olimpiada rasmi', help_text='Olimpiada kartasida ko\'rsatiladigan rasm (tavsiya: 400x300px)')
     date = models.DateField(verbose_name='Olimpiada sanasi', help_text='Olimpiada o\'tkaziladigan sana', default='2026-12-31')
-    information_letter = models.FileField(upload_to='olympiads/info_letters/', blank=True, null=True, verbose_name='Ma\'lumot xati', help_text='Olimpiada haqida rasmiy ma\'lumot xati (PDF)')
+    information_letter_link = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name='Axborot xati havolasi',
+        help_text='Tashqi axborot xati havolasi (https://...). Fayl yuklash shart emas.',
+    )
+    information_letter = models.FileField(
+        upload_to='olympiads/info_letters/',
+        blank=True,
+        null=True,
+        verbose_name='Ma\'lumot xati',
+        help_text='Yoki olimpiada haqida rasmiy ma\'lumot xatini yuklang (PDF).',
+    )
     registration_link = models.URLField(verbose_name='Ro\'yxatdan o\'tish havolasi', help_text='Olimpiadaga ro\'yxatdan o\'tish uchun havola')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -331,6 +343,18 @@ class Olympiad(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.subject})"
+
+    def get_information_letter_url(self):
+        if self.information_letter_link:
+            return self.information_letter_link
+        if self.information_letter:
+            from django.urls import reverse
+            return reverse('main:download_olympiad_letter', args=[self.pk])
+        return None
+
+    @property
+    def is_external_letter_link(self):
+        return bool(self.information_letter_link)
     
     @property
     def status(self):

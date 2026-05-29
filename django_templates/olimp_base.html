@@ -98,8 +98,8 @@
                                 <p class="olympiad-country" style="word-wrap: break-word; white-space: normal; overflow-wrap: break-word; word-break: break-word;">{{ olympiad.country }}</p>
                                 <p class="olympiad-desc" style="word-wrap: break-word; white-space: normal; overflow-wrap: break-word; word-break: break-word;">{{ olympiad.short_description }}</p>
                                 <div class="olympiad-links">
-                                    {% if olympiad.information_letter %}
-                                    <a href="{{ olympiad.information_letter.url }}" target="_blank" class="btn-gradient stipendiya-action-btn">
+                                    {% if olympiad.get_information_letter_url %}
+                                    <a href="{{ olympiad.get_information_letter_url }}" target="_blank" rel="noopener" class="btn-gradient stipendiya-action-btn">
                                         <i class="fas fa-download"></i>
                                         Axborot xatini yuklash
                                     </a>

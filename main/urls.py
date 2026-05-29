@@ -70,6 +70,7 @@ urlpatterns = [
     path('certificate/<int:certificate_id>/download/', views.download_certificate, name='download_certificate'),
     path('buxdu-stipendiya-bazasi/<int:database_id>/yuklab-olish/', views.download_winner_database, name='download_winner_database'),
     path('iqtidorli-baza/<int:database_id>/yuklab-olish/', views.download_talented_database, name='download_talented_database'),
+    path('olimpiada/<int:olympiad_id>/axborot-xati/', views.download_olympiad_letter, name='download_olympiad_letter'),
     
     # Saralash testi (Assessment Test)
     path('assessment-test/', views.assessment_test_view, name='assessment_test'),

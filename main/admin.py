@@ -221,10 +221,26 @@ class BuxduWinnerDatabaseAdmin(admin.ModelAdmin):
 class OlympiadAdmin(admin.ModelAdmin):
     from main.forms import OlympiadAdminForm
     form = OlympiadAdminForm
-    list_display = ('name', 'subject', 'country', 'type', 'date', 'created_at')
+    list_display = ('name', 'subject', 'country', 'type', 'date', 'letter_source', 'created_at')
     list_filter = ('subject', 'country', 'type', 'date')
     search_fields = ('name', 'subject', 'country')
-    fields = ('type', 'name', 'subject', 'country', 'date', 'short_description', 'image', 'information_letter', 'registration_link')
+    fieldsets = (
+        (None, {
+            'fields': ('type', 'name', 'subject', 'country', 'date', 'short_description', 'image', 'registration_link'),
+        }),
+        ('Axborot xati', {
+            'fields': ('information_letter_link', 'information_letter'),
+            'description': 'Havola yoki PDF fayldan birini kiriting. Tashqi havola tavsiya etiladi.',
+        }),
+    )
+
+    @admin.display(description='Axborot xati')
+    def letter_source(self, obj):
+        if obj.information_letter_link:
+            return 'Havola'
+        if obj.information_letter:
+            return 'Fayl'
+        return '—'
 
 
 @admin.register(BuxduOlympiadWinner)

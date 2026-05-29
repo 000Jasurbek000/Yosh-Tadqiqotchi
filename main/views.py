@@ -461,6 +461,29 @@ def download_talented_database(request, database_id):
     return response
 
 
+def download_olympiad_letter(request, olympiad_id):
+    """Olimpiada axborot xati faylini yuklab berish (production media muammosini chetlab o'tadi)."""
+    import mimetypes
+    import os
+    from django.http import FileResponse, Http404
+
+    olympiad = get_object_or_404(Olympiad, pk=olympiad_id)
+    if not olympiad.information_letter:
+        raise Http404('Fayl topilmadi')
+
+    if not olympiad.information_letter.storage.exists(olympiad.information_letter.name):
+        raise Http404('Fayl serverda mavjud emas')
+
+    filename = os.path.basename(olympiad.information_letter.name)
+    content_type, _ = mimetypes.guess_type(filename)
+    if not content_type:
+        content_type = 'application/octet-stream'
+
+    response = FileResponse(olympiad.information_letter.open('rb'), content_type=content_type)
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+
+
 # Olimpiadalar
 class OlimpiadalarView(TemplateView):
     template_name = 'olimpiadalar.html'
