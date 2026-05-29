@@ -226,7 +226,11 @@ class OlympiadAdmin(admin.ModelAdmin):
     search_fields = ('name', 'subject', 'country')
     fieldsets = (
         (None, {
-            'fields': ('type', 'name', 'subject', 'country', 'date', 'short_description', 'image', 'registration_link'),
+            'fields': ('type', 'name', 'subject', 'country', 'date', 'short_description', 'registration_link'),
+        }),
+        ('Rasm', {
+            'fields': ('image_link', 'image'),
+            'description': 'Havola yoki rasm fayldan birini kiriting. Tashqi havola tavsiya etiladi.',
         }),
         ('Axborot xati', {
             'fields': ('information_letter_link', 'information_letter'),

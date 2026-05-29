@@ -316,7 +316,13 @@ class Olympiad(models.Model):
     name = models.CharField(max_length=255, verbose_name='Olimpiada nomi', help_text='Olimpiadaning to\'liq nomi')
     country = models.CharField(max_length=100, verbose_name='Davlat', help_text='Olimpiada o\'tkaziladigan davlat (masalan: O\'zbekiston, AQSh)')
     short_description = models.TextField(verbose_name='Qisqacha tavsif', help_text='Olimpiada haqida qisqa ma\'lumot')
-    image = models.ImageField(upload_to='olympiads/images/', blank=True, null=True, verbose_name='Olimpiada rasmi', help_text='Olimpiada kartasida ko\'rsatiladigan rasm (tavsiya: 400x300px)')
+    image_link = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name='Rasm havolasi',
+        help_text='Tashqi rasm havolasi (https://...). Rasm yuklash shart emas.',
+    )
+    image = models.ImageField(upload_to='olympiads/images/', blank=True, null=True, verbose_name='Olimpiada rasmi', help_text='Yoki olimpiada kartasida ko\'rsatiladigan rasmni yuklang (tavsiya: 400x300px)')
     date = models.DateField(verbose_name='Olimpiada sanasi', help_text='Olimpiada o\'tkaziladigan sana', default='2026-12-31')
     information_letter_link = models.URLField(
         blank=True,
@@ -355,6 +361,13 @@ class Olympiad(models.Model):
     @property
     def is_external_letter_link(self):
         return bool(self.information_letter_link)
+
+    def get_image_url(self):
+        if self.image_link:
+            return self.image_link
+        if self.image:
+            return self.image.url
+        return None
     
     @property
     def status(self):
