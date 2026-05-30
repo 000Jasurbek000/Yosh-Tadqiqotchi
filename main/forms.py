@@ -99,7 +99,7 @@ class UserRegisterForm(UserCreationForm):
         'class': 'form-input',
         'id': 'id_university',
     }))
-    faculty = forms.CharField(max_length=200, required=False, widget=forms.TextInput(attrs={
+    faculty = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={
         'class': 'form-input',
         'id': 'id_faculty',
         'placeholder': 'Fakultetingizni kiriting yoki tanlang',
@@ -138,8 +138,8 @@ class UserRegisterForm(UserCreationForm):
         if not university or university == '':
             self.add_error('university', 'O\'qigan/O\'qiyotgan joyni tanlash majburiy.')
 
-        if university == 'Buxoro davlat universiteti' and (not faculty or faculty == ''):
-            self.add_error('faculty', 'BuxDU tanlanganda fakultetni tanlash majburiy.')
+        if not faculty or faculty.strip() == '':
+            self.add_error('faculty', 'Fakultetni kiritish majburiy.')
 
         return cleaned_data
 
