@@ -43,17 +43,24 @@ admin.site.index_title = "Boshqaruv paneli"
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display = ('username', 'email', 'first_name', 'last_name', 'phone_number', 'residence_region', 'university', 'academic_degree', 'status', 'assessment_status')
-    list_filter = ('status', 'academic_degree', 'assessment_status', 'is_staff', 'is_superuser')
+    list_display = ('username', 'email', 'first_name', 'last_name', 'phone_number', 'residence_region', 'university', 'academic_degree', 'role', 'status', 'assessment_status')
+    list_filter = ('role', 'status', 'academic_degree', 'assessment_status', 'is_staff', 'is_superuser')
     search_fields = ('username', 'email', 'first_name', 'last_name', 'university')
     fieldsets = BaseUserAdmin.fieldsets + (
-        ('Qo\'shimcha ma\'lumotlar', {'fields': ('phone_number', 'residence_region', 'university', 'academic_degree', 'status', 'profile_image')}),
+        ('Qo\'shimcha ma\'lumotlar', {'fields': ('phone_number', 'residence_region', 'university', 'faculty', 'academic_degree', 'role', 'profile_image')}),
+        ('Talaba holati', {
+            'fields': ('status',),
+            'description': 'Talabani Iqtidorli yoki Oddiy qilib belgilang.',
+        }),
         ('Saralash testi', {'fields': ('assessment_status', 'assessment_score', 'assessment_taken_at', 'assessment_next_attempt')}),
     )
     add_fieldsets = BaseUserAdmin.add_fieldsets + (
-        ('Qo\'shimcha ma\'lumotlar', {'fields': ('phone_number', 'residence_region', 'university', 'academic_degree', 'status')}),
+        ('Qo\'shimcha ma\'lumotlar', {'fields': ('phone_number', 'residence_region', 'university', 'faculty', 'academic_degree', 'role', 'status')}),
     )
     readonly_fields = ('assessment_taken_at',)
+
+    class Media:
+        js = ('admin/user_status_confirm.js',)
 
 
 @admin.register(Announcement)

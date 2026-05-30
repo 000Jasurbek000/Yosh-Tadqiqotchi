@@ -12,6 +12,17 @@ class User(AbstractUser):
         ('phd', 'PhD (Falsafa doktori)'),
         ('dsc', 'DSc (Fan doktori)'),
     ]
+
+    ROLE_CHOICES = [
+        ('talaba', 'Talaba'),
+        ('foydalanuvchi', 'Foydalanuvchi'),
+        ('oqituvchi', 'O\'qituvchi'),
+    ]
+
+    STATUS_CHOICES = [
+        ('oddiy', 'Oddiy'),
+        ('iqtidorli', 'Iqtidorli'),
+    ]
     
     email = models.EmailField(unique=True, verbose_name='Email')
     phone_number = models.CharField(max_length=20, blank=True, null=True, verbose_name='Telefon raqam')
@@ -19,7 +30,8 @@ class User(AbstractUser):
     university = models.CharField(max_length=200, blank=True, null=True, verbose_name='O\'qigan/O\'qiyotgan joy')
     faculty = models.CharField(max_length=200, blank=True, null=True, verbose_name='Fakultet')
     academic_degree = models.CharField(max_length=20, choices=DEGREE_CHOICES, blank=True, default='', verbose_name='Ilmiy daraja')
-    status = models.CharField(max_length=50, default='talaba', verbose_name='Status')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='talaba', verbose_name='Rol', help_text='Foydalanuvchi roli (ro\'yxatdan o\'tishda tanlanadi)')
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='oddiy', verbose_name='Talaba holati', help_text='Iqtidorli yoki oddiy (admin tomonidan belgilanadi)')
     profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True, verbose_name='Profil rasmi')
     
     # Saralash testi (Assessment Test) ma'lumotlari

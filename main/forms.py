@@ -109,10 +109,13 @@ class UserRegisterForm(UserCreationForm):
     academic_degree = forms.ChoiceField(choices=DEGREE_CHOICES, required=True, widget=forms.Select(attrs={
         'class': 'form-input',
     }))
+    role = forms.ChoiceField(choices=User.ROLE_CHOICES, required=True, widget=forms.Select(attrs={
+        'class': 'form-input',
+    }))
 
     class Meta:
         model = User
-        fields = ['email', 'first_name', 'last_name', 'phone_number', 'residence_region', 'university', 'faculty', 'academic_degree', 'password1', 'password2']
+        fields = ['email', 'first_name', 'last_name', 'phone_number', 'residence_region', 'university', 'faculty', 'academic_degree', 'role', 'password1', 'password2']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
