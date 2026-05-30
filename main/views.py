@@ -48,7 +48,13 @@ class CoursesView(LoginRequiredMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['courses'] = Course.objects.filter(is_active=True).order_by('-created_at')
+        user = self.request.user
+        is_admin = user.is_staff or user.is_superuser
+        # Admin barcha kurslarni (faol bo'lmaganlarini ham) ko'radi
+        if is_admin:
+            context['courses'] = Course.objects.all().order_by('-created_at')
+        else:
+            context['courses'] = Course.objects.filter(is_active=True).order_by('-created_at')
         return context
 
 
@@ -59,8 +65,14 @@ class CourseDetailView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         course_id = self.kwargs.get('pk')
-        course = get_object_or_404(Course, pk=course_id, is_active=True)
         user = self.request.user
+        is_admin = user.is_staff or user.is_superuser
+
+        # Admin faol bo'lmagan kurslarni ham ko'ra oladi
+        if is_admin:
+            course = get_object_or_404(Course, pk=course_id)
+        else:
+            course = get_object_or_404(Course, pk=course_id, is_active=True)
         
         # Get or create course progress
         course_progress, created = UserCourseProgress.objects.get_or_create(
@@ -89,7 +101,8 @@ class CourseDetailView(LoginRequiredMixin, TemplateView):
         for module in modules:
             progress = user_module_progress.get(module.id)
             is_completed = progress.is_completed if progress else False
-            is_unlocked = previous_completed  # Unlock if previous module was completed
+            # Admin uchun barcha modullar ochiq
+            is_unlocked = True if is_admin else previous_completed
             
             module.is_unlocked = is_unlocked
             module.is_completed = is_completed
@@ -98,8 +111,8 @@ class CourseDetailView(LoginRequiredMixin, TemplateView):
             
             previous_completed = is_completed
         
-        # Check if all modules are completed
-        all_completed = all(m.is_completed for m in modules_with_status)
+        # Check if all modules are completed (admin uchun har doim ochiq)
+        all_completed = True if is_admin else all(m.is_completed for m in modules_with_status)
         
         # Get certificate if exists
         from .models import Certificate
@@ -126,8 +139,9 @@ class CourseDetailView(LoginRequiredMixin, TemplateView):
         context['test_passed'] = course_progress.test_passed
         context['certificate'] = certificate
         context['last_test'] = last_test
-        context['can_retry'] = can_retry
-        context['wait_seconds'] = wait_seconds
+        context['can_retry'] = True if is_admin else can_retry
+        context['wait_seconds'] = 0 if is_admin else wait_seconds
+        context['is_admin'] = is_admin
         
         return context
 
@@ -197,10 +211,16 @@ def complete_module(request, module_id):
 def course_test_view(request, course_id):
     from .models import Module, Question, Answer
     
-    course = get_object_or_404(Course, pk=course_id, is_active=True)
     user = request.user
+    is_admin = user.is_staff or user.is_superuser
+
+    # Admin faol bo'lmagan kurs testini ham ko'ra oladi
+    if is_admin:
+        course = get_object_or_404(Course, pk=course_id)
+    else:
+        course = get_object_or_404(Course, pk=course_id, is_active=True)
     
-    # Check if all modules are completed
+    # Check if all modules are completed (admin chetlab o'tadi)
     total_modules = course.modules.count()
     completed_modules = UserModuleProgress.objects.filter(
         user=user,
@@ -210,7 +230,7 @@ def course_test_view(request, course_id):
     
     print(f"DEBUG: Total modules: {total_modules}, Completed: {completed_modules}")
     
-    if completed_modules < total_modules:
+    if not is_admin and completed_modules < total_modules:
         print(f"DEBUG: REDIRECT - Modules not completed")
         messages.error(request, f'Barcha modullarni tugatishingiz kerak! Tugatilgan: {completed_modules}/{total_modules}')
         return redirect('main:course_detail', pk=course_id)
@@ -219,9 +239,9 @@ def course_test_view(request, course_id):
     course_progress = UserCourseProgress.objects.filter(user=user, course=course).first()
     print(f"DEBUG: Course progress exists: {course_progress is not None}, Test passed: {course_progress.test_passed if course_progress else 'N/A'}")
     
-    # Check if user needs to wait 8 minutes after failed attempt
+    # Check if user needs to wait 8 minutes after failed attempt (admin chetlab o'tadi)
     last_test = UserTestResult.objects.filter(user=user, course=course, passed=False).order_by('-submitted_at').first()
-    if last_test:
+    if not is_admin and last_test:
         from django.utils import timezone
         time_since_last = timezone.now() - last_test.submitted_at
         print(f"DEBUG: Last failed test: {last_test.submitted_at}, Time since: {time_since_last.total_seconds()} seconds")
@@ -1333,9 +1353,11 @@ def assessment_test_view(request):
     wait_time = None
     last_result = None
     
+    is_admin = user.is_staff or user.is_superuser
+
     if assessment_test:
-        # Foydalanuvchi allaqachon test topshirganmi?
-        if user.assessment_next_attempt:
+        # Foydalanuvchi allaqachon test topshirganmi? (admin chetlab o'tadi)
+        if not is_admin and user.assessment_next_attempt:
             from django.utils import timezone
             now = timezone.now()
             
@@ -1386,9 +1408,10 @@ def start_assessment_test(request):
         messages.error(request, 'Test savollari topilmadi.')
         return redirect('main:assessment_test')
     
-    # Foydalanuvchi qayta urinish qila olishini tekshirish
+    # Foydalanuvchi qayta urinish qila olishini tekshirish (admin chetlab o'tadi)
     user = request.user
-    if user.assessment_next_attempt:
+    is_admin = user.is_staff or user.is_superuser
+    if not is_admin and user.assessment_next_attempt:
         from django.utils import timezone
         now = timezone.now()
         
