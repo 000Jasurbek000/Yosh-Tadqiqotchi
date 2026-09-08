@@ -1067,3 +1067,43 @@ class Literature(models.Model):
         if self.file:
             return self.file.url
         return None
+
+
+# ─── Yosh Tadqiqotchi AI — Knowledge Base (RAG) ─────────────────────────────
+class KnowledgeChunk(models.Model):
+    SOURCE_TYPES = [
+        ('database', 'Database'),
+        ('website', 'Website / Template'),
+        ('faq', 'FAQ'),
+        ('business_logic', 'Business logic'),
+        ('documentation', 'Documentation'),
+        ('other', 'Other'),
+    ]
+
+    source_type = models.CharField(max_length=32, choices=SOURCE_TYPES, db_index=True)
+    title = models.CharField(max_length=500)
+    content = models.TextField()
+    url = models.CharField(max_length=500, blank=True, default='')
+    category = models.CharField(max_length=100, blank=True, default='', db_index=True)
+    object_id = models.CharField(max_length=100, blank=True, default='', db_index=True)
+    source_file = models.CharField(max_length=300, blank=True, default='')
+    priority = models.PositiveSmallIntegerField(default=50, help_text='Yuqori = muhimroq (1–100)')
+    content_hash = models.CharField(max_length=64, db_index=True)
+    # Oddiy retrieval uchun tokenlar (bo'shliq bilan ajratilgan, past registr)
+    search_text = models.TextField(blank=True, default='')
+    is_active = models.BooleanField(default=True)
+    indexed_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'knowledge_chunks'
+        verbose_name = 'Knowledge chunk'
+        verbose_name_plural = 'Knowledge chunks'
+        ordering = ['-priority', '-indexed_at']
+        indexes = [
+            models.Index(fields=['source_type', 'category']),
+            models.Index(fields=['content_hash']),
+        ]
+
+    def __str__(self):
+        return f'[{self.source_type}] {self.title[:80]}'

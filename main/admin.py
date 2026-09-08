@@ -11,11 +11,12 @@ from .models import (
     Module, Question, Answer, UserCourseProgress,
     UserModuleProgress, UserTestResult, Certificate, TestSet,
     AssessmentTest, AssessmentTestResult, Literature, ScientificSupervisor,
-    SupervisorRequest, OlympiadProgram, OlympiadApplication
+    SupervisorRequest, OlympiadProgram, OlympiadApplication, KnowledgeChunk
 )
 from . import admin_db
 from . import admin_stats
 from .utils_display import format_assessment_status
+from .clearable_files import ClearableFileAdminMixin
 
 
 # Admin URL larga "Baza boshqaruvi" va "Statistika" sahifalarini qo'shamiz
@@ -64,9 +65,10 @@ class UserAdmin(BaseUserAdmin):
 
 
 @admin.register(Announcement)
-class AnnouncementAdmin(admin.ModelAdmin):
+class AnnouncementAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
     from main.forms import AnnouncementAdminForm
     form = AnnouncementAdminForm
+    clearable_file_fields = ('image',)
     list_display = ('title', 'author', 'date', 'created_at')
     list_filter = ('date', 'created_at')
     search_fields = ('title', 'short_text', 'author')
@@ -101,9 +103,10 @@ class TestSetAdmin(admin.ModelAdmin):
 
 
 @admin.register(Course)
-class CourseAdmin(admin.ModelAdmin):
+class CourseAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
     from main.forms import CourseAdminForm
     form = CourseAdminForm
+    clearable_file_fields = ('image', 'test_file')
     list_display = ('name', 'module_count', 'test_set', 'passing_score', 'is_active', 'created_at')
     search_fields = ('name', 'short_description')
     list_filter = ('is_active', 'test_set', 'created_at')
@@ -123,7 +126,8 @@ class SurveyAdmin(admin.ModelAdmin):
 
 
 @admin.register(TalentedStudentDatabase)
-class TalentedStudentDatabaseAdmin(admin.ModelAdmin):
+class TalentedStudentDatabaseAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
+    clearable_file_fields = ('file',)
     list_display = ('academic_year', 'file_name', 'file_format', 'file_source', 'created_at')
     list_filter = ('file_format', 'created_at')
     search_fields = ('academic_year', 'file_name')
@@ -133,7 +137,7 @@ class TalentedStudentDatabaseAdmin(admin.ModelAdmin):
         }),
         ('Fayl', {
             'fields': ('file_link', 'file'),
-            'description': 'Havola yoki fayldan birini kiriting. Tashqi havola tavsiya etiladi.',
+            'description': 'Havola yoki fayldan birini kiriting. Eski faylni olib tashlash uchun "Eski faylni o\'chirish" ni belgilang.',
         }),
     )
 
@@ -147,7 +151,8 @@ class TalentedStudentDatabaseAdmin(admin.ModelAdmin):
 
 
 @admin.register(StateScholarship)
-class StateScholarshipAdmin(admin.ModelAdmin):
+class StateScholarshipAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
+    clearable_file_fields = ('regulation_file',)
     list_display = ('name', 'regulation_source', 'created_at')
     search_fields = ('name', 'short_description')
     fieldsets = (
@@ -156,7 +161,7 @@ class StateScholarshipAdmin(admin.ModelAdmin):
         }),
         ('Nizom', {
             'fields': ('regulation_link', 'regulation_file'),
-            'description': 'Havola yoki PDF fayldan birini kiriting. Tashqi havola tavsiya etiladi.',
+            'description': 'Havola yoki PDF fayldan birini kiriting. Eski faylni olib tashlash uchun checkboxni belgilang.',
         }),
         ('Ariza', {
             'fields': ('application_link',),
@@ -174,7 +179,8 @@ class StateScholarshipAdmin(admin.ModelAdmin):
 
 
 @admin.register(BuxduScholarship)
-class BuxduScholarshipAdmin(admin.ModelAdmin):
+class BuxduScholarshipAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
+    clearable_file_fields = ('regulation_file',)
     list_display = ('name', 'regulation_source', 'created_at')
     search_fields = ('name', 'short_description')
     fieldsets = (
@@ -183,7 +189,7 @@ class BuxduScholarshipAdmin(admin.ModelAdmin):
         }),
         ('Nizom', {
             'fields': ('regulation_link', 'regulation_file'),
-            'description': 'Havola yoki PDF fayldan birini kiriting. Tashqi havola tavsiya etiladi.',
+            'description': 'Havola yoki PDF fayldan birini kiriting. Eski faylni olib tashlash uchun checkboxni belgilang.',
         }),
         ('Ariza', {
             'fields': ('application_link',),
@@ -201,7 +207,8 @@ class BuxduScholarshipAdmin(admin.ModelAdmin):
 
 
 @admin.register(BuxduWinnerDatabase)
-class BuxduWinnerDatabaseAdmin(admin.ModelAdmin):
+class BuxduWinnerDatabaseAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
+    clearable_file_fields = ('file',)
     list_display = ('scholarship_type', 'academic_year', 'file_name', 'file_source', 'created_at')
     list_filter = ('academic_year', 'scholarship_type')
     search_fields = ('scholarship_type', 'file_name')
@@ -211,7 +218,7 @@ class BuxduWinnerDatabaseAdmin(admin.ModelAdmin):
         }),
         ('Fayl', {
             'fields': ('file_link', 'file'),
-            'description': 'Havola yoki fayldan birini kiriting. Tashqi havola tavsiya etiladi.',
+            'description': 'Havola yoki fayldan birini kiriting. Eski faylni olib tashlash uchun checkboxni belgilang.',
         }),
     )
 
@@ -225,9 +232,10 @@ class BuxduWinnerDatabaseAdmin(admin.ModelAdmin):
 
 
 @admin.register(Olympiad)
-class OlympiadAdmin(admin.ModelAdmin):
+class OlympiadAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
     from main.forms import OlympiadAdminForm
     form = OlympiadAdminForm
+    clearable_file_fields = ('image', 'information_letter')
     list_display = ('name', 'subject', 'country', 'type', 'date', 'letter_source', 'created_at')
     list_filter = ('subject', 'country', 'type', 'date')
     search_fields = ('name', 'subject', 'country')
@@ -237,11 +245,11 @@ class OlympiadAdmin(admin.ModelAdmin):
         }),
         ('Rasm', {
             'fields': ('image_link', 'image'),
-            'description': 'Havola yoki rasm fayldan birini kiriting. Tashqi havola tavsiya etiladi.',
+            'description': 'Havola yoki rasm fayldan birini kiriting. Eski rasmni olib tashlash uchun checkboxni belgilang.',
         }),
         ('Axborot xati', {
             'fields': ('information_letter_link', 'information_letter'),
-            'description': 'Havola yoki PDF fayldan birini kiriting. Tashqi havola tavsiya etiladi.',
+            'description': 'Havola yoki PDF fayldan birini kiriting. Eski faylni olib tashlash uchun checkboxni belgilang.',
         }),
     )
 
@@ -255,7 +263,8 @@ class OlympiadAdmin(admin.ModelAdmin):
 
 
 @admin.register(BuxduOlympiadWinner)
-class BuxduOlympiadWinnerAdmin(admin.ModelAdmin):
+class BuxduOlympiadWinnerAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
+    clearable_file_fields = ('file',)
     list_display = ('olympiad_name', 'subject', 'academic_year', 'created_at')
     list_filter = ('academic_year', 'subject')
     search_fields = ('olympiad_name', 'subject')
@@ -272,14 +281,15 @@ class BuxduOlympiadImageInline(admin.TabularInline):
 
 
 @admin.register(BuxduOlympiad)
-class BuxduOlympiadAdmin(admin.ModelAdmin):
+class BuxduOlympiadAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
+    clearable_file_fields = ('image', 'program_file', 'result_file')
     list_display = ('subject', 'date', 'status_display', 'image_count', 'created_at')
     list_filter = ('date', 'subject')
     search_fields = ('subject', 'description')
     date_hierarchy = 'date'
     readonly_fields = ('status_display', 'image_count')
     inlines = [BuxduOlympiadImageInline]
-    fields = ('subject', 'date', 'status_display', 'description', 'image', 'program_file', 
+    fields = ('subject', 'date', 'status_display', 'description', 'image', 'program_file',
               'registration_link_1', 'registration_link_2', 'result_file')
     
     def status_display(self, obj):
@@ -307,7 +317,8 @@ class OakDatabaseAdmin(admin.ModelAdmin):
 
 
 @admin.register(Conference)
-class ConferenceAdmin(admin.ModelAdmin):
+class ConferenceAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
+    clearable_file_fields = ('information_letter',)
     list_display = ('name', 'type', 'letter_source', 'created_at')
     list_filter = ('type',)
     search_fields = ('name',)
@@ -317,7 +328,7 @@ class ConferenceAdmin(admin.ModelAdmin):
         }),
         ('Axborot xati', {
             'fields': ('information_letter_link', 'information_letter'),
-            'description': 'Havola yoki PDF fayldan birini kiriting. Tashqi havola tavsiya etiladi.',
+            'description': 'Havola yoki PDF fayldan birini kiriting. Eski faylni olib tashlash uchun checkboxni belgilang.',
         }),
     )
 
@@ -346,7 +357,8 @@ class ArticleBankAdmin(admin.ModelAdmin):
 
 
 @admin.register(ResearcherRegulation)
-class ResearcherRegulationAdmin(admin.ModelAdmin):
+class ResearcherRegulationAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
+    clearable_file_fields = ('file',)
     list_display = ('regulation_name', 'source_type', 'created_at')
     search_fields = ('regulation_name',)
     fieldsets = (
@@ -355,7 +367,7 @@ class ResearcherRegulationAdmin(admin.ModelAdmin):
         }),
         ('Manba', {
             'fields': ('regulation_link', 'file'),
-            'description': 'Havola yoki fayldan birini kiriting. Tashqi sayt havolasi tavsiya etiladi.',
+            'description': 'Havola yoki fayldan birini kiriting. Eski faylni olib tashlash uchun checkboxni belgilang.',
         }),
     )
 
@@ -499,7 +511,8 @@ class AssessmentTestResultAdmin(admin.ModelAdmin):
 
 
 @admin.register(Literature)
-class LiteratureAdmin(admin.ModelAdmin):
+class LiteratureAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
+    clearable_file_fields = ('file', 'cover_image')
     list_display = ('title', 'author', 'field', 'has_file', 'has_url', 'cover_preview', 'created_at')
     list_filter = ('field', 'created_at')
     search_fields = ('title', 'author', 'description')
@@ -510,7 +523,7 @@ class LiteratureAdmin(admin.ModelAdmin):
         }),
         ('Manba', {
             'fields': ('file', 'url'),
-            'description': 'Fayl yoki Internet manzilidan birini kiriting.'
+            'description': 'Fayl yoki Internet manzilidan birini kiriting. Eski faylni olib tashlash uchun checkboxni belgilang.'
         }),
         ('Muqova rasmi', {
             'fields': ('cover_image', 'cover_preview')
@@ -539,7 +552,8 @@ class LiteratureAdmin(admin.ModelAdmin):
 
 
 @admin.register(ScientificSupervisor)
-class ScientificSupervisorAdmin(admin.ModelAdmin):
+class ScientificSupervisorAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
+    clearable_file_fields = ('photo',)
     list_display = ('order', 'full_name', 'position', 'specialty', 'phone', 'email',
                     'photo_preview', 'capacity_display', 'is_active')
     list_filter = ('is_active',)
@@ -603,7 +617,8 @@ class SupervisorRequestAdmin(admin.ModelAdmin):
 
 # ───────────────────────────── Olimpiada dasturi ─────────────────────────────
 @admin.register(OlympiadProgram)
-class OlympiadProgramAdmin(admin.ModelAdmin):
+class OlympiadProgramAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
+    clearable_file_fields = ('task_file',)
     list_display = ('code', 'title', 'applications_count', 'has_task_file', 'is_active', 'updated_at')
     list_filter  = ('is_active', 'code')
     search_fields = ('title', 'short_intro', 'required_skills', 'knowledge_areas')
@@ -619,7 +634,7 @@ class OlympiadProgramAdmin(admin.ModelAdmin):
         }),
         ('Topshiriqlar fayli', {
             'fields': ('task_file',),
-            'description': 'PDF, Word yoki boshqa formatdagi topshiriqlar to\'plamini yuklang'
+            'description': 'PDF, Word yoki boshqa format. Eski faylni olib tashlash uchun checkboxni belgilang.'
         }),
         ('Qo\'shimcha', {
             'fields': ('additional_info', 'applications_count', 'created_at', 'updated_at'),
@@ -727,3 +742,29 @@ class OlympiadApplicationAdmin(admin.ModelAdmin):
     def export_to_excel(self, request, queryset):
         from .admin_olympiad import generate_applications_excel
         return generate_applications_excel(queryset)
+
+
+@admin.register(KnowledgeChunk)
+class KnowledgeChunkAdmin(admin.ModelAdmin):
+    list_display = ('title', 'source_type', 'category', 'priority', 'is_active', 'indexed_at')
+    list_filter = ('source_type', 'category', 'is_active')
+    search_fields = ('title', 'content', 'url', 'object_id', 'source_file')
+    readonly_fields = ('content_hash', 'search_text', 'indexed_at', 'created_at')
+    list_editable = ('is_active', 'priority')
+    actions = ['reindex_knowledge']
+
+    fieldsets = (
+        (None, {
+            'fields': ('source_type', 'title', 'content', 'url', 'category', 'object_id', 'source_file', 'priority', 'is_active')
+        }),
+        ('Index', {
+            'fields': ('content_hash', 'search_text', 'indexed_at', 'created_at'),
+            'classes': ('collapse',),
+        }),
+    )
+
+    @admin.action(description='Butun knowledge base ni qayta indekslash')
+    def reindex_knowledge(self, request, queryset):
+        from .knowledge.ingest import rebuild_index
+        stats = rebuild_index(full=False)
+        self.message_user(request, f"Indeks yangilandi. Faol chunklar: {stats.get('total_active')}")

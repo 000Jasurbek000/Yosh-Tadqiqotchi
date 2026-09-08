@@ -55,11 +55,12 @@ def call_chat_api(messages_list, system_prompt):
     payload = {
         'messages': messages_list,
         'system_prompt': system_prompt,
-        'temperature': 0.3,
+        'temperature': 0.2,
         'top_k': 5,
         'top_p': 0.9,
-        'max_tokens': 400,
-        'web_access': True,
+        'max_tokens': 600,
+        # Internet umumiy bilimlari o'chirilgan — faqat platforma konteksti
+        'web_access': False,
     }
 
     last_error = 'Javob olishda xatolik yuz berdi.'

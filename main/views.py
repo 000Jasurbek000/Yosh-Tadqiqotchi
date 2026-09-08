@@ -1522,39 +1522,17 @@ def chat_view(request):
         if not user_message:
             return JsonResponse({'reply': 'Xabar bo\'sh bo\'lmasligi kerak.'})
 
-        system_prompt = """
-Siz "Tadqiqotchi AI" nomli ilmiy-tadqiqot yordamchisisiz.
+        from .knowledge.service import answer_question
+        reply, meta = answer_question(user_message, history=history)
 
-O'ZINGIZ HAQIDA:
-- Ismingiz: Tadqiqotchi AI
-- Siz ilmiy tadqiqot, ta'lim va akademik mavzularda yordam beradigan AI yordamchisiz.
-- "ChatGPT", "OpenAI" yoki boshqa kompaniya nomini tilga olmang.
-
-SUHBAT QOIDALARI:
-- Suhbat tarixini eslab qoling. Foydalanuvchining oldingi savollariga va sizning oldingi javoblaringizga asoslanib javob bering.
-- Masalan, agar foydalanuvchi "magistrlik nima" deb so'ragan, keyin "uni qanday olaman" desa — magistrlik darajasini qanday olish haqida javob bering, o'zingiz haqingizda emas.
-
-JAVOB BERISH QOIDALARI:
-1. Javob 500 belgidan oshmasin — qisqa, aniq va tushunarli yozing.
-2. Hech qachon havola, manba, URL yoki "Batafsil..." kabi qo'shimcha qo'shmang.
-3. Markdown formatdan foydalaning: muhim so'zlar uchun **bold** ishlatsangiz mumkin.
-4. Agar ma'lumot topilmasa, "Kechirasiz, bu mavzu bo'yicha aniq ma'lumot topa olmadim." deb ayting.
-5. O'zbek tilida javob bering. Foydalanuvchi boshqa tilda yozsa — shu tilda javob bering.
-"""
-
-        # Suhbat tarixini API formatiga keltirish (oxirgi 10 ta xabar)
-        messages_list = []
-        for h in history[-10:]:
-            role = h.get('role')
-            content = h.get('content', '').strip()
-            if role in ('user', 'assistant') and content:
-                messages_list.append({"role": role, "content": content})
-        messages_list.append({"role": "user", "content": user_message})
-
-        reply, error = call_chat_api(messages_list, system_prompt)
-        if error:
-            return JsonResponse({'reply': error})
-        return JsonResponse({'reply': reply})
+        payload = {'reply': reply}
+        if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
+            payload['meta'] = {
+                'chunk_count': meta.get('chunk_count', 0),
+                'max_score': meta.get('max_score', 0),
+                'sources': meta.get('sources', []),
+            }
+        return JsonResponse(payload)
 
     except json_module.JSONDecodeError:
         return JsonResponse({'reply': 'Noto\'g\'ri so\'rov formati.'})
