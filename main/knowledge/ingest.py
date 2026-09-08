@@ -17,7 +17,7 @@ from .text_utils import normalize_text, tokenize, content_hash
 
 
 def _upsert_chunk(**kwargs):
-    """content_hash bo'yicha yangilash yoki yaratish. source_type+object_id bo'yicha eski o'chirish."""
+    """object_id bo'yicha yangilash yoki yaratish (title o'zgarsa ham bir xil chunk)."""
     source_type = kwargs['source_type']
     object_id = kwargs.get('object_id', '')
     title = kwargs['title']
@@ -27,13 +27,21 @@ def _upsert_chunk(**kwargs):
     tokens = tokenize(f"{title} {content} {kwargs.get('category', '')}")
     search_text = ' '.join(tokens)
 
-    existing = KnowledgeChunk.objects.filter(
-        source_type=source_type,
-        object_id=object_id,
-        title=title,
-    ).first()
+    existing = None
+    if object_id:
+        existing = KnowledgeChunk.objects.filter(
+            source_type=source_type,
+            object_id=object_id,
+        ).first()
+    if existing is None:
+        existing = KnowledgeChunk.objects.filter(
+            source_type=source_type,
+            object_id=object_id,
+            title=title,
+        ).first()
 
     defaults = {
+        'title': title,
         'content': content,
         'url': kwargs.get('url', ''),
         'category': kwargs.get('category', ''),
@@ -45,7 +53,7 @@ def _upsert_chunk(**kwargs):
     }
 
     if existing:
-        if existing.content_hash == ch:
+        if existing.content_hash == ch and existing.title == title:
             return False  # o'zgarmagan
         for k, v in defaults.items():
             setattr(existing, k, v)
@@ -55,10 +63,322 @@ def _upsert_chunk(**kwargs):
     KnowledgeChunk.objects.create(
         source_type=source_type,
         object_id=object_id,
-        title=title,
         **defaults,
     )
     return True
+
+
+def _delete_chunks_by_object_id(object_id: str):
+    if not object_id:
+        return 0
+    deleted, _ = KnowledgeChunk.objects.filter(object_id=object_id).delete()
+    return deleted
+
+
+def index_instance(instance) -> bool:
+    """Bitta model obyektini knowledge base ga yozish. True = yangilandi/yaratildi."""
+    from main.models import (
+        StateScholarship, BuxduScholarship, BuxduWinnerDatabase,
+        Olympiad, BuxduOlympiad, Conference, ResearcherRegulation,
+        Literature, Course, Announcement, OakDatabase,
+        DissertationBank, ArticleBank, TalentedStudentDatabase,
+        ScientificSupervisor, OlympiadProgram, AssessmentTest, Survey,
+    )
+
+    if isinstance(instance, StateScholarship):
+        return _upsert_chunk(
+            source_type='database',
+            title=f'Davlat stipendiyasi: {instance.name}',
+            content=(
+                f"Davlat stipendiyasi: {instance.name}. "
+                f"Tavsif: {instance.short_description or '—'}. "
+                f"Nizom: {'havola/fayl mavjud' if (instance.regulation_link or instance.regulation_file) else 'yo\'q'}. "
+                f"Ariza: {instance.application_link or 'havola yo\'q'}."
+            ),
+            url='/davlat-stipendiyalari/',
+            category='scholarship',
+            object_id=f'state_scholarship:{instance.pk}',
+            priority=90,
+        )
+
+    if isinstance(instance, BuxduScholarship):
+        return _upsert_chunk(
+            source_type='database',
+            title=f'BuxDU stipendiyasi: {instance.name}',
+            content=(
+                f"BuxDU stipendiyasi: {instance.name}. "
+                f"Tavsif: {instance.short_description or '—'}. "
+                f"Ariza: {instance.application_link or 'havola yo\'q'}."
+            ),
+            url='/buxdu-stipendiyalari/',
+            category='scholarship',
+            object_id=f'buxdu_scholarship:{instance.pk}',
+            priority=90,
+        )
+
+    if isinstance(instance, BuxduWinnerDatabase):
+        return _upsert_chunk(
+            source_type='database',
+            title=f'Sovrindorlar bazasi: {instance.scholarship_type} ({instance.academic_year})',
+            content=(
+                f"BuxDU stipendiya sovrindorlari bazasi: {instance.scholarship_type}, "
+                f"o'quv yili: {instance.academic_year}, fayl: {instance.file_name}."
+            ),
+            url='/buxdu-stipendiya-bazasi/',
+            category='scholarship',
+            object_id=f'buxdu_winner_db:{instance.pk}',
+            priority=70,
+        )
+
+    if isinstance(instance, Olympiad):
+        return _upsert_chunk(
+            source_type='database',
+            title=f'Olimpiada: {instance.name}',
+            content=(
+                f"Olimpiada: {instance.name}. Fan: {instance.subject}. Davlat: {instance.country}. "
+                f"Turi: {instance.get_type_display() if hasattr(instance, 'get_type_display') else instance.type}. "
+                f"Sana: {instance.date}. Tavsif: {instance.short_description or '—'}. "
+                f"Ro'yxatdan o'tish: {instance.registration_link or 'havola yo\'q'}."
+            ),
+            url='/olimpiadalar/',
+            category='olympiad',
+            object_id=f'olympiad:{instance.pk}',
+            priority=85,
+        )
+
+    if isinstance(instance, BuxduOlympiad):
+        return _upsert_chunk(
+            source_type='database',
+            title=f'BuxDU olimpiadasi: {instance.subject}',
+            content=(
+                f"BuxDU olimpiadasi: {instance.subject}. Sana: {instance.date}. "
+                f"Tavsif: {instance.description or '—'}. "
+                f"Status: {'tugagan' if instance.is_finished else 'kutilmoqda'}."
+            ),
+            url='/buxdu-olimpiadalari/',
+            category='olympiad',
+            object_id=f'buxdu_olympiad:{instance.pk}',
+            priority=85,
+        )
+
+    if isinstance(instance, OlympiadProgram):
+        if not instance.is_active:
+            _delete_chunks_by_object_id(f'olympiad_program:{instance.pk}')
+            return True
+        return _upsert_chunk(
+            source_type='database',
+            title=f'Olimpiada dasturi: {instance.title}',
+            content=(
+                f"Olimpiada dasturi (Iqtidor Yo'li): {instance.title}. "
+                f"Kirish: {instance.short_intro or '—'}. "
+                f"Kerakli ko'nikmalar: {instance.required_skills or '—'}. "
+                f"Bilim sohalari: {instance.knowledge_areas or '—'}. "
+                f"O'z-o'zini tekshirish: {instance.self_check_text or '—'}."
+            ),
+            url=f'/olimpiada/{instance.code}/',
+            category='olympiad',
+            object_id=f'olympiad_program:{instance.pk}',
+            priority=88,
+        )
+
+    if isinstance(instance, Conference):
+        return _upsert_chunk(
+            source_type='database',
+            title=f'Konferensiya: {instance.name}',
+            content=(
+                f"Konferensiya: {instance.name}. "
+                f"Turi: {instance.get_type_display() if hasattr(instance, 'get_type_display') else instance.type}."
+            ),
+            url='/xalqaro-konferensiyalar/',
+            category='conference',
+            object_id=f'conference:{instance.pk}',
+            priority=75,
+        )
+
+    if isinstance(instance, ResearcherRegulation):
+        return _upsert_chunk(
+            source_type='database',
+            title=f'Nizom: {instance.regulation_name}',
+            content=f"Ilmiy tadqiqotchilar uchun nizom: {instance.regulation_name}.",
+            url='/ilmiy-nizomlar/',
+            category='regulation',
+            object_id=f'regulation:{instance.pk}',
+            priority=80,
+        )
+
+    if isinstance(instance, Literature):
+        return _upsert_chunk(
+            source_type='database',
+            title=f'Adabiyot: {instance.title}',
+            content=(
+                f"Adabiyot: {instance.title}. Muallif: {instance.author}. "
+                f"Soha: {instance.get_field_display() if instance.field else '—'}. "
+                f"Tavsif: {instance.description or '—'}."
+            ),
+            url='/adabiyotlar/',
+            category='literature',
+            object_id=f'literature:{instance.pk}',
+            priority=70,
+        )
+
+    if isinstance(instance, Course):
+        if not instance.is_active:
+            _delete_chunks_by_object_id(f'course:{instance.pk}')
+            return True
+        return _upsert_chunk(
+            source_type='database',
+            title=f'Kurs: {instance.name}',
+            content=(
+                f"Kurs: {instance.name}. Tavsif: {instance.short_description or '—'}. "
+                f"Modullar soni: {instance.module_count}. O'tish bali: {instance.passing_score}."
+            ),
+            url='/courses/',
+            category='course',
+            object_id=f'course:{instance.pk}',
+            priority=85,
+        )
+
+    if isinstance(instance, Announcement):
+        return _upsert_chunk(
+            source_type='database',
+            title=f"E'lon: {instance.title}",
+            content=(
+                f"E'lon: {instance.title}. Muallif: {instance.author}. "
+                f"Sana: {instance.date}. {instance.short_text or ''} {instance.detailed_text or ''}"
+            )[:2000],
+            url='/',
+            category='announcement',
+            object_id=f'announcement:{instance.pk}',
+            priority=65,
+        )
+
+    if isinstance(instance, OakDatabase):
+        return _upsert_chunk(
+            source_type='database',
+            title=f'Jurnal: {instance.journal_name}',
+            content=f"OAK jurnali: {instance.journal_name}. Turi: {instance.type}. Yo'nalishlar: {instance.fields}.",
+            url='/mahalliy-oak-jurnallari/',
+            category='journal',
+            object_id=f'oak:{instance.pk}',
+            priority=70,
+        )
+
+    if isinstance(instance, DissertationBank):
+        return _upsert_chunk(
+            source_type='database',
+            title=f'Dissertatsiya: {instance.database_type}',
+            content=f"Dissertatsiya banki: {instance.database_type}, yo'nalish: {instance.direction}.",
+            url='/dissertatsiyalar-banki/',
+            category='dissertation',
+            object_id=f'diss:{instance.pk}',
+            priority=65,
+        )
+
+    if isinstance(instance, ArticleBank):
+        return _upsert_chunk(
+            source_type='database',
+            title=f'Maqola banki: {instance.name}',
+            content=f"Maqola banki: {instance.name}. Qo'llanma: {instance.short_guide or '—'}.",
+            url='/maqolalar-banki/',
+            category='article',
+            object_id=f'article:{instance.pk}',
+            priority=65,
+        )
+
+    if isinstance(instance, TalentedStudentDatabase):
+        return _upsert_chunk(
+            source_type='database',
+            title=f'Iqtidorli talabalar bazasi ({instance.academic_year})',
+            content=f"Iqtidorli talabalar bazasi: {instance.academic_year}, {instance.file_name}.",
+            url='/iqtidorli-baza/',
+            category='talent',
+            object_id=f'talent_db:{instance.pk}',
+            priority=75,
+        )
+
+    if isinstance(instance, ScientificSupervisor):
+        if not instance.is_active:
+            _delete_chunks_by_object_id(f'supervisor:{instance.pk}')
+            return True
+        return _upsert_chunk(
+            source_type='database',
+            title=f'Ilmiy rahbar: {instance.full_name}',
+            content=(
+                f"Ilmiy rahbar: {instance.full_name}. Lavozim: {instance.position}. "
+                f"Mutaxassislik: {instance.specialty}. "
+                f"Telefon: {instance.phone or '—'}. Email: {instance.email or '—'}."
+            ),
+            url='/ilmiy-rahbarlar/',
+            category='supervisor',
+            object_id=f'supervisor:{instance.pk}',
+            priority=80,
+        )
+
+    if isinstance(instance, AssessmentTest):
+        if not instance.is_active:
+            _delete_chunks_by_object_id(f'assessment:{instance.pk}')
+            return True
+        return _upsert_chunk(
+            source_type='database',
+            title='Saralash testi (Assessment)',
+            content=(
+                f"Saralash testi: {instance.title}. Tavsif: {instance.description or '—'}. "
+                f"Vaqt limiti: {instance.time_limit} daqiqa. O'tish foizi: {instance.pass_percentage}%. "
+                f"Qayta urinish kechikishi: {instance.retry_delay_hours} soat."
+            ),
+            url='/assessment-test/',
+            category='assessment',
+            object_id=f'assessment:{instance.pk}',
+            priority=95,
+        )
+
+    if isinstance(instance, Survey):
+        if not instance.is_active:
+            _delete_chunks_by_object_id(f'survey:{instance.pk}')
+            return True
+        return _upsert_chunk(
+            source_type='database',
+            title=f"So'rovnoma: {instance.title}",
+            content=f"So'rovnoma: {instance.title}. {instance.description or ''} Havola: {instance.link or '—'}.",
+            url='/iqtidorli-sorovnoma/',
+            category='survey',
+            object_id=f'survey:{instance.pk}',
+            priority=60,
+        )
+
+    return False
+
+
+def object_id_for_instance(instance) -> str:
+    mapping = {
+        'StateScholarship': 'state_scholarship',
+        'BuxduScholarship': 'buxdu_scholarship',
+        'BuxduWinnerDatabase': 'buxdu_winner_db',
+        'Olympiad': 'olympiad',
+        'BuxduOlympiad': 'buxdu_olympiad',
+        'OlympiadProgram': 'olympiad_program',
+        'Conference': 'conference',
+        'ResearcherRegulation': 'regulation',
+        'Literature': 'literature',
+        'Course': 'course',
+        'Announcement': 'announcement',
+        'OakDatabase': 'oak',
+        'DissertationBank': 'diss',
+        'ArticleBank': 'article',
+        'TalentedStudentDatabase': 'talent_db',
+        'ScientificSupervisor': 'supervisor',
+        'AssessmentTest': 'assessment',
+        'Survey': 'survey',
+    }
+    prefix = mapping.get(instance.__class__.__name__)
+    if not prefix or not instance.pk:
+        return ''
+    return f'{prefix}:{instance.pk}'
+
+
+def delete_instance_chunks(instance) -> int:
+    oid = object_id_for_instance(instance)
+    return _delete_chunks_by_object_id(oid)
 
 
 def _strip_html_template(raw: str) -> str:
