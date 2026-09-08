@@ -11,7 +11,8 @@ from .models import (
     Module, Question, Answer, UserCourseProgress,
     UserModuleProgress, UserTestResult, Certificate, TestSet,
     AssessmentTest, AssessmentTestResult, Literature, ScientificSupervisor,
-    SupervisorRequest, OlympiadProgram, OlympiadApplication, KnowledgeChunk
+    SupervisorRequest, OlympiadProgram, OlympiadApplication, KnowledgeChunk,
+    StudentActivityLink,
 )
 from . import admin_db
 from . import admin_stats
@@ -768,3 +769,24 @@ class KnowledgeChunkAdmin(admin.ModelAdmin):
         from .knowledge.ingest import rebuild_index
         stats = rebuild_index(full=False)
         self.message_user(request, f"Indeks yangilandi. Faol chunklar: {stats.get('total_active')}")
+
+
+@admin.register(StudentActivityLink)
+class StudentActivityLinkAdmin(admin.ModelAdmin):
+    list_display = ('title', 'link', 'is_active', 'updated_at')
+    fields = ('title', 'link', 'is_active', 'updated_at')
+    readonly_fields = ('updated_at',)
+
+    def has_add_permission(self, request):
+        # Faqat bitta yozuv
+        return not StudentActivityLink.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def changelist_view(self, request, extra_context=None):
+        # Ro'yxat o'rniga to'g'ridan-to'g'ri tahrirlash
+        obj = StudentActivityLink.get_solo()
+        from django.shortcuts import redirect
+        from django.urls import reverse
+        return redirect(reverse('admin:main_studentactivitylink_change', args=[obj.pk]))

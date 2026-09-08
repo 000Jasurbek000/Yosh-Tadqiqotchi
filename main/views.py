@@ -1273,6 +1273,10 @@ def profile_view(request):
         user=request.user
     ).select_related('olympiad').order_by('-created_at')
 
+    # Talaba faoliyatini kuzatish (admin belgilagan tashqi havola)
+    from main.models import StudentActivityLink
+    activity = StudentActivityLink.objects.filter(pk=1, is_active=True).exclude(link='').first()
+
     context = {
         'user': request.user,
         'courses_data': courses_data,
@@ -1283,6 +1287,7 @@ def profile_view(request):
         'supervisor_requests': supervisor_requests,
         'accepted_supervisors': accepted_supervisors,
         'olympiad_applications': olympiad_applications,
+        'activity_link': activity,
     }
     return render(request, 'profile.html', context)
 

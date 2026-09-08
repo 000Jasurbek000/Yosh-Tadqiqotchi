@@ -1107,3 +1107,56 @@ class KnowledgeChunk(models.Model):
 
     def __str__(self):
         return f'[{self.source_type}] {self.title[:80]}'
+
+
+# ─── Talaba faoliyatini kuzatish (profil tugmasi) ────────────────────────────
+class StudentActivityLink(models.Model):
+    """
+    Admin belgilagan tashqi sayt havolasi.
+    Talaba profilida «Mening faoliyatim» tugmasi orqali ochiladi.
+    Bitta yozuv yetarli (singleton).
+    """
+    title = models.CharField(
+        max_length=120,
+        default='Mening faoliyatim',
+        verbose_name='Tugma matni',
+        help_text='Profilida ko‘rinadigan tugma nomi',
+    )
+    link = models.URLField(
+        verbose_name='Faoliyat kuzatuv sayti (havola)',
+        help_text='https://... — talaba shu sahifaga o‘tkaziladi',
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='Faol',
+        help_text='O‘chirilsa, profilida tugma ko‘rinmaydi',
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'student_activity_link'
+        verbose_name = 'Talaba faoliyatini kuzatish'
+        verbose_name_plural = 'Talaba faoliyatini kuzatish'
+
+    def __str__(self):
+        return f'{self.title}: {self.link}'
+
+    def save(self, *args, **kwargs):
+        # Faqat bitta sozlama saqlansin
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass  # o‘chirishga ruxsat bermaymiz
+
+    @classmethod
+    def get_solo(cls):
+        obj = cls.objects.filter(pk=1).first()
+        if obj:
+            return obj
+        return cls.objects.create(
+            pk=1,
+            title='Mening faoliyatim',
+            link='https://example.com',
+            is_active=False,
+        )
