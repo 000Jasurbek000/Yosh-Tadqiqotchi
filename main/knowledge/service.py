@@ -49,11 +49,15 @@ def detect_smalltalk(user_message: str):
         'salom', 'assalomu alaykum', 'assalom', 'hello', 'hi', 'hey',
         'hayrli kun', 'hayrli tong', 'hayrli kech', 'good morning',
     )
-    if t in greet or any(t == p or t.startswith(p + ' ') for p in greet):
-        # "salom stipendiyalar" kabi aralash savol — smalltalk emas
-        words = t.split()
-        if len(words) <= 4:
-            return SMALLTALK_REPLIES['greeting']
+    if t in greet:
+        return SMALLTALK_REPLIES['greeting']
+    for p in greet:
+        if t.startswith(p + ' '):
+            rest = t[len(p):].strip()
+            # Faqat salom + qisqa emoji/so'z; mavzuli savol bo'lsa — RAG
+            if len(rest.split()) <= 1 and rest in ('', 'aka', 'opa', 'do\'st', 'dost', '👋', '😊'):
+                return SMALLTALK_REPLIES['greeting']
+            return None
 
     return None
 
