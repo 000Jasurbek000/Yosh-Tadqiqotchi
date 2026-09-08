@@ -29,9 +29,8 @@ BRANCH="${DEPLOY_BRANCH:-main}"
 REMOTE="${DEPLOY_REMOTE:-origin}"
 # Virtualenv yo'li (bo'sh qoldirilsa: .venv yoki venv avtomatik topiladi)
 VENV_DIR="${DEPLOY_VENV:-}"
-# systemd service nomi (bo'sh bo'lsa — restart o'tkazib yuboriladi)
+# systemd service nomi (bo'sh bo'lsa — Passenger yoki boshqa usul)
 SERVICE_NAME="${DEPLOY_SERVICE:-}"
-# Masalan: gunicorn, xalikova, yoshtadqiqotchi
 # Knowledge indeks (birinchi marta yoki to'liq qayta: DEPLOY_FULL_INDEX=1 ./deploy.sh)
 FULL_INDEX="${DEPLOY_FULL_INDEX:-0}"
 
@@ -97,8 +96,13 @@ fi
 # settings.py ga qo'lda tegmaymiz — faqat gitdagi kod keladi;
 # maxfiy/sozlama qiymatlar .env orqali o'qiladi.
 
-# --- Virtualenv ---
-if [[ -z "$VENV_DIR" ]]; then
+# --- Virtualenv / conda ---
+# Agar shellda allaqachon conda/venv faol bo'lsa — shuni ishlatamiz
+if [[ -n "${CONDA_PREFIX:-}" ]] || [[ -n "${VIRTUAL_ENV:-}" ]]; then
+  PYTHON=python
+  PIP=pip
+  echo "==> Faol muhit: ${CONDA_DEFAULT_ENV:-${VIRTUAL_ENV:-conda/venv}}"
+elif [[ -z "$VENV_DIR" ]]; then
   if [[ -d "$APP_DIR/.venv" ]]; then
     VENV_DIR="$APP_DIR/.venv"
   elif [[ -d "$APP_DIR/venv" ]]; then
@@ -106,22 +110,23 @@ if [[ -z "$VENV_DIR" ]]; then
   fi
 fi
 
-if [[ -n "$VENV_DIR" && -f "$VENV_DIR/bin/activate" ]]; then
-  # shellcheck source=/dev/null
-  source "$VENV_DIR/bin/activate"
-  echo "==> venv: $VENV_DIR"
-  PYTHON=python
-  PIP=pip
-elif [[ -n "$VENV_DIR" && -f "$VENV_DIR/Scripts/activate" ]]; then
-  # Windows-style (kamdan-kam serverda)
-  # shellcheck source=/dev/null
-  source "$VENV_DIR/Scripts/activate"
-  PYTHON=python
-  PIP=pip
-else
-  PYTHON="${DEPLOY_PYTHON:-python3}"
-  PIP="${DEPLOY_PIP:-pip3}"
-  echo "==> venv topilmadi, ishlatiladi: $PYTHON"
+if [[ -z "${PYTHON:-}" ]]; then
+  if [[ -n "$VENV_DIR" && -f "$VENV_DIR/bin/activate" ]]; then
+    # shellcheck source=/dev/null
+    source "$VENV_DIR/bin/activate"
+    echo "==> venv: $VENV_DIR"
+    PYTHON=python
+    PIP=pip
+  elif [[ -n "$VENV_DIR" && -f "$VENV_DIR/Scripts/activate" ]]; then
+    # shellcheck source=/dev/null
+    source "$VENV_DIR/Scripts/activate"
+    PYTHON=python
+    PIP=pip
+  else
+    PYTHON="${DEPLOY_PYTHON:-python3}"
+    PIP="${DEPLOY_PIP:-pip3}"
+    echo "==> venv topilmadi, ishlatiladi: $PYTHON"
+  fi
 fi
 
 # --- Dependencies ---
@@ -147,23 +152,31 @@ echo "==> collectstatic"
 echo "==> Django check"
 "$PYTHON" manage.py check
 
-# --- Restart ---
-if [[ -n "$SERVICE_NAME" ]]; then
+# --- Restart (Passenger / systemd) ---
+restarted=0
+
+# cPanel / Phusion Passenger — eng ishonchli usul
+if [[ -f "$APP_DIR/passenger_wsgi.py" ]] || [[ -d "$APP_DIR/tmp" ]] || [[ -d "$APP_DIR/public" ]]; then
+  mkdir -p "$APP_DIR/tmp"
+  touch "$APP_DIR/tmp/restart.txt"
+  echo "==> Passenger restart: tmp/restart.txt yangilandi"
+  restarted=1
+fi
+
+if [[ -n "$SERVICE_NAME" ]] && command -v systemctl >/dev/null 2>&1; then
   echo "==> systemctl restart $SERVICE_NAME"
-  if command -v systemctl >/dev/null 2>&1; then
-    sudo systemctl restart "$SERVICE_NAME"
-    sudo systemctl --no-pager --full status "$SERVICE_NAME" | head -n 20 || true
-  else
-    echo "OGOHLANTIRISH: systemctl yo'q — xizmatni qo'lda restart qiling."
-  fi
-else
-  echo "==> Restart o'tkazib yuborildi."
-  echo "    Bir marta sozlang, masalan:"
-  echo "      export DEPLOY_SERVICE=gunicorn"
-  echo "    yoki deploy.sh ichida SERVICE_NAME ni yozing."
-  echo "    Keyin: sudo systemctl restart <service>"
+  sudo systemctl restart "$SERVICE_NAME"
+  sudo systemctl --no-pager --full status "$SERVICE_NAME" | head -n 20 || true
+  restarted=1
+elif [[ -n "$SERVICE_NAME" ]] && [[ "$restarted" -eq 0 ]]; then
+  echo "OGOHLANTIRISH: systemctl yo'q (DEPLOY_SERVICE=$SERVICE_NAME)."
+fi
+
+if [[ "$restarted" -eq 0 ]]; then
+  echo "==> Avtomatik restart topilmadi."
+  echo "    Passenger bo'lsa:  touch tmp/restart.txt"
 fi
 
 echo ""
 echo "OK — deploy tugadi."
-echo "Eslatma: .env va server sozlamalari o'zgartirilmadi."
+echo "Eslatma: .env va serverdagi lokal sozlamalar saqlab qolindi."
