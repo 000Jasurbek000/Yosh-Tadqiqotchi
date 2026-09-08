@@ -53,17 +53,36 @@ fi
 echo "==> git fetch / pull..."
 git fetch "$REMOTE" "$BRANCH"
 
-# Lokal commitlanmagan o'zgarishlar bo'lsa — ogohlantirib to'xtatamiz
-# (.env gitignore'da, lekin boshqa fayllar bo'lishi mumkin)
+STASHED=0
+# Serverdagi lokal o'zgarishlar (masalan settings.py) — stash qilib pull, keyin qaytariladi.
+# .env gitignore'da, shuning uchun stashga kirmaydi.
 if ! git diff --quiet || ! git diff --cached --quiet; then
-  echo "XATO: Serverda commitlanmagan o'zgarishlar bor."
-  echo "Ular deploy paytida aralashib ketishi mumkin."
-  echo "Tekshiring: git status"
-  echo "Agar faqat vaqtinchalik fayl bo'lsa: git stash -u  (yoki qo'lda tozalang)"
+  echo "==> Serverda lokal o'zgarishlar topildi (saqlanadi):"
+  git status --short || true
+  git stash push -m "deploy-auto-stash-$(date +%Y%m%d%H%M%S)" --quiet
+  STASHED=1
+  echo "==> Lokal o'zgarishlar stash qilindi"
+fi
+
+if ! git pull --ff-only "$REMOTE" "$BRANCH"; then
+  echo "XATO: git pull muvaffaqiyatsiz (fast-forward emas)."
+  if [[ "$STASHED" -eq 1 ]]; then
+    echo "==> Stash qaytarilmoqda..."
+    git stash pop || true
+  fi
   exit 1
 fi
 
-git pull --ff-only "$REMOTE" "$BRANCH"
+if [[ "$STASHED" -eq 1 ]]; then
+  echo "==> Lokal o'zgarishlar qaytarilmoqda (stash pop)..."
+  if ! git stash pop; then
+    echo "OGOHLANTIRISH: stash pop conflict. Server sozlamalari stashda qolgan bo'lishi mumkin."
+    echo "  Tekshiring: git stash list && git status"
+    echo "  Conflictni qo'lda hal qiling, keyin: git stash drop"
+  else
+    echo "==> Lokal o'zgarishlar qaytarildi (.env / server sozlamalari saqlanadi)"
+  fi
+fi
 
 # .env ni qayta tiklash (agar biror sabab bilan o'zgargan bo'lsa)
 if [[ -n "$ENV_BACKUP" && -f "$ENV_BACKUP" ]]; then
