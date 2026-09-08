@@ -631,12 +631,12 @@ def index_business_logic():
             'title': 'Iqtidorli talaba statusini olish',
             'content': (
                 "Yosh Tadqiqotchi platformasida iqtidorli talaba statusini olish uchun "
-                "saralash testidan (Assessment Test) muvaffaqiyatli o'tish kerak. "
-                "Test faol bo'lsa, foydalanuvchi /assessment-test/ sahifasidan boshlaydi. "
-                "Belgilangan foizdan yuqori natija olsangiz, profilingizda assessment_status "
-                "iqtidorli ga o'zgaradi va admin ham Talaba holatini Iqtidorli qilib belgilashi mumkin. "
+                "Saralash testidan muvaffaqiyatli o'tish kerak. "
+                "Test faol bo'lsa, menyudagi «Saralash testi» bo'limidan boshlang. "
+                "Belgilangan foizdan yuqori natija olsangiz, profilingizda talaba holati "
+                "Iqtidorli ga o'zgaradi; admin ham Talaba holatini Iqtidorli qilib belgilashi mumkin. "
                 "Testni yiqilganingizda qayta topshirish uchun kutish vaqti (soatlar) qo'llaniladi. "
-                "Iqtidor Yo'li (/iqtidor-yoli/) va ba'zi olimpiada dasturlari faqat iqtidorli "
+                "«Iqtidor Yo'li» va ba'zi olimpiada dasturlari faqat iqtidorli "
                 "talabalar (yoki admin) uchun ochiq."
             ),
             'url': '/assessment-test/',
@@ -655,7 +655,7 @@ def index_business_logic():
                 "sozlamalarida belgilangan. Muvaffaqiyatsiz urinishdan keyin qayta topshirish "
                 "uchun kutish vaqti bor. Admin foydalanuvchilar bu cheklovlarni chetlab o'tadi."
             ),
-            'url': '/kurslar/',
+            'url': '/courses/',
             'category': 'course',
             'object_id': 'logic:course_progress',
             'priority': 90,

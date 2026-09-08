@@ -75,11 +75,13 @@ def retrieve(query: str, top_k: int = DEFAULT_TOP_K, threshold: float = DEFAULT_
         return [], 0.0, ''
 
     parts = []
+    from .prompts import format_source_label
     for i, c in enumerate(top, 1):
-        src = c['url'] or c['category'] or c['source_type']
+        src = format_source_label(c.get('url') or '')
+        # Contentedagi ichki pathlarni odamona nomga yaqinlashtirish uchun eslatma
         parts.append(
             f"[{i}] {c['title']}\n"
-            f"Manba: {src}\n"
+            f"Manba (to'g'ri): {src}\n"
             f"{c['content']}"
         )
     context_text = '\n\n---\n\n'.join(parts)
@@ -94,10 +96,13 @@ def build_user_message_with_context(user_question: str, context_text: str) -> st
             f"Agar context bo'sh bo'lsa, faqat ma'lumot topilmaganini ayting."
         )
     return (
-        f"RETRIEVED CONTEXT (Yosh Tadqiqotchi platformasi):\n"
+        f"RETRIEVED CONTEXT (Yosh Tadqiqotchi platformasi — yoshtadqiqotchi.uz):\n"
         f"{context_text}\n\n"
         f"USER QUESTION: {user_question}\n\n"
-        f"Faqat yuqoridagi context asosida javob bering."
+        f"QOIDALAR: Faqat context asosida javob bering. "
+        f"Manbada faqat yoshtadqiqotchi.uz domenini ishlating (yosh.tadqiqotchi.uz deb yozmang). "
+        f"/assessment-test/ kabi ichki yo'llarni yozmang — sahifa nomini ayting "
+        f"(masalan: «Saralash testi» bo'limi)."
     )
 
 
