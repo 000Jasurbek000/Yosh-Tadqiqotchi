@@ -77,29 +77,30 @@ DEGREE_CHOICES = [
 
 
 class UserRegisterForm(UserCreationForm):
-    email = forms.EmailField(required=False, widget=forms.EmailInput(attrs={
-        'class': 'form-input',
-        'placeholder': 'Email (ixtiyoriy)'
-    }))
     first_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={
         'class': 'form-input',
-        'placeholder': 'Ismingiz'
+        'placeholder': 'Ismingiz',
+        'required': True,
     }))
     last_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={
         'class': 'form-input',
-        'placeholder': 'Familiyangiz'
+        'placeholder': 'Familiyangiz',
+        'required': True,
     }))
     phone_number = forms.CharField(max_length=20, required=True, widget=forms.TextInput(attrs={
         'class': 'form-input',
         'placeholder': '+998 XX XXX XX XX',
-        'id': 'phone_number'
+        'id': 'phone_number',
+        'required': True,
     }))
     residence_region = forms.ChoiceField(choices=REGION_CHOICES, required=True, widget=forms.Select(attrs={
         'class': 'form-input',
+        'required': True,
     }))
     university = forms.ChoiceField(choices=[], required=True, widget=forms.Select(attrs={
         'class': 'form-input',
         'id': 'id_university',
+        'required': True,
     }))
     faculty = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={
         'class': 'form-input',
@@ -107,26 +108,31 @@ class UserRegisterForm(UserCreationForm):
         'placeholder': 'Fakultetingizni kiriting yoki tanlang',
         'list': 'buxdu-faculties-list',
         'autocomplete': 'off',
+        'required': True,
     }))
     education_direction = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={
         'class': 'form-input',
         'placeholder': "Ta'lim yo'nalishi (masalan: Matematika)",
+        'required': True,
     }))
     education_stage = forms.CharField(max_length=120, required=True, widget=forms.TextInput(attrs={
         'class': 'form-input',
         'placeholder': "Ta'lim bosqichi / kurs (masalan: 2-kurs)",
+        'required': True,
     }))
     academic_degree = forms.ChoiceField(choices=DEGREE_CHOICES, required=True, widget=forms.Select(attrs={
         'class': 'form-input',
+        'required': True,
     }))
     role = forms.ChoiceField(choices=User.ROLE_CHOICES, required=True, widget=forms.Select(attrs={
         'class': 'form-input',
+        'required': True,
     }))
 
     class Meta:
         model = User
         fields = [
-            'email', 'first_name', 'last_name', 'phone_number', 'residence_region',
+            'first_name', 'last_name', 'phone_number', 'residence_region',
             'university', 'faculty', 'education_direction', 'education_stage',
             'academic_degree', 'role', 'password1', 'password2',
         ]
@@ -134,28 +140,31 @@ class UserRegisterForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields.pop('username', None)
+        self.fields.pop('email', None)
         self.fields['university'].choices = get_university_choices()
         self.fields['password1'].widget.attrs.update({
             'class': 'form-input',
-            'placeholder': 'Parol (kamida 5 belgi)'
+            'placeholder': 'Parol (kamida 5 belgi)',
+            'required': True,
         })
         self.fields['password2'].widget.attrs.update({
             'class': 'form-input',
-            'placeholder': 'Parolni tasdiqlang'
+            'placeholder': 'Parolni tasdiqlang',
+            'required': True,
         })
         self.fields['password1'].help_text = 'Kamida 5 ta belgi. Oson parol ham qabul qilinadi.'
-        self.fields['email'].required = False
 
-    def clean_email(self):
-        email = (self.cleaned_data.get('email') or '').strip().lower()
-        if not email:
-            return None
-        qs = User.objects.filter(email__iexact=email)
-        if self.instance and self.instance.pk:
-            qs = qs.exclude(pk=self.instance.pk)
-        if qs.exists():
-            raise forms.ValidationError('Bu email allaqachon ro\'yxatdan o\'tgan.')
-        return email
+    def clean_first_name(self):
+        value = (self.cleaned_data.get('first_name') or '').strip()
+        if not value:
+            raise forms.ValidationError('Ism majburiy.')
+        return value
+
+    def clean_last_name(self):
+        value = (self.cleaned_data.get('last_name') or '').strip()
+        if not value:
+            raise forms.ValidationError('Familiya majburiy.')
+        return value
 
     def clean_phone_number(self):
         from .phone_utils import normalize_phone, phone_digits
@@ -176,14 +185,15 @@ class UserRegisterForm(UserCreationForm):
         university = cleaned_data.get('university')
         faculty = cleaned_data.get('faculty')
         residence_region = cleaned_data.get('residence_region')
+        academic_degree = cleaned_data.get('academic_degree')
 
-        if not residence_region or residence_region == '':
+        if not residence_region:
             self.add_error('residence_region', 'Yashash xududi majburiy.')
 
-        if not university or university == '':
+        if not university:
             self.add_error('university', 'O\'qigan/O\'qiyotgan joyni tanlash majburiy.')
 
-        if not faculty or faculty.strip() == '':
+        if not faculty or not str(faculty).strip():
             self.add_error('faculty', 'Fakultetni kiritish majburiy.')
 
         if not (cleaned_data.get('education_direction') or '').strip():
@@ -192,14 +202,20 @@ class UserRegisterForm(UserCreationForm):
         if not (cleaned_data.get('education_stage') or '').strip():
             self.add_error('education_stage', "Ta'lim bosqichi / kursni kiriting.")
 
+        if not academic_degree:
+            self.add_error('academic_degree', 'Ilmiy darajani tanlang.')
+
+        if not cleaned_data.get('role'):
+            self.add_error('role', 'Rolni tanlang.')
+
         return cleaned_data
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.faculty = self.cleaned_data.get('faculty', '')
+        user.faculty = (self.cleaned_data.get('faculty') or '').strip()
         user.education_direction = (self.cleaned_data.get('education_direction') or '').strip()
         user.education_stage = (self.cleaned_data.get('education_stage') or '').strip()
-        user.email = self.cleaned_data.get('email') or None
+        user.email = None
         if commit:
             user.save()
         return user
@@ -228,30 +244,52 @@ class UserUpdateForm(forms.ModelForm):
         'class': 'form-input',
         'placeholder': 'Email (ixtiyoriy)'
     }))
-    residence_region = forms.ChoiceField(choices=REGION_CHOICES, required=False, widget=forms.Select(attrs={
+    first_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={
         'class': 'form-input',
+        'placeholder': 'Ismingiz',
+        'required': True,
     }))
-    university = forms.ChoiceField(choices=[], required=False, widget=forms.Select(attrs={
+    last_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={
+        'class': 'form-input',
+        'placeholder': 'Familiyangiz',
+        'required': True,
+    }))
+    phone_number = forms.CharField(max_length=20, required=True, widget=forms.TextInput(attrs={
+        'class': 'form-input',
+        'placeholder': '+998 XX XXX XX XX',
+        'id': 'phone_number',
+        'required': True,
+    }))
+    residence_region = forms.ChoiceField(choices=REGION_CHOICES, required=True, widget=forms.Select(attrs={
+        'class': 'form-input',
+        'required': True,
+    }))
+    university = forms.ChoiceField(choices=[], required=True, widget=forms.Select(attrs={
         'class': 'form-input',
         'id': 'id_university',
+        'required': True,
     }))
-    faculty = forms.CharField(max_length=200, required=False, widget=forms.TextInput(attrs={
+    faculty = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={
         'class': 'form-input',
         'id': 'id_faculty',
         'placeholder': 'Fakultetingizni kiriting yoki tanlang',
         'list': 'buxdu-faculties-list',
         'autocomplete': 'off',
+        'required': True,
     }))
-    education_direction = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={
+    education_direction = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={
         'class': 'form-input',
         'placeholder': "Ta'lim yo'nalishi",
+        'required': True,
     }))
-    education_stage = forms.CharField(max_length=120, required=False, widget=forms.TextInput(attrs={
+    education_stage = forms.CharField(max_length=120, required=True, widget=forms.TextInput(attrs={
         'class': 'form-input',
         'placeholder': "Ta'lim bosqichi / kurs",
+        'required': True,
     }))
-    academic_degree = forms.ChoiceField(choices=DEGREE_CHOICES, required=False, widget=forms.Select(attrs={
+    academic_degree = forms.ChoiceField(choices=DEGREE_CHOICES, required=True, widget=forms.Select(attrs={
         'class': 'form-input',
+        'required': True,
     }))
     profile_image = forms.ImageField(required=False, widget=forms.FileInput(attrs={
         'class': 'form-input',
@@ -265,25 +303,22 @@ class UserUpdateForm(forms.ModelForm):
             'university', 'faculty', 'education_direction', 'education_stage',
             'academic_degree', 'profile_image',
         ]
-        widgets = {
-            'first_name': forms.TextInput(attrs={
-                'class': 'form-input',
-                'placeholder': 'Ismingiz'
-            }),
-            'last_name': forms.TextInput(attrs={
-                'class': 'form-input',
-                'placeholder': 'Familiyangiz'
-            }),
-            'phone_number': forms.TextInput(attrs={
-                'class': 'form-input',
-                'placeholder': '+998 XX XXX XX XX',
-                'id': 'phone_number'
-            }),
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['university'].choices = get_university_choices()
+
+    def clean_first_name(self):
+        value = (self.cleaned_data.get('first_name') or '').strip()
+        if not value:
+            raise forms.ValidationError('Ism majburiy.')
+        return value
+
+    def clean_last_name(self):
+        value = (self.cleaned_data.get('last_name') or '').strip()
+        if not value:
+            raise forms.ValidationError('Familiya majburiy.')
+        return value
 
     def clean_email(self):
         email = (self.cleaned_data.get('email') or '').strip().lower()
@@ -301,15 +336,30 @@ class UserUpdateForm(forms.ModelForm):
         raw = self.cleaned_data.get('phone_number') or ''
         compact = normalize_phone(raw)
         digits = phone_digits(compact)
-        if compact and len(digits) != 9:
+        if len(digits) != 9:
             raise forms.ValidationError('Telefon raqamini to\'liq kiriting.')
-        if compact:
-            qs = User.objects.filter(phone_number=compact)
-            if self.instance and self.instance.pk:
-                qs = qs.exclude(pk=self.instance.pk)
-            if qs.exists():
-                raise forms.ValidationError('Bu telefon raqam allaqachon band.')
-        return compact or None
+        qs = User.objects.filter(phone_number=compact)
+        if self.instance and self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise forms.ValidationError('Bu telefon raqam allaqachon band.')
+        return compact
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if not cleaned_data.get('residence_region'):
+            self.add_error('residence_region', 'Yashash xududi majburiy.')
+        if not cleaned_data.get('university'):
+            self.add_error('university', 'O\'qigan/O\'qiyotgan joyni tanlash majburiy.')
+        if not (cleaned_data.get('faculty') or '').strip():
+            self.add_error('faculty', 'Fakultetni kiritish majburiy.')
+        if not (cleaned_data.get('education_direction') or '').strip():
+            self.add_error('education_direction', "Ta'lim yo'nalishini kiriting.")
+        if not (cleaned_data.get('education_stage') or '').strip():
+            self.add_error('education_stage', "Ta'lim bosqichi / kursni kiriting.")
+        if not cleaned_data.get('academic_degree'):
+            self.add_error('academic_degree', 'Ilmiy darajani tanlang.')
+        return cleaned_data
 
 
 # Question with Answers Form

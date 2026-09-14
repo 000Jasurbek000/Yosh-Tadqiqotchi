@@ -6,8 +6,8 @@ from .phone_utils import normalize_phone, phone_digits
 User = get_user_model()
 
 
-class EmailBackend(ModelBackend):
-    """Email yoki telefon orqali kirish."""
+class PhoneBackend(ModelBackend):
+    """Faqat telefon (yoki admin username) orqali kirish."""
 
     def authenticate(self, request, username=None, password=None, **kwargs):
         if not username or not password:
@@ -20,14 +20,8 @@ class EmailBackend(ModelBackend):
 
     def _find_user(self, username):
         raw = (username or '').strip()
-        if not raw:
+        if not raw or '@' in raw:
             return None
-
-        if '@' in raw:
-            try:
-                return User.objects.get(email__iexact=raw)
-            except User.DoesNotExist:
-                return None
 
         compact = normalize_phone(raw)
         digits = phone_digits(raw)
@@ -49,3 +43,7 @@ class EmailBackend(ModelBackend):
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
+
+
+# Eski importlar uchun
+EmailBackend = PhoneBackend

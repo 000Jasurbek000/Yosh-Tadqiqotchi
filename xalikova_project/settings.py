@@ -170,7 +170,7 @@ AUTH_USER_MODEL = 'main.User'
 
 # Authentication Backends
 AUTHENTICATION_BACKENDS = [
-    'main.backends.EmailBackend',  # Telefon yoki email bilan kirish
+    'main.backends.EmailBackend',  # Telefon raqam bilan kirish
     'django.contrib.auth.backends.ModelBackend',  # Admin username
 ]
 

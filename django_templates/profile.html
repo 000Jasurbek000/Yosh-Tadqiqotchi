@@ -323,10 +323,12 @@
                     <span class="info-label">Familiya</span>
                     <span class="info-value">{{ user.last_name }}</span>
                 </li>
+                {% if user.email %}
                 <li class="profile-info-item full-width">
                     <span class="info-label">Email</span>
                     <span class="info-value">{{ user.email }}</span>
                 </li>
+                {% endif %}
                 {% if user.phone_number %}
                 <li class="profile-info-item">
                     <span class="info-label">Telefon</span>

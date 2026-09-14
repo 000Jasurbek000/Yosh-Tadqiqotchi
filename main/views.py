@@ -1328,16 +1328,20 @@ def download_certificate(request, certificate_id):
 
 @login_required
 def settings_view(request):
+    user_form = UserUpdateForm(instance=request.user)
+    password_form = PasswordChangeForm(request.user)
+
     if request.method == 'POST':
         form_type = request.POST.get('form_type')
-        
+
         if form_type == 'profile':
             user_form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
             if user_form.is_valid():
                 user_form.save()
                 messages.success(request, 'Profilingiz muvaffaqiyatli yangilandi!')
                 return redirect('main:settings')
-        
+            messages.error(request, 'Iltimos, barcha majburiy maydonlarni to\'ldiring.')
+
         elif form_type == 'password':
             password_form = PasswordChangeForm(request.user, request.POST)
             if password_form.is_valid():
@@ -1345,12 +1349,8 @@ def settings_view(request):
                 update_session_auth_hash(request, user)
                 messages.success(request, 'Parolingiz muvaffaqiyatli o\'zgartirildi!')
                 return redirect('main:settings')
-            else:
-                messages.error(request, 'Parolni o\'zgartirishda xatolik yuz berdi.')
-    
-    user_form = UserUpdateForm(instance=request.user)
-    password_form = PasswordChangeForm(request.user)
-    
+            messages.error(request, 'Parolni o\'zgartirishda xatolik yuz berdi.')
+
     context = {
         'user_form': user_form,
         'password_form': password_form,

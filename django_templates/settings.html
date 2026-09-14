@@ -294,52 +294,85 @@
                     <div class="form-group">
                         <label class="form-label" for="{{ user_form.first_name.id_for_label }}">Ism</label>
                         {{ user_form.first_name }}
+                        {% if user_form.first_name.errors %}
+                            <span style="color: #ef4444; font-size: 13px;">{{ user_form.first_name.errors.0 }}</span>
+                        {% endif %}
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="{{ user_form.last_name.id_for_label }}">Familiya</label>
                         {{ user_form.last_name }}
+                        {% if user_form.last_name.errors %}
+                            <span style="color: #ef4444; font-size: 13px;">{{ user_form.last_name.errors.0 }}</span>
+                        {% endif %}
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="{{ user_form.email.id_for_label }}">Email</label>
+                    <label class="form-label" for="{{ user_form.email.id_for_label }}">Email (ixtiyoriy)</label>
                     {{ user_form.email }}
+                    {% if user_form.email.errors %}
+                        <span style="color: #ef4444; font-size: 13px;">{{ user_form.email.errors.0 }}</span>
+                    {% endif %}
+                    <small class="form-text" style="display: block; margin-top: 6px; color: var(--text-muted); font-size: 13px;">
+                        Email login uchun ishlatilmaydi. Xohlasangiz shu yerda kiritishingiz mumkin.
+                    </small>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="{{ user_form.phone_number.id_for_label }}">Telefon raqam</label>
                     {{ user_form.phone_number }}
+                    {% if user_form.phone_number.errors %}
+                        <span style="color: #ef4444; font-size: 13px;">{{ user_form.phone_number.errors.0 }}</span>
+                    {% endif %}
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="{{ user_form.residence_region.id_for_label }}">Yashash xudud</label>
                     {{ user_form.residence_region }}
+                    {% if user_form.residence_region.errors %}
+                        <span style="color: #ef4444; font-size: 13px;">{{ user_form.residence_region.errors.0 }}</span>
+                    {% endif %}
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="{{ user_form.university.id_for_label }}">O'qigan/O'qiyotgan joy</label>
                     {{ user_form.university }}
+                    {% if user_form.university.errors %}
+                        <span style="color: #ef4444; font-size: 13px;">{{ user_form.university.errors.0 }}</span>
+                    {% endif %}
                 </div>
 
                 <div class="form-group" id="faculty-group">
                     <label class="form-label" for="{{ user_form.faculty.id_for_label }}">Fakultet</label>
                     {{ user_form.faculty }}
                     <datalist id="buxdu-faculties-list"></datalist>
+                    {% if user_form.faculty.errors %}
+                        <span style="color: #ef4444; font-size: 13px;">{{ user_form.faculty.errors.0 }}</span>
+                    {% endif %}
                 </div>
 
                 <div class="form-group">
                     <label class="form-label" for="{{ user_form.education_direction.id_for_label }}">Ta'lim yo'nalishi</label>
                     {{ user_form.education_direction }}
+                    {% if user_form.education_direction.errors %}
+                        <span style="color: #ef4444; font-size: 13px;">{{ user_form.education_direction.errors.0 }}</span>
+                    {% endif %}
                 </div>
 
                 <div class="form-group">
                     <label class="form-label" for="{{ user_form.education_stage.id_for_label }}">Ta'lim bosqichi / kurs</label>
                     {{ user_form.education_stage }}
+                    {% if user_form.education_stage.errors %}
+                        <span style="color: #ef4444; font-size: 13px;">{{ user_form.education_stage.errors.0 }}</span>
+                    {% endif %}
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="{{ user_form.academic_degree.id_for_label }}">Ilmiy daraja</label>
                     {{ user_form.academic_degree }}
+                    {% if user_form.academic_degree.errors %}
+                        <span style="color: #ef4444; font-size: 13px;">{{ user_form.academic_degree.errors.0 }}</span>
+                    {% endif %}
                 </div>
                 
                 <button type="submit" class="btn-primary">O'zgarishlarni saqlash</button>
