@@ -48,7 +48,7 @@ BUXDU_FACULTIES = [
     'Iqtisodiyot va turizm fakulteti',
 ]
 
-FACULTY_CHOICES = BUXDU_FACULTIES  # JS uchun ishlatiladi
+FACULTY_CHOICES = [('', 'Fakultetni tanlang')] + [(f, f) for f in BUXDU_FACULTIES]
 
 REGION_CHOICES = [
     ('', 'Yashash xududingizni tanlang'),
@@ -112,17 +112,14 @@ class UserRegisterForm(UserCreationForm):
         'id': 'id_university',
         'required': True,
     }))
-    faculty = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={
+    faculty = forms.ChoiceField(choices=FACULTY_CHOICES, required=True, widget=forms.Select(attrs={
         'class': 'form-input',
         'id': 'id_faculty',
-        'placeholder': 'Fakultetingizni kiriting yoki tanlang',
-        'list': 'buxdu-faculties-list',
-        'autocomplete': 'off',
         'required': True,
     }))
     education_direction = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={
         'class': 'form-input',
-        'placeholder': "Ta'lim yo'nalishi (masalan: Matematika)",
+        'placeholder': "Ta'lim yo'nalishi",
         'required': True,
     }))
     education_stage = forms.ChoiceField(choices=COURSE_STAGE_CHOICES, required=True, widget=forms.Select(attrs={
@@ -206,7 +203,7 @@ class UserRegisterForm(UserCreationForm):
             self.add_error('university', 'O\'qigan/O\'qiyotgan joyni tanlash majburiy.')
 
         if not faculty or not str(faculty).strip():
-            self.add_error('faculty', 'Fakultetni kiritish majburiy.')
+            self.add_error('faculty', 'Fakultetni tanlang.')
 
         if not (cleaned_data.get('education_direction') or '').strip():
             self.add_error('education_direction', "Ta'lim yo'nalishini kiriting.")
@@ -281,12 +278,9 @@ class UserUpdateForm(forms.ModelForm):
         'id': 'id_university',
         'required': True,
     }))
-    faculty = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={
+    faculty = forms.ChoiceField(choices=FACULTY_CHOICES, required=True, widget=forms.Select(attrs={
         'class': 'form-input',
         'id': 'id_faculty',
-        'placeholder': 'Fakultetingizni kiriting yoki tanlang',
-        'list': 'buxdu-faculties-list',
-        'autocomplete': 'off',
         'required': True,
     }))
     education_direction = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={
@@ -323,6 +317,11 @@ class UserUpdateForm(forms.ModelForm):
         if current and current not in dict(stage_choices):
             stage_choices.append((current, current))
         self.fields['education_stage'].choices = stage_choices
+        faculty_choices = list(FACULTY_CHOICES)
+        current_faculty = (getattr(self.instance, 'faculty', '') or '').strip()
+        if current_faculty and current_faculty not in dict(faculty_choices):
+            faculty_choices.append((current_faculty, current_faculty))
+        self.fields['faculty'].choices = faculty_choices
 
     def clean_first_name(self):
         value = (self.cleaned_data.get('first_name') or '').strip()
@@ -368,7 +367,7 @@ class UserUpdateForm(forms.ModelForm):
         if not cleaned_data.get('university'):
             self.add_error('university', 'O\'qigan/O\'qiyotgan joyni tanlash majburiy.')
         if not (cleaned_data.get('faculty') or '').strip():
-            self.add_error('faculty', 'Fakultetni kiritish majburiy.')
+            self.add_error('faculty', 'Fakultetni tanlang.')
         if not (cleaned_data.get('education_direction') or '').strip():
             self.add_error('education_direction', "Ta'lim yo'nalishini kiriting.")
         if not (cleaned_data.get('education_stage') or '').strip():

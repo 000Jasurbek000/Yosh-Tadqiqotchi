@@ -351,7 +351,6 @@
                 <div class="form-group" id="faculty-group">
                     <label class="form-label" for="{{ user_form.faculty.id_for_label }}">Fakultet</label>
                     {{ user_form.faculty }}
-                    <datalist id="buxdu-faculties-list"></datalist>
                     {% if user_form.faculty.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ user_form.faculty.errors.0 }}</span>
                     {% endif %}
@@ -435,44 +434,6 @@ document.addEventListener('DOMContentLoaded', function() {
         select.style.height = 'auto';
         select.style.overflow = 'visible';
     });
-});
-
-// Fakultet datalist - BuxDU tanlanganda tavsiyalar chiqarish
-document.addEventListener('DOMContentLoaded', function() {
-    const universitySelect = document.getElementById('id_university');
-    const facultyInput = document.getElementById('id_faculty');
-    const datalist = document.getElementById('buxdu-faculties-list');
-
-    if (!universitySelect || !facultyInput || !datalist) return;
-
-    const buxduFaculties = [
-        'Aniq fanlar va intellektual muhandislik texnologiyalari ilmiy-tadqiqot instituti',
-        'Tabiiy fanlar va agroinnovatsiyalar ilmiy-tadqiqot instituti',
-        'Yuridik fakulteti',
-        'Filologiya fakulteti',
-        'Tarix fakulteti',
-        'Xorijiy tillar',
-        "Sport va san'at fakulteti",
-        'Davlat auditi fakulteti',
-        'Iqtisodiyot va turizm fakulteti',
-    ];
-
-    function updateFacultyDatalist() {
-        datalist.innerHTML = '';
-        if (universitySelect.value === 'Buxoro davlat universiteti') {
-            buxduFaculties.forEach(function(f) {
-                const opt = document.createElement('option');
-                opt.value = f;
-                datalist.appendChild(opt);
-            });
-            facultyInput.placeholder = 'Fakultetni tanlang yoki kiriting';
-        } else {
-            facultyInput.placeholder = 'Fakultetingizni kiriting';
-        }
-    }
-
-    universitySelect.addEventListener('change', updateFacultyDatalist);
-    updateFacultyDatalist();
 });
 
 // Phone number auto-format with +998
