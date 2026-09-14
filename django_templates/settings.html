@@ -35,6 +35,12 @@
         overflow-x: auto;
     }
     
+    .form-group .helptext,
+    .form-group .help,
+    .form-group ul.help {
+        display: none !important;
+    }
+
     .tab-btn {
         padding: 12px 24px;
         background: none;
@@ -399,18 +405,17 @@
                 
                 <div class="form-group">
                     <label class="form-label" for="{{ password_form.old_password.id_for_label }}">Joriy parol</label>
-                    {{ password_form.old_password }}
+                    {{ password_form.old_password.as_widget }}
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="{{ password_form.new_password1.id_for_label }}">Yangi parol</label>
-                    {{ password_form.new_password1 }}
-                    <p class="form-help-text">Parol kamida 5 ta belgidan iborat bo'lishi kerak</p>
+                    {{ password_form.new_password1.as_widget }}
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="{{ password_form.new_password2.id_for_label }}">Yangi parolni tasdiqlang</label>
-                    {{ password_form.new_password2 }}
+                    {{ password_form.new_password2.as_widget }}
                 </div>
                 
                 <button type="submit" class="btn-primary">Parolni o'zgartirish</button>

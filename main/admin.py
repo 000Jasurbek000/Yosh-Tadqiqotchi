@@ -544,18 +544,20 @@ class AssessmentTestAdmin(admin.ModelAdmin):
 class AssessmentTestResultAdmin(admin.ModelAdmin):
     list_display = (
         'user', 'user_faculty', 'user_direction', 'user_stage', 'user_phone',
-        'assessment_test', 'percentage', 'passed', 'correct_answers', 'total_questions', 'submitted_at',
+        'assessment_test', 'percentage_display', 'passed', 'correct_answers', 'total_questions', 'submitted_at',
     )
+    list_display_links = ('user', 'assessment_test')
     list_filter = ('passed', 'assessment_test', 'submitted_at', 'user__faculty')
     search_fields = (
         'user__email', 'user__first_name', 'user__last_name', 'user__phone_number',
         'user__faculty', 'user__education_direction', 'user__education_stage',
     )
-    readonly_fields = (
-        'user', 'assessment_test', 'score', 'total_questions', 'correct_answers',
-        'percentage', 'passed', 'time_taken', 'submitted_at',
-        'user_faculty', 'user_direction', 'user_stage', 'user_phone',
+    fields = (
+        'user', 'user_phone', 'user_faculty', 'user_direction', 'user_stage',
+        'assessment_test', 'percentage_display', 'passed', 'correct_answers', 'total_questions',
+        'time_taken', 'submitted_at',
     )
+    readonly_fields = fields
     date_hierarchy = 'submitted_at'
     list_select_related = ('user', 'assessment_test')
 
@@ -564,19 +566,26 @@ class AssessmentTestResultAdmin(admin.ModelAdmin):
 
     @admin.display(description='Fakultet')
     def user_faculty(self, obj):
-        return obj.user.faculty or '—'
+        return getattr(getattr(obj, 'user', None), 'faculty', None) or '—'
 
     @admin.display(description="Ta'lim yo'nalishi")
     def user_direction(self, obj):
-        return obj.user.education_direction or '—'
+        return getattr(getattr(obj, 'user', None), 'education_direction', None) or '—'
 
     @admin.display(description='Kurs / bosqich')
     def user_stage(self, obj):
-        return obj.user.education_stage or '—'
+        return getattr(getattr(obj, 'user', None), 'education_stage', None) or '—'
 
     @admin.display(description='Telefon')
     def user_phone(self, obj):
-        return obj.user.phone_number or '—'
+        return getattr(getattr(obj, 'user', None), 'phone_number', None) or '—'
+
+    @admin.display(description='Foiz')
+    def percentage_display(self, obj):
+        try:
+            return f'{round(float(obj.percentage), 1):.1f}'.replace('.', ',')
+        except (TypeError, ValueError):
+            return '—'
 
 
 @admin.register(Literature)
@@ -722,10 +731,18 @@ class OlympiadProgramAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
         }),
     )
 
+    class Media:
+        css = {'all': ('admin/custom_admin.css',)}
+        js = ('admin/olympiad_code_select.js',)
+
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         if db_field.name == 'code':
             from django import forms as django_forms
-            kwargs['widget'] = django_forms.Select(choices=OlympiadProgram.all_code_choices())
+            kwargs['widget'] = django_forms.Select(
+                choices=OlympiadProgram.all_code_choices(),
+                attrs={'class': 'admin-native-select'},
+            )
+            return db_field.formfield(**kwargs)
         return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 

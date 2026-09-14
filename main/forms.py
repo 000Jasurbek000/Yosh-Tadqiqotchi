@@ -75,6 +75,16 @@ DEGREE_CHOICES = [
     ('dsc', 'DSc (Fan doktori)'),
 ]
 
+COURSE_STAGE_CHOICES = [
+    ('', 'Kursni tanlang'),
+    ('1-kurs', '1-kurs'),
+    ('2-kurs', '2-kurs'),
+    ('3-kurs', '3-kurs'),
+    ('4-kurs', '4-kurs'),
+    ('5-kurs', '5-kurs'),
+    ('6-kurs', '6-kurs'),
+]
+
 
 class UserRegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={
@@ -115,9 +125,8 @@ class UserRegisterForm(UserCreationForm):
         'placeholder': "Ta'lim yo'nalishi (masalan: Matematika)",
         'required': True,
     }))
-    education_stage = forms.CharField(max_length=120, required=True, widget=forms.TextInput(attrs={
+    education_stage = forms.ChoiceField(choices=COURSE_STAGE_CHOICES, required=True, widget=forms.Select(attrs={
         'class': 'form-input',
-        'placeholder': "Ta'lim bosqichi / kurs (masalan: 2-kurs)",
         'required': True,
     }))
     academic_degree = forms.ChoiceField(choices=DEGREE_CHOICES, required=True, widget=forms.Select(attrs={
@@ -144,7 +153,7 @@ class UserRegisterForm(UserCreationForm):
         self.fields['university'].choices = get_university_choices()
         self.fields['password1'].widget.attrs.update({
             'class': 'form-input',
-            'placeholder': 'Parol (kamida 5 belgi)',
+            'placeholder': 'Parol',
             'required': True,
         })
         self.fields['password2'].widget.attrs.update({
@@ -152,7 +161,10 @@ class UserRegisterForm(UserCreationForm):
             'placeholder': 'Parolni tasdiqlang',
             'required': True,
         })
-        self.fields['password1'].help_text = 'Kamida 5 ta belgi. Oson parol ham qabul qilinadi.'
+        self.fields['password1'].help_text = ''
+        self.fields['password2'].help_text = ''
+        self.fields['password1'].widget.attrs.pop('aria-describedby', None)
+        self.fields['password2'].widget.attrs.pop('aria-describedby', None)
 
     def clean_first_name(self):
         value = (self.cleaned_data.get('first_name') or '').strip()
@@ -282,9 +294,8 @@ class UserUpdateForm(forms.ModelForm):
         'placeholder': "Ta'lim yo'nalishi",
         'required': True,
     }))
-    education_stage = forms.CharField(max_length=120, required=True, widget=forms.TextInput(attrs={
+    education_stage = forms.ChoiceField(choices=COURSE_STAGE_CHOICES, required=True, widget=forms.Select(attrs={
         'class': 'form-input',
-        'placeholder': "Ta'lim bosqichi / kurs",
         'required': True,
     }))
     academic_degree = forms.ChoiceField(choices=DEGREE_CHOICES, required=True, widget=forms.Select(attrs={
@@ -307,6 +318,11 @@ class UserUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['university'].choices = get_university_choices()
+        stage_choices = list(COURSE_STAGE_CHOICES)
+        current = (getattr(self.instance, 'education_stage', '') or '').strip()
+        if current and current not in dict(stage_choices):
+            stage_choices.append((current, current))
+        self.fields['education_stage'].choices = stage_choices
 
     def clean_first_name(self):
         value = (self.cleaned_data.get('first_name') or '').strip()

@@ -144,3 +144,22 @@
 .breadcrumbs a:hover {
     color: #7c3aed !important;
 }
+
+/* Olimpiada kodi: Jazzmin Select2 qidiruvi yo'q, oddiy select */
+.field-code .select2-container,
+.field-code .select2-search,
+.field-code .select2-search__field,
+.field-code .select2-dropdown .select2-search {
+    display: none !important;
+}
+.field-code select.admin-native-select,
+.field-code select {
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    max-width: 480px;
+    height: auto !important;
+    min-height: 38px;
+    padding: 6px 10px;
+    opacity: 1 !important;
+}

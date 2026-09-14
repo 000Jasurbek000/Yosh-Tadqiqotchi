@@ -1328,8 +1328,17 @@ def download_certificate(request, certificate_id):
 
 @login_required
 def settings_view(request):
+    def _no_pw_help(form):
+        for field in form.fields.values():
+            field.help_text = ''
+            field.widget.attrs.pop('aria-describedby', None)
+            css = field.widget.attrs.get('class', '')
+            if 'form-input' not in css.split():
+                field.widget.attrs['class'] = (css + ' form-input').strip()
+        return form
+
     user_form = UserUpdateForm(instance=request.user)
-    password_form = PasswordChangeForm(request.user)
+    password_form = _no_pw_help(PasswordChangeForm(request.user))
 
     if request.method == 'POST':
         form_type = request.POST.get('form_type')
@@ -1343,7 +1352,7 @@ def settings_view(request):
             messages.error(request, 'Iltimos, barcha majburiy maydonlarni to\'ldiring.')
 
         elif form_type == 'password':
-            password_form = PasswordChangeForm(request.user, request.POST)
+            password_form = _no_pw_help(PasswordChangeForm(request.user, request.POST))
             if password_form.is_valid():
                 user = password_form.save()
                 update_session_auth_hash(request, user)
@@ -1486,7 +1495,7 @@ def submit_assessment_test(request):
             # Agar javob bermagan bo'lsa, xato deb hisoblanadi (correct_answers o'zgarmaydi)
         
         # Foizni hisoblash
-        percentage = (correct_answers / total_questions * 100) if total_questions > 0 else 0
+        percentage = round((correct_answers / total_questions * 100), 1) if total_questions > 0 else 0
         passed = percentage >= assessment_test.pass_percentage
         
         # Natijani saqlash
@@ -1519,7 +1528,7 @@ def submit_assessment_test(request):
         return JsonResponse({
             'success': True,
             'passed': passed,
-            'percentage': round(percentage, 2),
+            'percentage': round(percentage, 1),
             'correct_answers': correct_answers,
             'total_questions': total_questions,
             'new_status': user.assessment_status

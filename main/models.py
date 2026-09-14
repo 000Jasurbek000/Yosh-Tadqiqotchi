@@ -883,12 +883,14 @@ class AssessmentTestResult(models.Model):
         ordering = ['-submitted_at']
     
     def __str__(self):
-        return f"{self.user} - {self.assessment_test.title} - {self.percentage}%"
-        verbose_name_plural = 'Sertifikatlar'
-        ordering = ['-issued_at']
-    
-    def __str__(self):
-        return f"{self.user} - {self.course.name} sertifikati"
+        user = getattr(self, 'user', None)
+        test = getattr(self, 'assessment_test', None)
+        title = getattr(test, 'title', None) or 'Test'
+        try:
+            pct = round(float(self.percentage), 1)
+        except (TypeError, ValueError):
+            pct = 0
+        return f"{user} - {title} - {pct}%"
 
 
 # Ilmiy rahbarlar

@@ -51,6 +51,12 @@
 .bg-blob-3 {
     background: linear-gradient(135deg, #d946ef, #f0abfc) !important;
 }
+
+.form-group .helptext,
+.form-group .help,
+.form-group ul.help {
+    display: none !important;
+}
 </style>
 {% endblock %}
 
@@ -204,8 +210,7 @@
 
                 <div class="form-group">
                     <label for="{{ form.password1.id_for_label }}">Parol</label>
-                    {{ form.password1 }}
-                    <span style="color: #6b7280; font-size: 12px;">Kamida 5 ta belgi. 11111 kabi oson parol ham qabul qilinadi.</span>
+                    {{ form.password1.as_widget }}
                     {% if form.password1.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ form.password1.errors.0 }}</span>
                     {% endif %}
@@ -213,7 +218,7 @@
 
                 <div class="form-group">
                     <label for="{{ form.password2.id_for_label }}">Parolni tasdiqlash</label>
-                    {{ form.password2 }}
+                    {{ form.password2.as_widget }}
                     {% if form.password2.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ form.password2.errors.0 }}</span>
                     {% endif %}
