@@ -332,116 +332,18 @@
             </p>
 
             <div class="iy-olympiad-grid">
-
-                <!-- 1 -->
+                {% for item in olympiad_codes %}
                 <div class="iy-olympiad-card">
                     <div class="iy-olympiad-head">
-                        <div class="iy-olympiad-icon iy-c-1"><i class="fas fa-square-root-variable"></i></div>
-                        <h3 class="iy-olympiad-name">1. Xalqaro matematika fan olimpiadalariga tayyorlov</h3>
+                        <div class="iy-olympiad-icon iy-c-{% cycle '1' '2' '3' '4' '5' '6' '7' '8' %}"><i class="{{ item.icon_class|default:'fas fa-medal' }}"></i></div>
+                        <h3 class="iy-olympiad-name">{{ item.order }}. {{ item.title }}</h3>
                     </div>
                     <div class="iy-olympiad-actions">
-                        <a href="{% url 'main:olympiad_program' code='matematika' %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
-                        <a href="{% url 'main:olympiad_program' code='matematika' %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
-                    </div>
-                </div>
-
-                <!-- 2 -->
-                <div class="iy-olympiad-card">
-                    <div class="iy-olympiad-head">
-                        <div class="iy-olympiad-icon iy-c-2"><i class="fas fa-flask"></i></div>
-                        <h3 class="iy-olympiad-name">2. Xalqaro kimyo fan olimpiadalariga tayyorlov</h3>
-                    </div>
-                    <div class="iy-olympiad-actions">
-                        <a href="{% url 'main:olympiad_program' code='kimyo' %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
-                        <a href="{% url 'main:olympiad_program' code='kimyo' %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
-                    </div>
-                </div>
-
-                <!-- 3 -->
-                <div class="iy-olympiad-card">
-                    <div class="iy-olympiad-head">
-                        <div class="iy-olympiad-icon iy-c-3"><i class="fas fa-language"></i></div>
-                        <h3 class="iy-olympiad-name">3. Xalqaro ingliz tili fan olimpiadalariga tayyorlov</h3>
-                    </div>
-                    <div class="iy-olympiad-actions">
-                        <a href="{% url 'main:olympiad_program' code='ingliz_tili' %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
-                        <a href="{% url 'main:olympiad_program' code='ingliz_tili' %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
-                    </div>
-                </div>
-
-                <!-- 4 -->
-                <div class="iy-olympiad-card">
-                    <div class="iy-olympiad-head">
-                        <div class="iy-olympiad-icon iy-c-4"><i class="fas fa-brain"></i></div>
-                        <h3 class="iy-olympiad-name">4. Xalqaro falsafa fan olimpiadasiga tayyorlov</h3>
-                    </div>
-                    <div class="iy-olympiad-actions">
-                        <a href="{% url 'main:olympiad_program' code='falsafa' %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
-                        <a href="{% url 'main:olympiad_program' code='falsafa' %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
-                    </div>
-                </div>
-
-                <!-- 5 -->
-                <div class="iy-olympiad-card">
-                    <div class="iy-olympiad-head">
-                        <div class="iy-olympiad-icon iy-c-5"><i class="fas fa-chart-line"></i></div>
-                        <h3 class="iy-olympiad-name">5. Xalqaro iqtisodiyotga oid fanlar olimpiadasiga tayyorlov</h3>
-                    </div>
-                    <div class="iy-olympiad-actions">
-                        <a href="{% url 'main:olympiad_program' code='iqtisodiyot' %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
-                        <a href="{% url 'main:olympiad_program' code='iqtisodiyot' %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
-                    </div>
-                </div>
-
-                <!-- 6 -->
-                <div class="iy-olympiad-card">
-                    <div class="iy-olympiad-head">
-                        <div class="iy-olympiad-icon iy-c-6"><i class="fas fa-atom"></i></div>
-                        <h3 class="iy-olympiad-name">6. Xalqaro fizika fan olimpiadasiga tayyorlov</h3>
-                    </div>
-                    <div class="iy-olympiad-actions">
-                        <a href="{% url 'main:olympiad_program' code='fizika' %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
-                        <a href="{% url 'main:olympiad_program' code='fizika' %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
-                    </div>
-                </div>
-
-                <!-- 7 -->
-                <div class="iy-olympiad-card">
-                    <div class="iy-olympiad-head">
-                        <div class="iy-olympiad-icon iy-c-7"><i class="fas fa-laptop-code"></i></div>
-                        <h3 class="iy-olympiad-name">7. Xalqaro IT olimpiadalariga tayyorlov</h3>
-                    </div>
-                    <div class="iy-olympiad-actions">
-                        <a href="{% url 'main:olympiad_program' code='it' %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
-                        <a href="{% url 'main:olympiad_program' code='it' %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
-                    </div>
-                </div>
-
-                <!-- 8 -->
-                <div class="iy-olympiad-card">
-                    <div class="iy-olympiad-head">
-                        <div class="iy-olympiad-icon iy-c-8"><i class="fas fa-lightbulb"></i></div>
-                        <h3 class="iy-olympiad-name">8. Xalqaro ilmiy-innovatsion mazmundagi tanlovlarga tayyorlov</h3>
-                    </div>
-                    <div class="iy-olympiad-actions">
-                        <a href="{% url 'main:olympiad_program' code='innovatsiya' %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
-                        <a href="{% url 'main:olympiad_program' code='innovatsiya' %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
-                    </div>
-                </div>
-
-                {% for extra in extra_olympiad_codes %}
-                <div class="iy-olympiad-card">
-                    <div class="iy-olympiad-head">
-                        <div class="iy-olympiad-icon iy-c-{{ forloop.counter|add:8 }}"><i class="{{ extra.icon_class|default:'fas fa-medal' }}"></i></div>
-                        <h3 class="iy-olympiad-name">{{ extra.order }}. {{ extra.title }}</h3>
-                    </div>
-                    <div class="iy-olympiad-actions">
-                        <a href="{% url 'main:olympiad_program' code=extra.code %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
-                        <a href="{% url 'main:olympiad_program' code=extra.code %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
+                        <a href="{% url 'main:olympiad_program' code=item.code %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
+                        <a href="{% url 'main:olympiad_program' code=item.code %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
                     </div>
                 </div>
                 {% endfor %}
-
             </div>
         </div>
 

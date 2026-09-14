@@ -145,21 +145,22 @@
     color: #7c3aed !important;
 }
 
-/* Olimpiada kodi: Jazzmin Select2 qidiruvi yo'q, oddiy select */
-.field-code .select2-container,
-.field-code .select2-search,
-.field-code .select2-search__field,
-.field-code .select2-dropdown .select2-search {
-    display: none !important;
+/* Olimpiada kodi: Select2 qidiruvi + yangi kod qo'shish */
+.field-code .related-widget-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 560px;
 }
-.field-code select.admin-native-select,
-.field-code select {
-    display: block !important;
-    visibility: visible !important;
-    width: 100% !important;
-    max-width: 480px;
-    height: auto !important;
-    min-height: 38px;
-    padding: 6px 10px;
-    opacity: 1 !important;
+.field-code .related-widget-wrapper .select2-container {
+    flex: 1;
+}
+.field-code .add-related {
+    font-size: 22px;
+    color: #16a34a !important;
+    line-height: 1;
+    text-decoration: none !important;
+}
+.field-code .add-related:hover {
+    color: #15803d !important;
 }

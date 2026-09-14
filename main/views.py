@@ -685,7 +685,7 @@ class IqtidorYoliView(LoginRequiredMixin, TemplateView):
             application_type='volunteer',
         ).order_by('-created_at').first()
         from .models import OlympiadProgramCode
-        context['extra_olympiad_codes'] = OlympiadProgramCode.objects.filter(is_active=True).order_by('order', 'id')
+        context['olympiad_codes'] = OlympiadProgramCode.catalog()
         return context
 
 

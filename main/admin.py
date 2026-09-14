@@ -4,6 +4,8 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.admin.forms import AdminAuthenticationForm
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
+from django import forms
+from django.db.models import Max
 from django.urls import path
 from .models import (
     User, Announcement, Course, Survey, TalentedStudentDatabase,
@@ -694,14 +696,36 @@ class SupervisorRequestAdmin(admin.ModelAdmin):
 
 
 # ───────────────────────────── Olimpiada dasturi ─────────────────────────────
+class OlympiadProgramCodeForm(forms.ModelForm):
+    class Meta:
+        model = OlympiadProgramCode
+        fields = ('order', 'title', 'icon_class')
+        widgets = {
+            'order': forms.NumberInput(attrs={'min': 1}),
+            'title': forms.TextInput(attrs={'style': 'min-width: 28em'}),
+            'icon_class': forms.TextInput(attrs={'placeholder': 'fas fa-medal'}),
+        }
+
+
 @admin.register(OlympiadProgramCode)
 class OlympiadProgramCodeAdmin(admin.ModelAdmin):
-    list_display = ('code', 'title', 'order', 'is_active', 'created_at')
-    list_display_links = ('code', 'title')
+    form = OlympiadProgramCodeForm
+    list_display = ('title', 'order', 'icon_preview', 'is_active')
+    list_display_links = ('title',)
     list_editable = ('order', 'is_active')
-    search_fields = ('code', 'title')
+    search_fields = ('title',)
     list_filter = ('is_active',)
-    fields = ('code', 'title', 'icon_class', 'order', 'is_active')
+    fields = ('order', 'title', 'icon_class')
+    ordering = ('order', 'id')
+
+    def get_changeform_initial_data(self, request):
+        last = OlympiadProgramCode.objects.aggregate(m=Max('order'))['m'] or 0
+        return {'order': last + 1, 'icon_class': 'fas fa-medal'}
+
+    @admin.display(description='Ikonka')
+    def icon_preview(self, obj):
+        icon = obj.icon_class or 'fas fa-medal'
+        return format_html('<i class="{}"></i> <span style="color:#6b7280;">{}</span>', icon, icon)
 
 
 @admin.register(OlympiadProgram)
@@ -715,7 +739,7 @@ class OlympiadProgramAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
     fieldsets = (
         ('Asosiy ma\'lumotlar', {
             'fields': ('code', 'title', 'short_intro', 'is_active'),
-            'description': 'Kod: 8 ta asosiy dastur yoki «Olimpiada dasturlari kodlari» bo\'limida qo\'shilgan yangi kod.',
+            'description': 'Kod ro\'yxatdan tanlanadi (qidiruv ishlaydi). Yangi dastur uchun + bosing — tartib, nom va ikonka kifoya.',
         }),
         ('Talab va ko\'nikmalar', {
             'fields': ('required_skills', 'knowledge_areas', 'self_check_text'),
@@ -733,14 +757,16 @@ class OlympiadProgramAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
 
     class Media:
         css = {'all': ('admin/custom_admin.css',)}
-        js = ('admin/olympiad_code_select.js',)
+        js = (
+            'admin/js/admin/RelatedObjectLookups.js',
+            'admin/olympiad_code_select.js',
+        )
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         if db_field.name == 'code':
             from django import forms as django_forms
             kwargs['widget'] = django_forms.Select(
-                choices=OlympiadProgram.all_code_choices(),
-                attrs={'class': 'admin-native-select'},
+                choices=[('', '---------')] + list(OlympiadProgram.all_code_choices()),
             )
             return db_field.formfield(**kwargs)
         return super().formfield_for_dbfield(db_field, request, **kwargs)

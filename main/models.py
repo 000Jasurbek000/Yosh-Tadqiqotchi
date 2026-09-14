@@ -924,19 +924,21 @@ class ScientificSupervisor(models.Model):
         return self.accepted_count >= self.max_students
 
 
-# Olimpiada dasturlari (Iqtidor Yo'li olimpiada kartochkalari uchun)
+# Iqtidor Yo'li kartochkalari: tartib, nom, ikonka (admin qo'shadi)
+BUILTIN_OLYMPIAD_CODES = [
+    ('matematika', 1, 'Xalqaro matematika fan olimpiadalariga tayyorlov', 'fas fa-square-root-variable'),
+    ('kimyo', 2, 'Xalqaro kimyo fan olimpiadalariga tayyorlov', 'fas fa-flask'),
+    ('ingliz_tili', 3, 'Xalqaro ingliz tili fan olimpiadalariga tayyorlov', 'fas fa-language'),
+    ('falsafa', 4, 'Xalqaro falsafa fan olimpiadasiga tayyorlov', 'fas fa-brain'),
+    ('iqtisodiyot', 5, 'Xalqaro iqtisodiyotga oid fanlar olimpiadasiga tayyorlov', 'fas fa-chart-line'),
+    ('fizika', 6, 'Xalqaro fizika fan olimpiadasiga tayyorlov', 'fas fa-atom'),
+    ('it', 7, 'Xalqaro IT olimpiadalariga tayyorlov', 'fas fa-laptop-code'),
+    ('innovatsiya', 8, 'Xalqaro ilmiy-innovatsion mazmundagi tanlovlarga tayyorlov', 'fas fa-lightbulb'),
+]
+
+
 class OlympiadProgram(models.Model):
-    # Sahifada qotib turadigan 8 ta asosiy kod (o'zgarmaydi)
-    OLYMPIAD_CHOICES = [
-        ('matematika',   '1. Xalqaro matematika fan olimpiadalariga tayyorlov'),
-        ('kimyo',        '2. Xalqaro kimyo fan olimpiadalariga tayyorlov'),
-        ('ingliz_tili',  '3. Xalqaro ingliz tili fan olimpiadalariga tayyorlov'),
-        ('falsafa',      '4. Xalqaro falsafa fan olimpiadasiga tayyorlov'),
-        ('iqtisodiyot',  '5. Xalqaro iqtisodiyotga oid fanlar olimpiadasiga tayyorlov'),
-        ('fizika',       '6. Xalqaro fizika fan olimpiadasiga tayyorlov'),
-        ('it',           '7. Xalqaro IT olimpiadalariga tayyorlov'),
-        ('innovatsiya',  '8. Xalqaro ilmiy-innovatsion mazmundagi tanlovlarga tayyorlov'),
-    ]
+    OLYMPIAD_CHOICES = [(c, f'{o}. {t}') for c, o, t, _i in BUILTIN_OLYMPIAD_CODES]
     BUILTIN_CODES = [c[0] for c in OLYMPIAD_CHOICES]
 
     code             = models.CharField(max_length=50, unique=True, verbose_name='Olimpiada kodi')
@@ -962,44 +964,26 @@ class OlympiadProgram(models.Model):
 
     @classmethod
     def all_code_choices(cls):
-        choices = list(cls.OLYMPIAD_CHOICES)
-        try:
-            extras = OlympiadProgramCode.objects.filter(is_active=True).order_by('order', 'id')
-            for extra in extras:
-                if extra.code not in cls.BUILTIN_CODES:
-                    choices.append((extra.code, extra.title))
-        except Exception:
-            pass
-        return choices
+        return [
+            (row.code, f'{row.order}. {row.title}')
+            for row in OlympiadProgramCode.catalog()
+        ]
 
     @classmethod
     def valid_codes(cls):
-        codes = set(cls.BUILTIN_CODES)
-        try:
-            codes.update(
-                OlympiadProgramCode.objects.filter(is_active=True).values_list('code', flat=True)
-            )
-        except Exception:
-            pass
-        return codes
+        return {row.code for row in OlympiadProgramCode.catalog()}
 
 
 class OlympiadProgramCode(models.Model):
-    """8 tadan tashqari qo'shimcha olimpiada dasturi kodlari (admin qo'shadi)."""
-    code = models.SlugField(
-        max_length=50,
-        unique=True,
-        verbose_name='Kod',
-        help_text='Lotin harflar, masalan: biologiya, geografiya. 8 ta asosiy kodni takrorlamang.',
-    )
+    """Iqtidor Yo'li sahifasidagi olimpiada kartochkalari (tartib, nom, ikonka)."""
+    code = models.SlugField(max_length=50, unique=True, blank=True, verbose_name='Kod')
     title = models.CharField(max_length=255, verbose_name='Nomi')
     icon_class = models.CharField(
         max_length=80,
         default='fas fa-medal',
-        verbose_name='Ikonka (Font Awesome)',
-        help_text='Masalan: fas fa-leaf',
+        verbose_name='Ikonka',
     )
-    order = models.PositiveIntegerField(default=9, verbose_name='Tartib')
+    order = models.PositiveIntegerField(default=1, verbose_name='Tartib raqami')
     is_active = models.BooleanField(default=True, verbose_name='Faol')
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -1010,12 +994,51 @@ class OlympiadProgramCode(models.Model):
         ordering = ['order', 'id']
 
     def __str__(self):
-        return f'{self.code} — {self.title}'
+        return f'{self.order}. {self.title}'
 
-    def clean(self):
-        from django.core.exceptions import ValidationError
-        if self.code in OlympiadProgram.BUILTIN_CODES:
-            raise ValidationError({'code': 'Bu kod 8 ta asosiy dastur ichida allaqachon bor.'})
+    @classmethod
+    def catalog(cls):
+        try:
+            rows = list(cls.objects.filter(is_active=True).order_by('order', 'id'))
+            existing = set(cls.objects.values_list('code', flat=True))
+            for code, order, title, icon in BUILTIN_OLYMPIAD_CODES:
+                if code not in existing:
+                    rows.append(cls(
+                        code=code, order=order, title=title,
+                        icon_class=icon, is_active=True,
+                    ))
+            rows.sort(key=lambda row: (row.order or 0, row.pk or 0))
+            if rows:
+                return rows
+        except Exception:
+            pass
+        return [
+            cls(code=code, order=order, title=title, icon_class=icon, is_active=True)
+            for code, order, title, icon in BUILTIN_OLYMPIAD_CODES
+        ]
+
+    def save(self, *args, **kwargs):
+        from django.db.models import Max
+        from django.utils.text import slugify
+
+        if not self.order:
+            last = type(self).objects.aggregate(m=Max('order'))['m'] or 0
+            self.order = last + 1
+        if not self.code:
+            base = slugify(self.title)[:40] or f'dastur-{self.order}'
+            code = base
+            n = 2
+            qs = type(self).objects.filter(code=code)
+            if self.pk:
+                qs = qs.exclude(pk=self.pk)
+            while qs.exists():
+                code = f'{base}-{n}'
+                n += 1
+                qs = type(self).objects.filter(code=code)
+                if self.pk:
+                    qs = qs.exclude(pk=self.pk)
+            self.code = code
+        super().save(*args, **kwargs)
 
 
 # Olimpiada va volontyor arizalari
