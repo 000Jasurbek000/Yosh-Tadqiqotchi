@@ -7,7 +7,7 @@ User = get_user_model()
 
 
 class PhoneBackend(ModelBackend):
-    """Faqat telefon (yoki admin username) orqali kirish."""
+    """Sayt: telefon. Admin: email yoki username."""
 
     def authenticate(self, request, username=None, password=None, **kwargs):
         if not username or not password:
@@ -20,8 +20,14 @@ class PhoneBackend(ModelBackend):
 
     def _find_user(self, username):
         raw = (username or '').strip()
-        if not raw or '@' in raw:
+        if not raw:
             return None
+
+        if '@' in raw:
+            user = User.objects.filter(email__iexact=raw).first()
+            if user:
+                return user
+            return User.objects.filter(username__iexact=raw).first()
 
         compact = normalize_phone(raw)
         digits = phone_digits(raw)
@@ -33,10 +39,10 @@ class PhoneBackend(ModelBackend):
             for candidate in qs.only('id', 'phone_number').iterator():
                 if phone_digits(candidate.phone_number) == digits:
                     return candidate
-        try:
-            return User.objects.get(username=raw)
-        except User.DoesNotExist:
-            return None
+        return (
+            User.objects.filter(username=raw).first()
+            or User.objects.filter(username__iexact=raw).first()
+        )
 
     def get_user(self, user_id):
         try:

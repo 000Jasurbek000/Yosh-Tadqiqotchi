@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.admin.forms import AdminAuthenticationForm
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.urls import path
@@ -41,6 +42,22 @@ admin.site.get_urls = _custom_get_urls
 admin.site.site_header = "Yosh Tadqiqotchi — Admin panel"
 admin.site.site_title = "Yosh Tadqiqotchi"
 admin.site.index_title = "Boshqaruv paneli"
+
+
+class AdminLoginForm(AuthenticationForm):
+    """Admin: email yoki username bilan kirish."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].label = 'Email yoki username'
+        self.fields['username'].widget.attrs.update({
+            'autofocus': True,
+            'placeholder': 'Email yoki username',
+            'autocomplete': 'username',
+        })
+
+
+admin.site.login_form = AdminLoginForm
 
 
 @admin.register(User)

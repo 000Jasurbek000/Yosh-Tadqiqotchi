@@ -170,7 +170,7 @@ AUTH_USER_MODEL = 'main.User'
 
 # Authentication Backends
 AUTHENTICATION_BACKENDS = [
-    'main.backends.EmailBackend',  # Telefon raqam bilan kirish
+    'main.backends.EmailBackend',  # Telefon, email (admin) yoki username
     'django.contrib.auth.backends.ModelBackend',  # Admin username
 ]
 
@@ -211,7 +211,7 @@ JAZZMIN_SETTINGS = {
     "login_logo": None,
 
     # Welcome text on the login screen
-    "welcome_sign": "Admin paneliga xush kelibsiz",
+    "welcome_sign": "Email yoki username bilan kiring",
 
     # Copyright on the footer
     "copyright": "Yosh Tadqiqotchi 2026",
