@@ -44,7 +44,7 @@ admin.site.site_title = "Yosh Tadqiqotchi"
 admin.site.index_title = "Boshqaruv paneli"
 
 
-class AdminLoginForm(AuthenticationForm):
+class AdminLoginForm(AdminAuthenticationForm):
     """Admin: email yoki username bilan kirish."""
 
     def __init__(self, *args, **kwargs):
