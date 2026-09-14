@@ -3,15 +3,16 @@
 # Yosh Tadqiqotchi — server deploy
 # Ishlatish:  bash deploy.sh
 #
-# Serverdagi BULAR o'zgarmaydi / ustiga yozilmaydi:
-#   - xalikova_project/settings.py
-#   - requirements.txt
-#   - .env
-#   - db.sqlite3 (va -wal/-shm)
-#   - media/
+# Serverdagi fayllar HECH QACHON GitHubdagisi bilan almashtirilmaydi:
+#   xalikova_project/settings.py
+#   requirements.txt
+#   .env
+#   db.sqlite3 (+ wal/shm)
+#   media/
 #
-# pip install ishlatilmaydi (virtualenv serverdagidek qoladi).
-# git reset --hard / stash pop YO'Q.
+# pip install yo'q. git reset --hard yo'q. git stash yo'q.
+# git pull ham yo'q (merge/conflict chiqmasin).
+# Kod: git fetch + alohida fayllarni origin/main dan olish.
 # ============================================================
 
 set -euo pipefail
@@ -26,62 +27,59 @@ FULL_INDEX="${DEPLOY_FULL_INDEX:-0}"
 cd "$APP_DIR"
 
 echo "==> Loyiha: $APP_DIR"
-echo "==> Branch: $REMOTE/$BRANCH"
 
-KEEP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/yt-keep.XXXXXX")"
-cleanup() { rm -rf "$KEEP_DIR"; }
+KEEP="$(mktemp -d "${TMPDIR:-/tmp}/yt-keep.XXXXXX")"
+cleanup() { rm -rf "$KEEP"; }
 trap cleanup EXIT
 
-keep_file() {
+preserve() {
   local rel="$1"
-  if [[ -f "$APP_DIR/$rel" ]]; then
-    mkdir -p "$KEEP_DIR/$(dirname "$rel")"
-    cp -a "$APP_DIR/$rel" "$KEEP_DIR/$rel"
-    echo "==> Saqlandi (server): $rel"
+  if [[ -e "$APP_DIR/$rel" ]]; then
+    mkdir -p "$KEEP/$(dirname "$rel")"
+    cp -a "$APP_DIR/$rel" "$KEEP/$rel"
+    echo "==> Saqlandi: $rel"
   fi
 }
 
-restore_file() {
+restore() {
   local rel="$1"
-  if [[ -f "$KEEP_DIR/$rel" ]]; then
+  if [[ -e "$KEEP/$rel" ]]; then
     mkdir -p "$APP_DIR/$(dirname "$rel")"
-    cp -a "$KEEP_DIR/$rel" "$APP_DIR/$rel"
-    echo "==> Qaytarildi (server): $rel"
+    cp -a "$KEEP/$rel" "$APP_DIR/$rel"
+    echo "==> Qaytarildi: $rel"
   fi
 }
 
-keep_file "xalikova_project/settings.py"
-keep_file "requirements.txt"
-keep_file ".env"
+preserve "xalikova_project/settings.py"
+preserve "requirements.txt"
+preserve ".env"
 
-echo "==> git fetch / pull (settings/requirements tegilmaydi)..."
+echo "==> git fetch $REMOTE $BRANCH"
 git fetch "$REMOTE" "$BRANCH"
 
+# Conflict/merge yo'q: tracked kod origin/main dan olinadi, keyin sozlamalar qaytariladi.
+git checkout "$REMOTE/$BRANCH" -- .
+
+restore "xalikova_project/settings.py"
+restore "requirements.txt"
+restore ".env"
+
+# Keyingi git operatsiyalar ham bu fayllarni yozmasin
 git update-index --skip-worktree "xalikova_project/settings.py" 2>/dev/null || true
 git update-index --skip-worktree "requirements.txt" 2>/dev/null || true
 
-if ! git pull --ff-only "$REMOTE" "$BRANCH"; then
-  echo "OGOHLANTIRISH: pull to'xtadi, server sozlamalarini saqlab qayta uriniladi."
-  git checkout -- "xalikova_project/settings.py" "requirements.txt" 2>/dev/null || true
-  git pull --ff-only "$REMOTE" "$BRANCH"
+if grep -q '^<<<<<<< ' "$APP_DIR/xalikova_project/settings.py" 2>/dev/null; then
+  echo "XATO: settings.py da hali conflict belgilari bor. Deploy to'xtatildi."
+  echo "  JetBackup dan faqat xalikova_project/settings.py ni tiklang."
+  exit 1
 fi
-
-restore_file "xalikova_project/settings.py"
-restore_file "requirements.txt"
-restore_file ".env"
-
-git update-index --skip-worktree "xalikova_project/settings.py" 2>/dev/null || true
-git update-index --skip-worktree "requirements.txt" 2>/dev/null || true
 
 if [[ -n "${CONDA_PREFIX:-}" ]] || [[ -n "${VIRTUAL_ENV:-}" ]]; then
   PYTHON=python
-  echo "==> Faol muhit: ${CONDA_DEFAULT_ENV:-${VIRTUAL_ENV:-conda/venv}}"
+  echo "==> Muhit: ${CONDA_DEFAULT_ENV:-${VIRTUAL_ENV:-conda/venv}}"
 elif [[ -z "$VENV_DIR" ]]; then
-  if [[ -d "$APP_DIR/.venv" ]]; then
-    VENV_DIR="$APP_DIR/.venv"
-  elif [[ -d "$APP_DIR/venv" ]]; then
-    VENV_DIR="$APP_DIR/venv"
-  fi
+  if [[ -d "$APP_DIR/.venv" ]]; then VENV_DIR="$APP_DIR/.venv"; fi
+  if [[ -d "$APP_DIR/venv" ]]; then VENV_DIR="$APP_DIR/venv"; fi
 fi
 
 if [[ -z "${PYTHON:-}" ]]; then
@@ -94,9 +92,8 @@ if [[ -z "${PYTHON:-}" ]]; then
   fi
 fi
 
-echo "==> pip o'tkazib yuborildi (requirements serverdagidek)"
-
-echo "==> migrate (faqat yangi ustunlar; db.sqlite3 o'chirilmaydi)"
+echo "==> pip o'tkazildi (requirements o'zgarmaydi)"
+echo "==> migrate (db.sqlite3 o'chirilmaydi)"
 "$PYTHON" manage.py migrate --noinput
 
 echo "==> knowledge index"
@@ -109,26 +106,18 @@ fi
 echo "==> collectstatic"
 "$PYTHON" manage.py collectstatic --noinput
 
-echo "==> Django check"
+echo "==> check"
 "$PYTHON" manage.py check
 
-restarted=0
 if [[ -f "$APP_DIR/passenger_wsgi.py" ]] || [[ -d "$APP_DIR/tmp" ]] || [[ -d "$APP_DIR/public" ]]; then
   mkdir -p "$APP_DIR/tmp"
   touch "$APP_DIR/tmp/restart.txt"
-  echo "==> Passenger restart: tmp/restart.txt"
-  restarted=1
+  echo "==> Passenger restart"
 fi
 
 if [[ -n "$SERVICE_NAME" ]] && command -v systemctl >/dev/null 2>&1; then
   sudo systemctl restart "$SERVICE_NAME"
-  restarted=1
-fi
-
-if [[ "$restarted" -eq 0 ]]; then
-  echo "==> Restart: touch tmp/restart.txt"
 fi
 
 echo ""
-echo "OK — kod yangilandi."
-echo "O'zgarmagan: settings.py, requirements.txt, .env, db.sqlite3, media/"
+echo "OK. O'zgarmagan: settings.py, requirements.txt, .env, db.sqlite3, media/"
