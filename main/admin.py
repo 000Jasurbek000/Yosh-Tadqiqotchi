@@ -12,7 +12,7 @@ from .models import (
     UserModuleProgress, UserTestResult, Certificate, TestSet,
     AssessmentTest, AssessmentTestResult, Literature, ScientificSupervisor,
     SupervisorRequest, OlympiadProgram, OlympiadApplication, KnowledgeChunk,
-    StudentActivityLink,
+    StudentActivityLink, OlympiadProgramCode,
 )
 from . import admin_db
 from . import admin_stats
@@ -45,11 +45,11 @@ admin.site.index_title = "Boshqaruv paneli"
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display = ('username', 'email', 'first_name', 'last_name', 'phone_number', 'residence_region', 'university', 'academic_degree', 'role', 'status', 'assessment_status')
-    list_filter = ('role', 'status', 'academic_degree', 'assessment_status', 'is_staff', 'is_superuser')
-    search_fields = ('username', 'email', 'first_name', 'last_name', 'university')
+    list_display = ('username', 'phone_number', 'email', 'first_name', 'last_name', 'faculty', 'education_direction', 'education_stage', 'role', 'status', 'assessment_status')
+    list_filter = ('role', 'status', 'academic_degree', 'assessment_status', 'faculty', 'is_staff', 'is_superuser')
+    search_fields = ('username', 'email', 'first_name', 'last_name', 'phone_number', 'university', 'faculty', 'education_direction', 'education_stage')
     fieldsets = BaseUserAdmin.fieldsets + (
-        ('Qo\'shimcha ma\'lumotlar', {'fields': ('phone_number', 'residence_region', 'university', 'faculty', 'academic_degree', 'role', 'profile_image')}),
+        ('Qo\'shimcha ma\'lumotlar', {'fields': ('phone_number', 'residence_region', 'university', 'faculty', 'education_direction', 'education_stage', 'academic_degree', 'role', 'profile_image')}),
         ('Talaba holati', {
             'fields': ('status',),
             'description': 'Talabani Iqtidorli yoki Oddiy qilib belgilang.',
@@ -57,7 +57,7 @@ class UserAdmin(BaseUserAdmin):
         ('Saralash testi', {'fields': ('assessment_status', 'assessment_score', 'assessment_taken_at', 'assessment_next_attempt')}),
     )
     add_fieldsets = BaseUserAdmin.add_fieldsets + (
-        ('Qo\'shimcha ma\'lumotlar', {'fields': ('phone_number', 'residence_region', 'university', 'faculty', 'academic_degree', 'role', 'status')}),
+        ('Qo\'shimcha ma\'lumotlar', {'fields': ('phone_number', 'email', 'residence_region', 'university', 'faculty', 'education_direction', 'education_stage', 'academic_degree', 'role', 'status')}),
     )
     readonly_fields = ('assessment_taken_at',)
 
@@ -500,15 +500,41 @@ class AssessmentTestAdmin(admin.ModelAdmin):
 
 @admin.register(AssessmentTestResult)
 class AssessmentTestResultAdmin(admin.ModelAdmin):
-    list_display = ('user', 'assessment_test', 'percentage', 'passed', 'correct_answers', 'total_questions', 'submitted_at')
-    list_filter = ('passed', 'assessment_test', 'submitted_at')
-    search_fields = ('user__email', 'user__first_name', 'user__last_name')
-    readonly_fields = ('user', 'assessment_test', 'score', 'total_questions', 'correct_answers', 
-                      'percentage', 'passed', 'time_taken', 'submitted_at')
+    list_display = (
+        'user', 'user_faculty', 'user_direction', 'user_stage', 'user_phone',
+        'assessment_test', 'percentage', 'passed', 'correct_answers', 'total_questions', 'submitted_at',
+    )
+    list_filter = ('passed', 'assessment_test', 'submitted_at', 'user__faculty')
+    search_fields = (
+        'user__email', 'user__first_name', 'user__last_name', 'user__phone_number',
+        'user__faculty', 'user__education_direction', 'user__education_stage',
+    )
+    readonly_fields = (
+        'user', 'assessment_test', 'score', 'total_questions', 'correct_answers',
+        'percentage', 'passed', 'time_taken', 'submitted_at',
+        'user_faculty', 'user_direction', 'user_stage', 'user_phone',
+    )
     date_hierarchy = 'submitted_at'
-    
+    list_select_related = ('user', 'assessment_test')
+
     def has_add_permission(self, request):
         return False
+
+    @admin.display(description='Fakultet')
+    def user_faculty(self, obj):
+        return obj.user.faculty or '—'
+
+    @admin.display(description="Ta'lim yo'nalishi")
+    def user_direction(self, obj):
+        return obj.user.education_direction or '—'
+
+    @admin.display(description='Kurs / bosqich')
+    def user_stage(self, obj):
+        return obj.user.education_stage or '—'
+
+    @admin.display(description='Telefon')
+    def user_phone(self, obj):
+        return obj.user.phone_number or '—'
 
 
 @admin.register(Literature)
@@ -617,17 +643,28 @@ class SupervisorRequestAdmin(admin.ModelAdmin):
 
 
 # ───────────────────────────── Olimpiada dasturi ─────────────────────────────
+@admin.register(OlympiadProgramCode)
+class OlympiadProgramCodeAdmin(admin.ModelAdmin):
+    list_display = ('code', 'title', 'order', 'is_active', 'created_at')
+    list_display_links = ('code', 'title')
+    list_editable = ('order', 'is_active')
+    search_fields = ('code', 'title')
+    list_filter = ('is_active',)
+    fields = ('code', 'title', 'icon_class', 'order', 'is_active')
+
+
 @admin.register(OlympiadProgram)
 class OlympiadProgramAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
     clearable_file_fields = ('task_file',)
     list_display = ('code', 'title', 'applications_count', 'has_task_file', 'is_active', 'updated_at')
-    list_filter  = ('is_active', 'code')
-    search_fields = ('title', 'short_intro', 'required_skills', 'knowledge_areas')
+    list_filter  = ('is_active',)
+    search_fields = ('title', 'short_intro', 'required_skills', 'knowledge_areas', 'code')
     list_editable = ('is_active',)
     readonly_fields = ('created_at', 'updated_at', 'applications_count')
     fieldsets = (
         ('Asosiy ma\'lumotlar', {
-            'fields': ('code', 'title', 'short_intro', 'is_active')
+            'fields': ('code', 'title', 'short_intro', 'is_active'),
+            'description': 'Kod: 8 ta asosiy dastur yoki «Olimpiada dasturlari kodlari» bo\'limida qo\'shilgan yangi kod.',
         }),
         ('Talab va ko\'nikmalar', {
             'fields': ('required_skills', 'knowledge_areas', 'self_check_text'),
@@ -642,6 +679,13 @@ class OlympiadProgramAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == 'code':
+            from django import forms as django_forms
+            kwargs['widget'] = django_forms.Select(choices=OlympiadProgram.all_code_choices())
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+
 
     def applications_count(self, obj):
         if not obj.pk:

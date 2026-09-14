@@ -326,6 +326,16 @@
                     {{ user_form.faculty }}
                     <datalist id="buxdu-faculties-list"></datalist>
                 </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="{{ user_form.education_direction.id_for_label }}">Ta'lim yo'nalishi</label>
+                    {{ user_form.education_direction }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="{{ user_form.education_stage.id_for_label }}">Ta'lim bosqichi / kurs</label>
+                    {{ user_form.education_stage }}
+                </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="{{ user_form.academic_degree.id_for_label }}">Ilmiy daraja</label>
@@ -362,7 +372,7 @@
                 <div class="form-group">
                     <label class="form-label" for="{{ password_form.new_password1.id_for_label }}">Yangi parol</label>
                     {{ password_form.new_password1 }}
-                    <p class="form-help-text">Parol kamida 8 ta belgidan iborat bo'lishi kerak</p>
+                    <p class="form-help-text">Parol kamida 5 ta belgidan iborat bo'lishi kerak</p>
                 </div>
                 
                 <div class="form-group">
@@ -398,13 +408,15 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!universitySelect || !facultyInput || !datalist) return;
 
     const buxduFaculties = [
-        'Fizika-matematika va axborot texnologiyalari',
-        'Filologiya',
+        'Aniq fanlar va intellektual muhandislik texnologiyalari ilmiy-tadqiqot instituti',
+        'Tabiiy fanlar va agroinnovatsiyalar ilmiy-tadqiqot instituti',
+        'Yuridik fakulteti',
+        'Filologiya fakulteti',
+        'Tarix fakulteti',
         'Xorijiy tillar',
-        'Tarix va Yuridik',
-        "Sport va san'at",
-        'Iqtisodiyot va turizm',
-        'Tabiiy fanlar va agrobiotexnologiya',
+        "Sport va san'at fakulteti",
+        'Davlat auditi fakulteti',
+        'Iqtisodiyot va turizm fakulteti',
     ];
 
     function updateFacultyDatalist() {

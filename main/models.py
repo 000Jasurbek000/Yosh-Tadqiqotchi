@@ -24,11 +24,13 @@ class User(AbstractUser):
         ('iqtidorli', 'Iqtidorli'),
     ]
     
-    email = models.EmailField(unique=True, verbose_name='Email')
-    phone_number = models.CharField(max_length=20, blank=True, null=True, verbose_name='Telefon raqam')
+    email = models.EmailField(unique=True, blank=True, null=True, verbose_name='Email', help_text='Ixtiyoriy. Agar kiritilsa, takrorlanmasligi kerak.')
+    phone_number = models.CharField(max_length=20, unique=True, blank=True, null=True, verbose_name='Telefon raqam', help_text='Login uchun ishlatiladi')
     residence_region = models.CharField(max_length=100, blank=True, null=True, verbose_name='Yashash xudud')
     university = models.CharField(max_length=200, blank=True, null=True, verbose_name='O\'qigan/O\'qiyotgan joy')
     faculty = models.CharField(max_length=200, blank=True, null=True, verbose_name='Fakultet')
+    education_direction = models.CharField(max_length=255, blank=True, default='', verbose_name="Ta'lim yo'nalishi")
+    education_stage = models.CharField(max_length=120, blank=True, default='', verbose_name="Ta'lim bosqichi / kurs")
     academic_degree = models.CharField(max_length=20, choices=DEGREE_CHOICES, blank=True, default='', verbose_name='Ilmiy daraja')
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='talaba', verbose_name='Rol', help_text='Foydalanuvchi roli (ro\'yxatdan o\'tishda tanlanadi)')
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='oddiy', verbose_name='Talaba holati', help_text='Iqtidorli yoki oddiy (admin tomonidan belgilanadi)')
@@ -58,8 +60,8 @@ class User(AbstractUser):
         verbose_name='user permissions',
     )
     
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     class Meta:
         db_table = 'users'
@@ -67,7 +69,8 @@ class User(AbstractUser):
         verbose_name_plural = 'Foydalanuvchilar'
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}" if self.first_name else self.email
+        full = f"{self.first_name} {self.last_name}".strip()
+        return full or self.phone_number or self.email or self.username
 
 
 # 2. E'lonlar
@@ -921,6 +924,7 @@ class ScientificSupervisor(models.Model):
 
 # Olimpiada dasturlari (Iqtidor Yo'li olimpiada kartochkalari uchun)
 class OlympiadProgram(models.Model):
+    # Sahifada qotib turadigan 8 ta asosiy kod (o'zgarmaydi)
     OLYMPIAD_CHOICES = [
         ('matematika',   '1. Xalqaro matematika fan olimpiadalariga tayyorlov'),
         ('kimyo',        '2. Xalqaro kimyo fan olimpiadalariga tayyorlov'),
@@ -931,8 +935,9 @@ class OlympiadProgram(models.Model):
         ('it',           '7. Xalqaro IT olimpiadalariga tayyorlov'),
         ('innovatsiya',  '8. Xalqaro ilmiy-innovatsion mazmundagi tanlovlarga tayyorlov'),
     ]
+    BUILTIN_CODES = [c[0] for c in OLYMPIAD_CHOICES]
 
-    code             = models.CharField(max_length=30, choices=OLYMPIAD_CHOICES, unique=True, verbose_name='Olimpiada kodi')
+    code             = models.CharField(max_length=50, unique=True, verbose_name='Olimpiada kodi')
     title            = models.CharField(max_length=255, verbose_name='Sarlavha')
     short_intro      = models.TextField(verbose_name='Qisqacha kirish', help_text='Olimpiada haqida qisqa tanishtirish')
     required_skills  = models.TextField(blank=True, verbose_name='Talab qilingan ko\'nikmalar', help_text='Bu olimpiadaga arizachilar uchun zarur ko\'nikmalar')
@@ -952,6 +957,63 @@ class OlympiadProgram(models.Model):
 
     def __str__(self):
         return self.title
+
+    @classmethod
+    def all_code_choices(cls):
+        choices = list(cls.OLYMPIAD_CHOICES)
+        try:
+            extras = OlympiadProgramCode.objects.filter(is_active=True).order_by('order', 'id')
+            for extra in extras:
+                if extra.code not in cls.BUILTIN_CODES:
+                    choices.append((extra.code, extra.title))
+        except Exception:
+            pass
+        return choices
+
+    @classmethod
+    def valid_codes(cls):
+        codes = set(cls.BUILTIN_CODES)
+        try:
+            codes.update(
+                OlympiadProgramCode.objects.filter(is_active=True).values_list('code', flat=True)
+            )
+        except Exception:
+            pass
+        return codes
+
+
+class OlympiadProgramCode(models.Model):
+    """8 tadan tashqari qo'shimcha olimpiada dasturi kodlari (admin qo'shadi)."""
+    code = models.SlugField(
+        max_length=50,
+        unique=True,
+        verbose_name='Kod',
+        help_text='Lotin harflar, masalan: biologiya, geografiya. 8 ta asosiy kodni takrorlamang.',
+    )
+    title = models.CharField(max_length=255, verbose_name='Nomi')
+    icon_class = models.CharField(
+        max_length=80,
+        default='fas fa-medal',
+        verbose_name='Ikonka (Font Awesome)',
+        help_text='Masalan: fas fa-leaf',
+    )
+    order = models.PositiveIntegerField(default=9, verbose_name='Tartib')
+    is_active = models.BooleanField(default=True, verbose_name='Faol')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'olympiad_program_codes'
+        verbose_name = 'Olimpiada dasturi kodi'
+        verbose_name_plural = 'Olimpiada dasturlari kodlari'
+        ordering = ['order', 'id']
+
+    def __str__(self):
+        return f'{self.code} — {self.title}'
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.code in OlympiadProgram.BUILTIN_CODES:
+            raise ValidationError({'code': 'Bu kod 8 ta asosiy dastur ichida allaqachon bor.'})
 
 
 # Olimpiada va volontyor arizalari

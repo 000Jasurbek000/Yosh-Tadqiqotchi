@@ -357,6 +357,18 @@
                     <span class="info-value">{{ user.faculty }}</span>
                 </li>
                 {% endif %}
+                {% if user.education_direction %}
+                <li class="profile-info-item full-width">
+                    <span class="info-label">Ta'lim yo'nalishi</span>
+                    <span class="info-value">{{ user.education_direction }}</span>
+                </li>
+                {% endif %}
+                {% if user.education_stage %}
+                <li class="profile-info-item">
+                    <span class="info-label">Ta'lim bosqichi / kurs</span>
+                    <span class="info-value">{{ user.education_stage }}</span>
+                </li>
+                {% endif %}
             </ul>
         </div>
         

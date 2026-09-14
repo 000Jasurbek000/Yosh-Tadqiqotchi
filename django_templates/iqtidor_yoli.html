@@ -429,6 +429,19 @@
                     </div>
                 </div>
 
+                {% for extra in extra_olympiad_codes %}
+                <div class="iy-olympiad-card">
+                    <div class="iy-olympiad-head">
+                        <div class="iy-olympiad-icon iy-c-{{ forloop.counter|add:8 }}"><i class="{{ extra.icon_class|default:'fas fa-medal' }}"></i></div>
+                        <h3 class="iy-olympiad-name">{{ extra.order }}. {{ extra.title }}</h3>
+                    </div>
+                    <div class="iy-olympiad-actions">
+                        <a href="{% url 'main:olympiad_program' code=extra.code %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
+                        <a href="{% url 'main:olympiad_program' code=extra.code %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
+                    </div>
+                </div>
+                {% endfor %}
+
             </div>
         </div>
 

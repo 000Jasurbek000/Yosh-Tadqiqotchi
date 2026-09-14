@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main',
+    'main.apps.MainConfig',
 ]
 
 MIDDLEWARE = [
@@ -105,6 +105,10 @@ if os.environ.get('DB_ENGINE') == 'postgresql':
             'PASSWORD': os.environ.get('DB_PASSWORD', ''),
             'HOST': os.environ.get('DB_HOST', 'localhost'),
             'PORT': os.environ.get('DB_PORT', '5432'),
+            'CONN_MAX_AGE': 60,
+            'OPTIONS': {
+                'connect_timeout': 10,
+            },
         }
     }
 else:
@@ -112,24 +116,26 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
+            'CONN_MAX_AGE': 0,
+            'OPTIONS': {
+                'timeout': 30,
+            },
         }
     }
 
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'yoshtadqiqotchi',
+        'TIMEOUT': 300,
+    }
+}
 
+# Password validation — kamida 5 belgi, oson parol ham qabul qilinadi
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'OPTIONS': {'min_length': 5},
     },
 ]
 
@@ -164,8 +170,8 @@ AUTH_USER_MODEL = 'main.User'
 
 # Authentication Backends
 AUTHENTICATION_BACKENDS = [
-    'main.backends.EmailBackend',  # Email bilan login qilish
-    'django.contrib.auth.backends.ModelBackend',  # Standart backend (admin uchun)
+    'main.backends.EmailBackend',  # Telefon yoki email bilan kirish
+    'django.contrib.auth.backends.ModelBackend',  # Admin username
 ]
 
 # Login/Logout URLs
@@ -251,6 +257,8 @@ JAZZMIN_SETTINGS = {
         "main.Certificate": "fas fa-certificate",
         "main.AssessmentTest": "fas fa-file-signature",
         "main.AssessmentTestResult": "fas fa-poll-h",
+        "main.OlympiadProgramCode": "fas fa-barcode",
+        "main.OlympiadProgram": "fas fa-list-alt",
     },
 
     # Links to put along the top menu
@@ -320,14 +328,18 @@ JAZZMIN_UI_TWEAKS = {
 }
 
 # Email sozlamalari (.env dan olinadi — GitHubga parol yuborilmaydi)
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# IPv4 backend: cPanel/Gmail Errno 99 ni kamaytiradi
+EMAIL_BACKEND = 'main.email_backend.IPv4EmailBackend'
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
 EMAIL_USE_TLS = _env_bool('EMAIL_USE_TLS', True)
+EMAIL_USE_SSL = _env_bool('EMAIL_USE_SSL', False)
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_TIMEOUT = int(os.environ.get('EMAIL_TIMEOUT', '8'))
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'noreply@localhost')
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', DEFAULT_FROM_EMAIL)
+SUPERVISOR_NOTIFY_EMAIL = os.environ.get('SUPERVISOR_NOTIFY_EMAIL', 'jdavletov143@gmail.com')
 
 # RapidAPI — Tadqiqotchi AI chatbot
 RAPIDAPI_KEY = os.environ.get('RAPIDAPI_KEY', '')
@@ -340,3 +352,5 @@ CHAT_API_RETRIES = int(os.environ.get('CHAT_API_RETRIES', '2'))
 SERVE_MEDIA = _env_bool('SERVE_MEDIA', DEBUG)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') if not DEBUG else None
 SESSION_COOKIE_SECURE = _env_bool('SESSION_COOKIE_SECURE', not DEBUG)
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 14
+SESSION_SAVE_EVERY_REQUEST = False

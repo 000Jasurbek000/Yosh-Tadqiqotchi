@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import EmailMessage
 from django.conf import settings as django_settings
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
@@ -684,6 +684,8 @@ class IqtidorYoliView(LoginRequiredMixin, TemplateView):
             user=self.request.user,
             application_type='volunteer',
         ).order_by('-created_at').first()
+        from .models import OlympiadProgramCode
+        context['extra_olympiad_codes'] = OlympiadProgramCode.objects.filter(is_active=True).order_by('order', 'id')
         return context
 
 
@@ -721,7 +723,7 @@ def send_supervisor_request(request, supervisor_id):
     supervisor = get_object_or_404(ScientificSupervisor, pk=supervisor_id, is_active=True)
     user = request.user
 
-    if not supervisor.email:
+    if not supervisor.email and not getattr(django_settings, 'SUPERVISOR_NOTIFY_EMAIL', ''):
         messages.error(request, f"{supervisor.full_name} email manzili kiritilmagan. Murojaat yuborib bo'lmaydi.")
         return redirect('main:ilmiy_rahbarlar')
 
@@ -846,23 +848,28 @@ def send_supervisor_request(request, supervisor_id):
     )
 
     try:
+        from .email_backend import send_email_async
+        notify_email = getattr(django_settings, 'SUPERVISOR_NOTIFY_EMAIL', '') or 'jdavletov143@gmail.com'
         email_msg = EmailMessage(
             subject=subject,
             body=html_body,
             from_email=django_settings.DEFAULT_FROM_EMAIL,
-            to=[supervisor.email],
+            to=[notify_email],
             reply_to=[user.email] if user.email else None,
         )
         email_msg.content_subtype = 'html'
-        email_msg.send(fail_silently=False)
+        send_email_async(email_msg)
         messages.success(
             request,
-            f"Murojaatingiz {supervisor.full_name}ga muvaffaqiyatli yuborildi. "
+            f"Murojaatingiz {supervisor.full_name}ga yuborildi. "
             f"Javob kelguncha kuting. Profilingizda holatini kuzatishingiz mumkin."
         )
     except Exception as e:
-        sup_request.delete()
-        messages.error(request, f"Xatolik yuz berdi: {e}")
+        messages.warning(
+            request,
+            f"Murojaat saqlandi, lekin email yuborishda xatolik: {e}. "
+            f"Admin panel orqali ko'rib chiqiladi."
+        )
 
     return redirect('main:ilmiy_rahbarlar')
 
@@ -929,6 +936,7 @@ def supervisor_decision(request, token, action):
 
             # Talabaga xabar yuborish
             try:
+                from .email_backend import send_mail_async
                 accept_email_body = (
                     f"Assalomu alaykum, {full_name}!\n\n"
                     f"Xush xabar — {supervisor.full_name} sizning rahbarlik so'rovingizni "
@@ -940,12 +948,11 @@ def supervisor_decision(request, token, action):
                     f"Hurmat bilan,\n"
                     f"Yosh Tadqiqotchi platformasi"
                 )
-                send_mail(
+                send_mail_async(
                     subject=f"Rahbarlik so'rovingiz qabul qilindi — {supervisor.full_name}",
                     message=accept_email_body,
                     from_email=django_settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[student.email] if student.email else [],
-                    fail_silently=True,
                 )
             except Exception:
                 pass
@@ -956,6 +963,7 @@ def supervisor_decision(request, token, action):
             sup_request.save()
 
             try:
+                from .email_backend import send_mail_async
                 reject_email_body = (
                     f"Assalomu alaykum, {full_name}.\n\n"
                     f"Afsuski, {supervisor.full_name} sizning rahbarlik so'rovingizni "
@@ -964,12 +972,11 @@ def supervisor_decision(request, token, action):
                     f"Hurmat bilan,\n"
                     f"Yosh Tadqiqotchi platformasi"
                 )
-                send_mail(
+                send_mail_async(
                     subject=f"Rahbarlik so'rovi haqida — {supervisor.full_name}",
                     message=reject_email_body,
                     from_email=django_settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[student.email] if student.email else [],
-                    fail_silently=True,
                 )
             except Exception:
                 pass
@@ -1061,6 +1068,7 @@ Email   : {email}
 Izoh    : {notes or 'Yo\'q'}
 """
         try:
+            from .email_backend import send_email_async
             msg = EmailMessage(
                 subject=subject,
                 body=body,
@@ -1070,7 +1078,7 @@ Izoh    : {notes or 'Yo\'q'}
             uploaded_file = request.FILES.get('article_file')
             if uploaded_file:
                 msg.attach(uploaded_file.name, uploaded_file.read(), uploaded_file.content_type)
-            msg.send(fail_silently=False)
+            send_email_async(msg)
             messages.success(request, 'Buyurtmangiz muvaffaqiyatli yuborildi! Tez orada siz bilan bog\'lanamiz.')
         except Exception:
             messages.error(request, 'Xabar yuborishda xatolik yuz berdi. Qayta urinib ko\'ring.')
@@ -1119,6 +1127,7 @@ Telefon        : {phone or 'Ko\'rsatilmagan'}
 Maqola mavzusi : {article_topic or 'Ko\'rsatilmagan'}
 """
         try:
+            from .email_backend import send_email_async
             msg = EmailMessage(
                 subject=subject,
                 body=body,
@@ -1128,7 +1137,7 @@ Maqola mavzusi : {article_topic or 'Ko\'rsatilmagan'}
             uploaded_file = request.FILES.get('article_file')
             if uploaded_file:
                 msg.attach(uploaded_file.name, uploaded_file.read(), uploaded_file.content_type)
-            msg.send(fail_silently=False)
+            send_email_async(msg)
             messages.success(request, 'So\'rovingiz muvaffaqiyatli yuborildi! Tez orada siz bilan bog\'lanamiz.')
         except Exception:
             messages.error(request, 'Xabar yuborishda xatolik yuz berdi. Qayta urinib ko\'ring.')
@@ -1158,13 +1167,18 @@ def register_view(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
-            # Username ni email dan yaratamiz
-            email = form.cleaned_data.get('email')
+            from .phone_utils import phone_digits
             user = form.save(commit=False)
-            user.username = email.split('@')[0] + str(User.objects.count() + 1)
+            digits = phone_digits(user.phone_number)
+            base = f'u{digits}' if digits else 'user'
+            username = base
+            n = 1
+            while User.objects.filter(username=username).exists():
+                n += 1
+                username = f'{base}{n}'
+            user.username = username
             user.save()
             messages.success(request, f'{user.first_name}, siz muvaffaqiyatli ro\'yxatdan o\'tdingiz!')
-            # Backend ni aniqlash (EmailBackend ishlatamiz)
             login(request, user, backend='main.backends.EmailBackend')
             return redirect('main:home')
     else:
@@ -1180,19 +1194,18 @@ def login_view(request):
     if request.method == 'POST':
         form = UserLoginForm(request, data=request.POST)
         if form.is_valid():
-            email = form.cleaned_data.get('username')  # Form field nomi username lekin email kiritiladi
+            phone = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            # Email orqali authenticate qilamiz (custom backend ishlatadi)
-            user = authenticate(request, username=email, password=password)
+            user = authenticate(request, username=phone, password=password)
             if user is not None:
                 login(request, user)
-                messages.success(request, f'Xush kelibsiz, {user.first_name or user.email}!')
+                messages.success(request, f'Xush kelibsiz, {user.first_name or user.phone_number or user.username}!')
                 next_url = request.GET.get('next', 'main:home')
                 return redirect(next_url)
             else:
-                messages.error(request, 'Email yoki parol noto\'g\'ri!')
+                messages.error(request, 'Telefon raqam yoki parol noto\'g\'ri!')
         else:
-            messages.error(request, 'Email yoki parol noto\'g\'ri. Iltimos, qaytadan urinib ko\'ring.')
+            messages.error(request, 'Telefon raqam yoki parol noto\'g\'ri. Iltimos, qaytadan urinib ko\'ring.')
     else:
         form = UserLoginForm()
     
@@ -1563,16 +1576,14 @@ class OlympiadProgramDetailView(LoginRequiredMixin, View):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, code):
-        # OlympiadProgram.OLYMPIAD_CHOICES dagi mavjud kodlardan ekanligini tekshiramiz
-        valid_codes = [c[0] for c in OlympiadProgram.OLYMPIAD_CHOICES]
+        valid_codes = OlympiadProgram.valid_codes()
         if code not in valid_codes:
             messages.error(request, "Bunday olimpiada topilmadi.")
             return redirect('main:iqtidor_yoli')
 
         program = OlympiadProgram.objects.filter(code=code, is_active=True).first()
         if not program:
-            # Admin hali bu olimpiada uchun ma'lumotlarni kiritmagan
-            display_title = dict(OlympiadProgram.OLYMPIAD_CHOICES).get(code, 'Olimpiada')
+            display_title = dict(OlympiadProgram.all_code_choices()).get(code, 'Olimpiada')
             return render(request, 'olympiad_program_not_ready.html', {
                 'olympiad_title': display_title,
                 'olympiad_code': code,
@@ -1634,7 +1645,8 @@ def _send_application_admin_email(user, application, target_title, email_heading
             reply_to=[u.email] if u.email else None,
         )
         msg.content_subtype = 'html'
-        msg.send(fail_silently=True)
+        from .email_backend import send_email_async
+        send_email_async(msg)
     except Exception as e:
         print(f"Application email error: {e}")
 

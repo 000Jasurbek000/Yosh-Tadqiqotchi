@@ -37,13 +37,15 @@ def get_university_choices():
 
 
 BUXDU_FACULTIES = [
-    'Fizika-matematika va axborot texnologiyalari',
-    'Filologiya',
+    'Aniq fanlar va intellektual muhandislik texnologiyalari ilmiy-tadqiqot instituti',
+    'Tabiiy fanlar va agroinnovatsiyalar ilmiy-tadqiqot instituti',
+    'Yuridik fakulteti',
+    'Filologiya fakulteti',
+    'Tarix fakulteti',
     'Xorijiy tillar',
-    'Tarix va Yuridik',
-    "Sport va san'at",
-    'Iqtisodiyot va turizm',
-    'Tabiiy fanlar va agrobiotexnologiya',
+    "Sport va san'at fakulteti",
+    'Davlat auditi fakulteti',
+    'Iqtisodiyot va turizm fakulteti',
 ]
 
 FACULTY_CHOICES = BUXDU_FACULTIES  # JS uchun ishlatiladi
@@ -75,9 +77,9 @@ DEGREE_CHOICES = [
 
 
 class UserRegisterForm(UserCreationForm):
-    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={
+    email = forms.EmailField(required=False, widget=forms.EmailInput(attrs={
         'class': 'form-input',
-        'placeholder': 'Email manzilingiz'
+        'placeholder': 'Email (ixtiyoriy)'
     }))
     first_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={
         'class': 'form-input',
@@ -106,6 +108,14 @@ class UserRegisterForm(UserCreationForm):
         'list': 'buxdu-faculties-list',
         'autocomplete': 'off',
     }))
+    education_direction = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={
+        'class': 'form-input',
+        'placeholder': "Ta'lim yo'nalishi (masalan: Matematika)",
+    }))
+    education_stage = forms.CharField(max_length=120, required=True, widget=forms.TextInput(attrs={
+        'class': 'form-input',
+        'placeholder': "Ta'lim bosqichi / kurs (masalan: 2-kurs)",
+    }))
     academic_degree = forms.ChoiceField(choices=DEGREE_CHOICES, required=True, widget=forms.Select(attrs={
         'class': 'form-input',
     }))
@@ -115,19 +125,51 @@ class UserRegisterForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['email', 'first_name', 'last_name', 'phone_number', 'residence_region', 'university', 'faculty', 'academic_degree', 'role', 'password1', 'password2']
+        fields = [
+            'email', 'first_name', 'last_name', 'phone_number', 'residence_region',
+            'university', 'faculty', 'education_direction', 'education_stage',
+            'academic_degree', 'role', 'password1', 'password2',
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields.pop('username', None)
         self.fields['university'].choices = get_university_choices()
         self.fields['password1'].widget.attrs.update({
             'class': 'form-input',
-            'placeholder': 'Parol'
+            'placeholder': 'Parol (kamida 5 belgi)'
         })
         self.fields['password2'].widget.attrs.update({
             'class': 'form-input',
             'placeholder': 'Parolni tasdiqlang'
         })
+        self.fields['password1'].help_text = 'Kamida 5 ta belgi. Oson parol ham qabul qilinadi.'
+        self.fields['email'].required = False
+
+    def clean_email(self):
+        email = (self.cleaned_data.get('email') or '').strip().lower()
+        if not email:
+            return None
+        qs = User.objects.filter(email__iexact=email)
+        if self.instance and self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise forms.ValidationError('Bu email allaqachon ro\'yxatdan o\'tgan.')
+        return email
+
+    def clean_phone_number(self):
+        from .phone_utils import normalize_phone, phone_digits
+        raw = self.cleaned_data.get('phone_number') or ''
+        compact = normalize_phone(raw)
+        digits = phone_digits(compact)
+        if len(digits) != 9:
+            raise forms.ValidationError('Telefon raqamini to\'liq kiriting: +998 XX XXX XX XX')
+        qs = User.objects.filter(phone_number=compact)
+        if self.instance and self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise forms.ValidationError('Bu telefon raqam allaqachon ro\'yxatdan o\'tgan.')
+        return compact
 
     def clean(self):
         cleaned_data = super().clean()
@@ -144,31 +186,47 @@ class UserRegisterForm(UserCreationForm):
         if not faculty or faculty.strip() == '':
             self.add_error('faculty', 'Fakultetni kiritish majburiy.')
 
+        if not (cleaned_data.get('education_direction') or '').strip():
+            self.add_error('education_direction', "Ta'lim yo'nalishini kiriting.")
+
+        if not (cleaned_data.get('education_stage') or '').strip():
+            self.add_error('education_stage', "Ta'lim bosqichi / kursni kiriting.")
+
         return cleaned_data
 
     def save(self, commit=True):
         user = super().save(commit=False)
         user.faculty = self.cleaned_data.get('faculty', '')
+        user.education_direction = (self.cleaned_data.get('education_direction') or '').strip()
+        user.education_stage = (self.cleaned_data.get('education_stage') or '').strip()
+        user.email = self.cleaned_data.get('email') or None
         if commit:
             user.save()
         return user
 
 
 class UserLoginForm(AuthenticationForm):
-    username = forms.EmailField(widget=forms.EmailInput(attrs={
+    username = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form-input',
-        'placeholder': 'Email manzilingiz'
+        'placeholder': '+998 XX XXX XX XX',
+        'id': 'phone_number',
+        'autocomplete': 'tel',
     }))
     password = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'form-input',
         'placeholder': 'Parol'
     }))
 
+    error_messages = {
+        'invalid_login': 'Telefon raqam yoki parol noto\'g\'ri.',
+        'inactive': 'Bu akkaunt faol emas.',
+    }
+
 
 class UserUpdateForm(forms.ModelForm):
-    email = forms.EmailField(widget=forms.EmailInput(attrs={
+    email = forms.EmailField(required=False, widget=forms.EmailInput(attrs={
         'class': 'form-input',
-        'placeholder': 'Email manzilingiz'
+        'placeholder': 'Email (ixtiyoriy)'
     }))
     residence_region = forms.ChoiceField(choices=REGION_CHOICES, required=False, widget=forms.Select(attrs={
         'class': 'form-input',
@@ -184,6 +242,14 @@ class UserUpdateForm(forms.ModelForm):
         'list': 'buxdu-faculties-list',
         'autocomplete': 'off',
     }))
+    education_direction = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={
+        'class': 'form-input',
+        'placeholder': "Ta'lim yo'nalishi",
+    }))
+    education_stage = forms.CharField(max_length=120, required=False, widget=forms.TextInput(attrs={
+        'class': 'form-input',
+        'placeholder': "Ta'lim bosqichi / kurs",
+    }))
     academic_degree = forms.ChoiceField(choices=DEGREE_CHOICES, required=False, widget=forms.Select(attrs={
         'class': 'form-input',
     }))
@@ -194,7 +260,11 @@ class UserUpdateForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'phone_number', 'residence_region', 'university', 'faculty', 'academic_degree', 'profile_image']
+        fields = [
+            'first_name', 'last_name', 'email', 'phone_number', 'residence_region',
+            'university', 'faculty', 'education_direction', 'education_stage',
+            'academic_degree', 'profile_image',
+        ]
         widgets = {
             'first_name': forms.TextInput(attrs={
                 'class': 'form-input',
@@ -214,6 +284,32 @@ class UserUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['university'].choices = get_university_choices()
+
+    def clean_email(self):
+        email = (self.cleaned_data.get('email') or '').strip().lower()
+        if not email:
+            return None
+        qs = User.objects.filter(email__iexact=email)
+        if self.instance and self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise forms.ValidationError('Bu email allaqachon band.')
+        return email
+
+    def clean_phone_number(self):
+        from .phone_utils import normalize_phone, phone_digits
+        raw = self.cleaned_data.get('phone_number') or ''
+        compact = normalize_phone(raw)
+        digits = phone_digits(compact)
+        if compact and len(digits) != 9:
+            raise forms.ValidationError('Telefon raqamini to\'liq kiriting.')
+        if compact:
+            qs = User.objects.filter(phone_number=compact)
+            if self.instance and self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise forms.ValidationError('Bu telefon raqam allaqachon band.')
+        return compact or None
 
 
 # Question with Answers Form
