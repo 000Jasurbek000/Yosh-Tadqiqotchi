@@ -138,6 +138,12 @@ if grep -q '^<<<<<<< ' "$APP_DIR/xalikova_project/settings.py" 2>/dev/null; then
   exit 1
 fi
 
+echo "==> Baza fayllari (o'chirilmaydi):"
+ls -lh "$APP_DIR"/db.sqlite3 "$APP_DIR"/db.sqlite3-* "$APP_DIR"/db_backups/* 2>/dev/null || true
+
+echo "==> show_db"
+"$PYTHON" manage.py show_db || true
+
 echo "==> migrate"
 "$PYTHON" manage.py migrate --noinput
 

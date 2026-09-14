@@ -95,7 +95,9 @@ WSGI_APPLICATION = 'xalikova_project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+# Yo'lni .env dagi DB_PATH bilan belgilash mumkin (serverdagi asl sqlite).
 
+_sqlite_path = os.environ.get('DB_PATH', '').strip()
 if os.environ.get('DB_ENGINE') == 'postgresql':
     DATABASES = {
         'default': {
@@ -115,7 +117,7 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'NAME': Path(_sqlite_path) if _sqlite_path else (BASE_DIR / 'db.sqlite3'),
             'CONN_MAX_AGE': 0,
             'OPTIONS': {
                 'timeout': 30,
