@@ -13,7 +13,8 @@
 #   - makemigrations (faqat migrate)
 #
 # Nima QILADI:
-#   - git pull
+#   - git pull (tracked lokal o'zgarishlarni bekor qiladi, conflict qoldirmaydi)
+#   - pip dependencies (agar requirements.txt bo'lsa)
 #   - pip dependencies (agar requirements.txt bo'lsa)
 #   - migrate
 #   - knowledge index
@@ -49,39 +50,34 @@ if [[ -f "$ENV_FILE" ]]; then
 fi
 
 # --- Git pull (commit qilmaydi, faqat yangilaydi) ---
+# settings.py ni stash pop qilmaymiz: conflict marker (<<<<<<<) saytni to'xtatadi.
+# Maxfiy kalitlar faqat .env da. Tracked fayllar GitHubdagi kodga teng bo'ladi.
 echo "==> git fetch / pull..."
 git fetch "$REMOTE" "$BRANCH"
 
-STASHED=0
-# Serverdagi lokal o'zgarishlar (masalan settings.py) — stash qilib pull, keyin qaytariladi.
-# .env gitignore'da, shuning uchun stashga kirmaydi.
+_restore_clean_settings() {
+  if [[ -f "$APP_DIR/xalikova_project/settings.py" ]] && grep -q '^<<<<<<< ' "$APP_DIR/xalikova_project/settings.py"; then
+    echo "==> settings.py conflict belgilari topildi — GitHubdagi toza nusxa tiklanmoqda"
+    git checkout HEAD -- xalikova_project/settings.py || git checkout "$REMOTE/$BRANCH" -- xalikova_project/settings.py
+  fi
+}
+
+_restore_clean_settings
+
 if ! git diff --quiet || ! git diff --cached --quiet; then
-  echo "==> Serverda lokal o'zgarishlar topildi (saqlanadi):"
+  echo "==> Serverdagi tracked lokal o'zgarishlar (settings.py va h.k.) bekor qilinadi:"
   git status --short || true
-  git stash push -m "deploy-auto-stash-$(date +%Y%m%d%H%M%S)" --quiet
-  STASHED=1
-  echo "==> Lokal o'zgarishlar stash qilindi"
+  git reset --hard HEAD
+  echo "==> Toza holat. .env / media / db saqlanadi."
 fi
 
 if ! git pull --ff-only "$REMOTE" "$BRANCH"; then
   echo "XATO: git pull muvaffaqiyatsiz (fast-forward emas)."
-  if [[ "$STASHED" -eq 1 ]]; then
-    echo "==> Stash qaytarilmoqda..."
-    git stash pop || true
-  fi
+  echo "Qo'lda: git reset --hard $REMOTE/$BRANCH"
   exit 1
 fi
 
-if [[ "$STASHED" -eq 1 ]]; then
-  echo "==> Lokal o'zgarishlar qaytarilmoqda (stash pop)..."
-  if ! git stash pop; then
-    echo "OGOHLANTIRISH: stash pop conflict. Server sozlamalari stashda qolgan bo'lishi mumkin."
-    echo "  Tekshiring: git stash list && git status"
-    echo "  Conflictni qo'lda hal qiling, keyin: git stash drop"
-  else
-    echo "==> Lokal o'zgarishlar qaytarildi (.env / server sozlamalari saqlanadi)"
-  fi
-fi
+_restore_clean_settings
 
 # .env ni qayta tiklash (agar biror sabab bilan o'zgargan bo'lsa)
 if [[ -n "$ENV_BACKUP" && -f "$ENV_BACKUP" ]]; then
@@ -136,6 +132,12 @@ if [[ -f "$APP_DIR/requirements.txt" ]]; then
 fi
 
 # --- Django ---
+if grep -q '^<<<<<<< ' "$APP_DIR/xalikova_project/settings.py" 2>/dev/null; then
+  echo "XATO: settings.py da hali conflict belgilari bor. To'xtatildi."
+  echo "  git checkout HEAD -- xalikova_project/settings.py"
+  exit 1
+fi
+
 echo "==> migrate"
 "$PYTHON" manage.py migrate --noinput
 
@@ -179,4 +181,4 @@ fi
 
 echo ""
 echo "OK — deploy tugadi."
-echo "Eslatma: .env va serverdagi lokal sozlamalar saqlab qolindi."
+echo "Eslatma: .env saqlab qolindi. Kod GitHubdagi main bilan bir xil."
