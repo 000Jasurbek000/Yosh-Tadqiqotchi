@@ -859,17 +859,14 @@ def send_supervisor_request(request, supervisor_id):
         )
         email_msg.content_subtype = 'html'
         send_email_async(email_msg)
-        messages.success(
-            request,
-            f"Murojaatingiz {supervisor.full_name}ga yuborildi. "
-            f"Javob kelguncha kuting. Profilingizda holatini kuzatishingiz mumkin."
-        )
-    except Exception as e:
-        messages.warning(
-            request,
-            f"Murojaat saqlandi, lekin email yuborishda xatolik: {e}. "
-            f"Admin panel orqali ko'rib chiqiladi."
-        )
+    except Exception:
+        pass
+
+    messages.success(
+        request,
+        "Murojaatingiz qabul qilindi. Tez orada javob beriladi — "
+        "holatini profilingizda kuzatishingiz mumkin."
+    )
 
     return redirect('main:ilmiy_rahbarlar')
 

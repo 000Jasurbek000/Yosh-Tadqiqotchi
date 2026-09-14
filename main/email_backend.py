@@ -37,11 +37,11 @@ class IPv4EmailBackend(SMTPBackend):
                 'timeout': timeout,
                 'local_hostname': 'localhost',
             }
-                if self.use_ssl:
-                    ctx = getattr(self, 'ssl_context', None)
-                    if ctx:
-                        conn_kwargs['context'] = ctx
-                    self.connection = smtplib.SMTP_SSL(**conn_kwargs)
+            if self.use_ssl:
+                ctx = getattr(self, 'ssl_context', None)
+                if ctx:
+                    conn_kwargs['context'] = ctx
+                self.connection = smtplib.SMTP_SSL(**conn_kwargs)
             else:
                 self.connection = smtplib.SMTP(**conn_kwargs)
             self.connection.ehlo()
