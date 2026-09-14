@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main.apps.MainConfig',
+    'main',
 ]
 
 MIDDLEWARE = [
@@ -95,9 +95,7 @@ WSGI_APPLICATION = 'xalikova_project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-# Yo'lni .env dagi DB_PATH bilan belgilash mumkin (serverdagi asl sqlite).
 
-_sqlite_path = os.environ.get('DB_PATH', '').strip()
 if os.environ.get('DB_ENGINE') == 'postgresql':
     DATABASES = {
         'default': {
@@ -107,31 +105,18 @@ if os.environ.get('DB_ENGINE') == 'postgresql':
             'PASSWORD': os.environ.get('DB_PASSWORD', ''),
             'HOST': os.environ.get('DB_HOST', 'localhost'),
             'PORT': os.environ.get('DB_PORT', '5432'),
-            'CONN_MAX_AGE': 60,
-            'OPTIONS': {
-                'connect_timeout': 10,
-            },
         }
     }
 else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': Path(_sqlite_path) if _sqlite_path else (BASE_DIR / 'db.sqlite3'),
-            'CONN_MAX_AGE': 0,
+            'NAME': BASE_DIR / 'db.sqlite3',
             'OPTIONS': {
                 'timeout': 30,
             },
         }
     }
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'yoshtadqiqotchi',
-        'TIMEOUT': 300,
-    }
-}
 
 # Password validation — kamida 5 belgi, oson parol ham qabul qilinadi
 AUTH_PASSWORD_VALIDATORS = [
@@ -172,8 +157,8 @@ AUTH_USER_MODEL = 'main.User'
 
 # Authentication Backends
 AUTHENTICATION_BACKENDS = [
-    'main.backends.EmailBackend',  # Telefon, email (admin) yoki username
-    'django.contrib.auth.backends.ModelBackend',  # Admin username
+    'main.backends.EmailBackend',  # Telefon (sayt) yoki email (admin)
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 # Login/Logout URLs
@@ -213,7 +198,7 @@ JAZZMIN_SETTINGS = {
     "login_logo": None,
 
     # Welcome text on the login screen
-    "welcome_sign": "Email yoki username bilan kiring",
+    "welcome_sign": "Admin paneliga xush kelibsiz",
 
     # Copyright on the footer
     "copyright": "Yosh Tadqiqotchi 2026",
@@ -330,12 +315,10 @@ JAZZMIN_UI_TWEAKS = {
 }
 
 # Email sozlamalari (.env dan olinadi — GitHubga parol yuborilmaydi)
-# IPv4 backend: cPanel/Gmail Errno 99 ni kamaytiradi
 EMAIL_BACKEND = 'main.email_backend.IPv4EmailBackend'
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
 EMAIL_USE_TLS = _env_bool('EMAIL_USE_TLS', True)
-EMAIL_USE_SSL = _env_bool('EMAIL_USE_SSL', False)
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 EMAIL_TIMEOUT = int(os.environ.get('EMAIL_TIMEOUT', '8'))
@@ -354,5 +337,3 @@ CHAT_API_RETRIES = int(os.environ.get('CHAT_API_RETRIES', '2'))
 SERVE_MEDIA = _env_bool('SERVE_MEDIA', DEBUG)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') if not DEBUG else None
 SESSION_COOKIE_SECURE = _env_bool('SESSION_COOKIE_SECURE', not DEBUG)
-SESSION_COOKIE_AGE = 60 * 60 * 24 * 14
-SESSION_SAVE_EVERY_REQUEST = False
