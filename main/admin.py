@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.admin.forms import AdminAuthenticationForm
 from django.utils.html import format_html
@@ -55,6 +56,30 @@ class AdminLoginForm(AdminAuthenticationForm):
             'placeholder': 'Email yoki username',
             'autocomplete': 'username',
         })
+
+    def clean(self):
+        username = (self.cleaned_data.get('username') or '').strip()
+        password = self.cleaned_data.get('password')
+        if username and password:
+            self.user_cache = authenticate(
+                self.request, username=username, password=password
+            )
+            if self.user_cache is None:
+                UserModel = get_user_model()
+                candidate = (
+                    UserModel.objects.filter(email__iexact=username).first()
+                    or UserModel.objects.filter(username__iexact=username).first()
+                )
+                if (
+                    candidate
+                    and candidate.check_password(password)
+                    and candidate.is_active
+                ):
+                    self.user_cache = candidate
+            if self.user_cache is None:
+                raise self.get_invalid_login_error()
+            self.confirm_login_allowed(self.user_cache)
+        return self.cleaned_data
 
 
 admin.site.login_form = AdminLoginForm
