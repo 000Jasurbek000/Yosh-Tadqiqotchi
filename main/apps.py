@@ -7,6 +7,7 @@ class MainConfig(AppConfig):
 
     def ready(self):
         import main.signals  # noqa: F401
+        self._apply_runtime_overrides()
         from django.db.backends.signals import connection_created
         from django.dispatch import receiver
 
@@ -19,3 +20,24 @@ class MainConfig(AppConfig):
                 cursor.execute('PRAGMA busy_timeout=20000;')
                 cursor.execute('PRAGMA cache_size=-20000;')
                 cursor.execute('PRAGMA temp_store=MEMORY;')
+
+    @staticmethod
+    def _apply_runtime_overrides():
+        """Server settings.py ni almashtirmasdan kerakli sozlamalar."""
+        from django.conf import settings
+
+        settings.AUTH_PASSWORD_VALIDATORS = [
+            {
+                'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+                'OPTIONS': {'min_length': 5},
+            },
+        ]
+        settings.EMAIL_BACKEND = 'main.email_backend.IPv4EmailBackend'
+        if not getattr(settings, 'EMAIL_TIMEOUT', None):
+            settings.EMAIL_TIMEOUT = 8
+        if not getattr(settings, 'SUPERVISOR_NOTIFY_EMAIL', ''):
+            settings.SUPERVISOR_NOTIFY_EMAIL = 'jdavletov143@gmail.com'
+        settings.AUTHENTICATION_BACKENDS = [
+            'main.backends.EmailBackend',
+            'django.contrib.auth.backends.ModelBackend',
+        ]

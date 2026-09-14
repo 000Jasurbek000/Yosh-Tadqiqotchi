@@ -3,12 +3,15 @@
 # Yosh Tadqiqotchi — server deploy
 # Ishlatish:  bash deploy.sh
 #
-# Nima QILMAYDI:
-#   - git commit / push
-#   - .env ni o'zgartirish
-#   - db.sqlite3 / media ni o'chirish
-#   - git reset --hard / stash pop
-#   - makemigrations
+# Serverdagi BULAR o'zgarmaydi / ustiga yozilmaydi:
+#   - xalikova_project/settings.py
+#   - requirements.txt
+#   - .env
+#   - db.sqlite3 (va -wal/-shm)
+#   - media/
+#
+# pip install ishlatilmaydi (virtualenv serverdagidek qoladi).
+# git reset --hard / stash pop YO'Q.
 # ============================================================
 
 set -euo pipefail
@@ -25,31 +28,53 @@ cd "$APP_DIR"
 echo "==> Loyiha: $APP_DIR"
 echo "==> Branch: $REMOTE/$BRANCH"
 
-ENV_FILE="$APP_DIR/.env"
-ENV_BACKUP=""
-if [[ -f "$ENV_FILE" ]]; then
-  ENV_BACKUP="$(mktemp)"
-  cp -a "$ENV_FILE" "$ENV_BACKUP"
-  echo "==> .env saqlandi"
-fi
+KEEP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/yt-keep.XXXXXX")"
+cleanup() { rm -rf "$KEEP_DIR"; }
+trap cleanup EXIT
 
-echo "==> git fetch / pull..."
+keep_file() {
+  local rel="$1"
+  if [[ -f "$APP_DIR/$rel" ]]; then
+    mkdir -p "$KEEP_DIR/$(dirname "$rel")"
+    cp -a "$APP_DIR/$rel" "$KEEP_DIR/$rel"
+    echo "==> Saqlandi (server): $rel"
+  fi
+}
+
+restore_file() {
+  local rel="$1"
+  if [[ -f "$KEEP_DIR/$rel" ]]; then
+    mkdir -p "$APP_DIR/$(dirname "$rel")"
+    cp -a "$KEEP_DIR/$rel" "$APP_DIR/$rel"
+    echo "==> Qaytarildi (server): $rel"
+  fi
+}
+
+keep_file "xalikova_project/settings.py"
+keep_file "requirements.txt"
+keep_file ".env"
+
+echo "==> git fetch / pull (settings/requirements tegilmaydi)..."
 git fetch "$REMOTE" "$BRANCH"
+
+git update-index --skip-worktree "xalikova_project/settings.py" 2>/dev/null || true
+git update-index --skip-worktree "requirements.txt" 2>/dev/null || true
+
 if ! git pull --ff-only "$REMOTE" "$BRANCH"; then
-  echo "XATO: git pull muvaffaqiyatsiz."
-  echo "Serverda lokal o'zgarish bo'lsa, settings.py ni tahrirlamang — .env ishlating."
-  exit 1
+  echo "OGOHLANTIRISH: pull to'xtadi, server sozlamalarini saqlab qayta uriniladi."
+  git checkout -- "xalikova_project/settings.py" "requirements.txt" 2>/dev/null || true
+  git pull --ff-only "$REMOTE" "$BRANCH"
 fi
 
-if [[ -n "$ENV_BACKUP" && -f "$ENV_BACKUP" ]]; then
-  cp -a "$ENV_BACKUP" "$ENV_FILE"
-  rm -f "$ENV_BACKUP"
-  echo "==> .env tiklandi (o'zgartirilmadi)"
-fi
+restore_file "xalikova_project/settings.py"
+restore_file "requirements.txt"
+restore_file ".env"
+
+git update-index --skip-worktree "xalikova_project/settings.py" 2>/dev/null || true
+git update-index --skip-worktree "requirements.txt" 2>/dev/null || true
 
 if [[ -n "${CONDA_PREFIX:-}" ]] || [[ -n "${VIRTUAL_ENV:-}" ]]; then
   PYTHON=python
-  PIP=pip
   echo "==> Faol muhit: ${CONDA_DEFAULT_ENV:-${VIRTUAL_ENV:-conda/venv}}"
 elif [[ -z "$VENV_DIR" ]]; then
   if [[ -d "$APP_DIR/.venv" ]]; then
@@ -60,23 +85,18 @@ elif [[ -z "$VENV_DIR" ]]; then
 fi
 
 if [[ -z "${PYTHON:-}" ]]; then
-  if [[ -n "$VENV_DIR" && -f "$VENV_DIR/bin/activate" ]]; then
+  if [[ -n "${VENV_DIR:-}" && -f "$VENV_DIR/bin/activate" ]]; then
     # shellcheck source=/dev/null
     source "$VENV_DIR/bin/activate"
     PYTHON=python
-    PIP=pip
   else
     PYTHON="${DEPLOY_PYTHON:-python3}"
-    PIP="${DEPLOY_PIP:-pip3}"
   fi
 fi
 
-if [[ -f "$APP_DIR/requirements.txt" ]]; then
-  echo "==> pip install -r requirements.txt"
-  "$PIP" install -r "$APP_DIR/requirements.txt" -q
-fi
+echo "==> pip o'tkazib yuborildi (requirements serverdagidek)"
 
-echo "==> migrate"
+echo "==> migrate (faqat yangi ustunlar; db.sqlite3 o'chirilmaydi)"
 "$PYTHON" manage.py migrate --noinput
 
 echo "==> knowledge index"
@@ -110,4 +130,5 @@ if [[ "$restarted" -eq 0 ]]; then
 fi
 
 echo ""
-echo "OK — deploy tugadi. .env va db.sqlite3 o'zgartirilmadi."
+echo "OK — kod yangilandi."
+echo "O'zgarmagan: settings.py, requirements.txt, .env, db.sqlite3, media/"
