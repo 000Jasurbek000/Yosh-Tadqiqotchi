@@ -204,6 +204,11 @@
             <div class="chart-canvas-wrap"><canvas id="chartDegrees"></canvas></div>
         </div>
 
+        <div class="chart-block">
+            <h3>📚 Kurslar kesimida</h3>
+            <div class="chart-canvas-wrap"><canvas id="chartStages"></canvas></div>
+        </div>
+
         <div class="chart-block full">
             <h3>🏫 Fakultetlar bo'yicha taqsimot</h3>
             <div class="chart-canvas-wrap tall"><canvas id="chartFaculties"></canvas></div>
@@ -396,6 +401,14 @@ new Chart(document.getElementById('chartDegrees'), {
     data: { labels: CHART_DATA.degrees.labels, datasets: [{ data: CHART_DATA.degrees.data, backgroundColor: '#8b5cf6', borderRadius: 6 }] },
     options: { ...commonOpts, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
 });
+
+if (document.getElementById('chartStages') && CHART_DATA.stages) {
+new Chart(document.getElementById('chartStages'), {
+    type: 'bar',
+    data: { labels: CHART_DATA.stages.labels, datasets: [{ data: CHART_DATA.stages.data, backgroundColor: '#0ea5e9', borderRadius: 6 }] },
+    options: { ...commonOpts, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+});
+}
 
 // 5. Faculties (horizontal bar)
 new Chart(document.getElementById('chartFaculties'), {

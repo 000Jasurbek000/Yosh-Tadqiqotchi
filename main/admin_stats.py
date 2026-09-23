@@ -79,6 +79,11 @@ def _collect_stats():
         .annotate(c=Count('id')).order_by('-c')
     )
 
+    by_stage = list(
+        users_qs.exclude(education_stage='').exclude(education_stage__isnull=True)
+        .values('education_stage').annotate(c=Count('id')).order_by('education_stage')
+    )
+
     # Status (talaba va h.k.)
     by_status = list(
         users_qs.values('status').annotate(c=Count('id')).order_by('-c')
@@ -184,6 +189,7 @@ def _collect_stats():
         'by_faculty': by_faculty,
         'faculty_status': faculty_status,
         'by_degree': by_degree,
+        'by_stage': by_stage,
         'by_status': by_status,
         'registration_trend': registration_trend,
         'total_assessment_tests': total_assessment_tests,
@@ -239,6 +245,10 @@ def statistics_view(request):
         'degrees': {
             'labels': [d['academic_degree'] for d in stats['by_degree']],
             'data':   [d['c'] for d in stats['by_degree']],
+        },
+        'stages': {
+            'labels': [s['education_stage'] for s in stats['by_stage']],
+            'data':   [s['c'] for s in stats['by_stage']],
         },
         'content': {
             'labels': list(stats['content_stats'].keys()),
@@ -484,7 +494,7 @@ def statistics_excel(request):
     activity_threshold = stats['activity_threshold']
     accepted_supervisors, latest_supervisor_req, user_applications = _build_user_iqtidor_maps()
 
-    headers = ['#', 'F.I.O', 'Email', 'Telefon', 'Universitet', 'Fakultet',
+    headers = ['#', 'F.I.O', 'Email', 'Telefon', 'Universitet', 'Fakultet', 'Kurs',
                'Ilmiy daraja', 'Status', 'Holati', 'Faol (≤20 kun)', 'Admin', 'Ball %',
                'Ilmiy rahbar', 'Rahbar lavozimi', 'Rahbar email', 'Rahbarlik holati',
                'Olimpiada arizalari', 'Volontyor holati', 'Oxirgi kirish', 'Ro\'yxatdan o\'tgan']
@@ -522,6 +532,7 @@ def statistics_excel(request):
             u.phone_number or '—',
             u.university or '—',
             u.faculty or '—',
+            u.education_stage or '—',
             u.get_academic_degree_display() if u.academic_degree else '—',
             u.status or '—',
             'Iqtidorli' if is_talented else 'Oddiy',
@@ -617,7 +628,7 @@ def statistics_excel(request):
 
     # ===== Sheet 5: Test natijalari =====
     ws5 = wb.create_sheet("Test natijalari")
-    headers = ['#', 'Foydalanuvchi', 'Email', 'Test nomi', 'Ball', 'Foiz', 'O\'tdi', 'Topshirilgan']
+    headers = ['#', 'Foydalanuvchi', 'Email', 'Fakultet', 'Kurs', 'Ilmiy daraja', 'Test nomi', 'Ball', 'Foiz', 'O\'tdi', 'Topshirilgan']
     for col, h in enumerate(headers, 1):
         c = ws5.cell(row=1, column=col, value=h)
         c.fill = ORANGE_FILL
@@ -632,6 +643,9 @@ def statistics_excel(request):
             idx - 1,
             full_name,
             r.user.email or '—',
+            r.user.faculty or '—',
+            r.user.education_stage or '—',
+            r.user.get_academic_degree_display() if r.user.academic_degree else '—',
             r.assessment_test.title if r.assessment_test else '—',
             r.score,
             f"{round(r.percentage, 1)}%",
@@ -687,7 +701,7 @@ def statistics_excel(request):
 
     detail_headers = [
         '#', 'Fakultet', 'F.I.O', 'Username', 'Email', 'Telefon',
-        'Yashash xududi', 'Universitet', 'Ilmiy daraja', 'Status',
+        'Yashash xududi', 'Universitet', 'Kurs', 'Ilmiy daraja', 'Status',
         'Holati (Iqtidorli/Oddiy)', 'Saralash balli (%)',
         'Test urinishlari', 'O\'tgan urinishlar', 'Eng yuqori ball (%)',
         'Saralash topshirilgan', 'Keyingi urinish',
@@ -741,6 +755,7 @@ def statistics_excel(request):
             u.phone_number or '—',
             u.residence_region or '—',
             u.university or '—',
+            u.education_stage or '—',
             u.get_academic_degree_display() if u.academic_degree else '—',
             u.status or '—',
             'Iqtidorli' if is_talented else 'Oddiy',
@@ -817,7 +832,7 @@ def statistics_excel(request):
 
     # ===== Sheet 7: Ilmiy rahbarlik so'rovlari =====
     ws7 = wb.create_sheet("Rahbarlik so'rovlari")
-    req_headers = ['#', 'Talaba', 'Email', 'Universitet', 'Fakultet', 'Rahbar', 'Lavozim',
+    req_headers = ['#', 'Talaba', 'Email', 'Universitet', 'Fakultet', 'Kurs', 'Ilmiy daraja', 'Rahbar', 'Lavozim',
                    'Holat', 'Yuborilgan', 'Javob vaqti', 'Izoh']
     for col, h in enumerate(req_headers, 1):
         c = ws7.cell(row=1, column=col, value=h)
@@ -845,6 +860,8 @@ def statistics_excel(request):
             u.email or '—',
             u.university or '—',
             u.faculty or '—',
+            u.education_stage or '—',
+            u.get_academic_degree_display() if u.academic_degree else '—',
             req.supervisor.full_name,
             req.supervisor.position or '—',
             status_label_map.get(req.status, req.status),
@@ -863,7 +880,7 @@ def statistics_excel(request):
 
     # ===== Sheet 8: Olimpiada arizalari =====
     ws8 = wb.create_sheet("Olimpiada arizalari")
-    app_headers = ['#', 'F.I.O', 'Email', 'Telefon', 'Universitet', 'Fakultet',
+    app_headers = ['#', 'F.I.O', 'Email', 'Telefon', 'Universitet', 'Fakultet', 'Kurs', 'Ilmiy daraja',
                    'Holati (iqtidor)', 'Olimpiada', 'Ariza turi', 'Motivatsiya',
                    'Holat', 'Yuborilgan', 'Admin izohi']
     for col, h in enumerate(app_headers, 1):
@@ -893,6 +910,8 @@ def statistics_excel(request):
             u.phone_number or '—',
             u.university or '—',
             u.faculty or '—',
+            u.education_stage or '—',
+            u.get_academic_degree_display() if u.academic_degree else '—',
             format_assessment_status(u),
             app.display_title,
             app.get_application_type_display(),

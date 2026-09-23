@@ -42,7 +42,7 @@ def generate_applications_excel(queryset=None):
 
     headers = [
         '#', 'F.I.O', 'Email', 'Telefon', 'Universitet', 'Fakultet',
-        'Daraja', 'Status (iqtidor)', 'Olimpiada', 'Motivatsiya',
+        'Kurs', 'Daraja', 'Status (iqtidor)', 'Olimpiada', 'Motivatsiya',
         'Holat', 'Yuborilgan vaqt', 'Admin izohi'
     ]
     for col_num, header in enumerate(headers, 1):
@@ -62,13 +62,14 @@ def generate_applications_excel(queryset=None):
         ws.cell(row=row_num, column=4,  value=u.phone_number or '—')
         ws.cell(row=row_num, column=5,  value=u.university or '—')
         ws.cell(row=row_num, column=6,  value=getattr(u, 'faculty', '') or '—')
-        ws.cell(row=row_num, column=7,  value=u.get_academic_degree_display() if u.academic_degree else '—')
-        ws.cell(row=row_num, column=8,  value=format_assessment_status(u))
-        ws.cell(row=row_num, column=9,  value=app.display_title)
-        ws.cell(row=row_num, column=10, value=app.motivation or '—')
-        ws.cell(row=row_num, column=11, value=app.get_status_display())
-        ws.cell(row=row_num, column=12, value=app.created_at.strftime('%Y-%m-%d %H:%M') if app.created_at else '—')
-        ws.cell(row=row_num, column=13, value=app.admin_note or '—')
+        ws.cell(row=row_num, column=7,  value=getattr(u, 'education_stage', '') or '—')
+        ws.cell(row=row_num, column=8,  value=u.get_academic_degree_display() if u.academic_degree else '—')
+        ws.cell(row=row_num, column=9,  value=format_assessment_status(u))
+        ws.cell(row=row_num, column=10, value=app.display_title)
+        ws.cell(row=row_num, column=11, value=app.motivation or '—')
+        ws.cell(row=row_num, column=12, value=app.get_status_display())
+        ws.cell(row=row_num, column=13, value=app.created_at.strftime('%Y-%m-%d %H:%M') if app.created_at else '—')
+        ws.cell(row=row_num, column=14, value=app.admin_note or '—')
 
         # status rangini butun qatorga qo'llash
         fill_color = STATUS_COLORS.get(app.status, 'FFFFFF')

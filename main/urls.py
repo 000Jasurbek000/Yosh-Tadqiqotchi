@@ -60,6 +60,7 @@ urlpatterns = [
     path('volontyor/ariza/', views.submit_volunteer_application, name='submit_volunteer_application'),
     
     # Auth
+    path('set-language/', views.set_language, name='set_language'),
     path('login/', views.login_view, name='login'),
     path('register/', views.register_view, name='register'),
     path('logout/', views.logout_view, name='logout'),

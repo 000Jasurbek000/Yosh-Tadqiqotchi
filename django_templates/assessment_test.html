@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Saralash testi{% endblock %}
+{% block title %}{{ tr.pages.assessment }}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -237,8 +237,8 @@
             <div style="font-size: 64px; color: #e0e0e0; margin-bottom: 20px;">
                 <i class="fas fa-clipboard-list"></i>
             </div>
-            <h2 style="color: #666; margin-bottom: 10px;">Test mavjud emas</h2>
-            <p style="color: #999; margin-bottom: 30px;">Saralash testi hozircha tizimga qo'shilmagan</p>
+            <h2 style="color: #666; margin-bottom: 10px;">{{ tr.assessment.missing }}</h2>
+            <p style="color: #999; margin-bottom: 30px;">{{ no_test_reason|default:tr.assessment.no_test }}</p>
             <a href="{% url 'main:home' %}" class="btn-secondary" style="display: inline-flex; text-decoration: none;">
                 <i class="fas fa-home"></i> Bosh sahifaga qaytish
             </a>
@@ -339,7 +339,7 @@
         <div class="action-buttons">
             {% if can_attempt %}
                 <a href="{% url 'main:start_assessment_test' %}" class="btn-primary" onclick="return confirmStart()">
-                    <i class="fas fa-play"></i> Testni boshlash
+                    <i class="fas fa-play"></i> {{ tr.assessment.start }}
                 </a>
             {% else %}
                 <button class="btn-primary" disabled>

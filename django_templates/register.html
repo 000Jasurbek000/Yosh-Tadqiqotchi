@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Ro'yxatdan o'tish - Yosh Tadqiqotchi{% endblock %}
+{% block title %}{{ tr.auth.register_title }} - {{ tr.site.name }}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -111,8 +111,8 @@
 
         <!-- Right Side - Register Form -->
         <div class="glass-effect animate-fadeInUp" style="animation-delay: 0.2s;">
-            <h2 class="title" style="font-size: 32px; margin-bottom: 8px; text-align: center;">Profil yaratish</h2>
-            <p class="text-muted" style="text-align: center; margin-bottom: 32px;">Ro'yxatdan o'tish uchun ma'lumotlaringizni kiriting</p>
+            <h2 class="title" style="font-size: 32px; margin-bottom: 8px; text-align: center;">{{ tr.auth.create_profile }}</h2>
+            <p class="text-muted" style="text-align: center; margin-bottom: 32px;">{{ tr.auth.create_hint }}</p>
 
             {% if messages %}
                 {% for message in messages %}
@@ -127,7 +127,7 @@
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group">
-                        <label for="{{ form.first_name.id_for_label }}">Ism</label>
+                        <label for="{{ form.first_name.id_for_label }}">{{ tr.auth.first_name }}</label>
                         {{ form.first_name }}
                         {% if form.first_name.errors %}
                             <span style="color: #ef4444; font-size: 13px;">{{ form.first_name.errors.0 }}</span>
@@ -135,7 +135,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="{{ form.last_name.id_for_label }}">Familiya</label>
+                        <label for="{{ form.last_name.id_for_label }}">{{ tr.auth.last_name }}</label>
                         {{ form.last_name }}
                         {% if form.last_name.errors %}
                             <span style="color: #ef4444; font-size: 13px;">{{ form.last_name.errors.0 }}</span>
@@ -144,7 +144,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.phone_number.id_for_label }}">Telefon raqam</label>
+                    <label for="{{ form.phone_number.id_for_label }}">{{ tr.auth.phone }}</label>
                     {{ form.phone_number }}
                     {% if form.phone_number.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ form.phone_number.errors.0 }}</span>
@@ -152,7 +152,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.residence_region.id_for_label }}">Yashash xudud</label>
+                    <label for="{{ form.residence_region.id_for_label }}">{{ tr.auth.region }}</label>
                     {{ form.residence_region }}
                     {% if form.residence_region.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ form.residence_region.errors.0 }}</span>
@@ -160,7 +160,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.university.id_for_label }}">O'qigan/O'qiyotgan joy</label>
+                    <label for="{{ form.university.id_for_label }}">{{ tr.auth.university }}</label>
                     {{ form.university }}
                     {% if form.university.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ form.university.errors.0 }}</span>
@@ -168,7 +168,7 @@
                 </div>
 
                 <div class="form-group" id="faculty-group">
-                    <label for="{{ form.faculty.id_for_label }}">Fakultet</label>
+                    <label for="{{ form.faculty.id_for_label }}">{{ tr.auth.faculty }}</label>
                     {{ form.faculty }}
                     {% if form.faculty.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ form.faculty.errors.0 }}</span>
@@ -176,7 +176,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.education_direction.id_for_label }}">Ta'lim yo'nalishi</label>
+                    <label for="{{ form.education_direction.id_for_label }}">{{ tr.auth.direction }}</label>
                     {{ form.education_direction }}
                     {% if form.education_direction.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ form.education_direction.errors.0 }}</span>
@@ -184,7 +184,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.education_stage.id_for_label }}">Ta'lim bosqichi / kurs</label>
+                    <label for="{{ form.education_stage.id_for_label }}">{{ tr.auth.stage }}</label>
                     {{ form.education_stage }}
                     {% if form.education_stage.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ form.education_stage.errors.0 }}</span>
@@ -192,7 +192,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.academic_degree.id_for_label }}">Ilmiy daraja</label>
+                    <label for="{{ form.academic_degree.id_for_label }}">{{ tr.auth.degree }}</label>
                     {{ form.academic_degree }}
                     {% if form.academic_degree.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ form.academic_degree.errors.0 }}</span>
@@ -200,7 +200,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.role.id_for_label }}">Rol</label>
+                    <label for="{{ form.role.id_for_label }}">{{ tr.auth.role }}</label>
                     {{ form.role }}
                     {% if form.role.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ form.role.errors.0 }}</span>
@@ -208,7 +208,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.password1.id_for_label }}">Parol</label>
+                    <label for="{{ form.password1.id_for_label }}">{{ tr.auth.password }}</label>
                     {{ form.password1.as_widget }}
                     {% if form.password1.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ form.password1.errors.0 }}</span>
@@ -216,19 +216,19 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.password2.id_for_label }}">Parolni tasdiqlash</label>
+                    <label for="{{ form.password2.id_for_label }}">{{ tr.auth.password2 }}</label>
                     {{ form.password2.as_widget }}
                     {% if form.password2.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ form.password2.errors.0 }}</span>
                     {% endif %}
                 </div>
 
-                <button type="submit" class="form-btn">Ro'yxatdan o'tish</button>
+                <button type="submit" class="form-btn">{{ tr.auth.register_btn }}</button>
             </form>
 
             <p class="text-center mt-4 text-muted">
                 Allaqachon akkauntingiz bormi?
-                <a href="{% url 'main:login' %}" class="text-link">Tizimga kirish</a>
+                <a href="{% url 'main:login' %}" class="text-link">{{ tr.nav.login }}</a>
             </p>
         </div>
     </div>

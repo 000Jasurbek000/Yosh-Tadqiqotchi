@@ -41,3 +41,17 @@ class MainConfig(AppConfig):
             'main.backends.EmailBackend',
             'django.contrib.auth.backends.ModelBackend',
         ]
+        mw = list(settings.MIDDLEWARE)
+        if 'main.language.LanguageMiddleware' not in mw:
+            insert_at = 0
+            for i, item in enumerate(mw):
+                if 'SessionMiddleware' in item:
+                    insert_at = i + 1
+                    break
+            mw.insert(insert_at, 'main.language.LanguageMiddleware')
+            settings.MIDDLEWARE = mw
+        for engine in settings.TEMPLATES:
+            cps = engine.get('OPTIONS', {}).get('context_processors', [])
+            if 'main.language.language_context' not in cps:
+                cps.append('main.language.language_context')
+                engine['OPTIONS']['context_processors'] = cps

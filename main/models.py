@@ -714,8 +714,23 @@ class Module(models.Model):
 
 # 18. Test to'plami (alohida test nomi bilan)
 class TestSet(models.Model):
+    TARGET_LEVEL_CHOICES = [
+        ('1-kurs', '1-kurs (bakalavr)'),
+        ('2-kurs', '2-kurs (bakalavr)'),
+        ('3-kurs', '3-kurs (bakalavr)'),
+        ('4-kurs', '4-kurs (bakalavr)'),
+        ('magistr', 'Magistr'),
+    ]
     name = models.CharField(max_length=200, verbose_name='Test nomi', help_text='Test to\'plami nomini kiriting (masalan: Python asoslari testi)')
     description = models.TextField(blank=True, null=True, verbose_name='Tavsif', help_text='Test to\'plami haqida qisqa ma\'lumot')
+    target_level = models.CharField(
+        max_length=20,
+        choices=TARGET_LEVEL_CHOICES,
+        blank=True,
+        default='',
+        verbose_name='Kim uchun',
+        help_text='Bakalavr: 1–4 kurs. Magistr: bitta to\'plam (kursdan qat\'i nazar). PhD/DSc uchun kerak emas.',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

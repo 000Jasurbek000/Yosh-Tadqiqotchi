@@ -81,8 +81,6 @@ COURSE_STAGE_CHOICES = [
     ('2-kurs', '2-kurs'),
     ('3-kurs', '3-kurs'),
     ('4-kurs', '4-kurs'),
-    ('5-kurs', '5-kurs'),
-    ('6-kurs', '6-kurs'),
 ]
 
 
@@ -147,7 +145,15 @@ class UserRegisterForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         self.fields.pop('username', None)
         self.fields.pop('email', None)
+        from .i18n import t
         self.fields['university'].choices = get_university_choices()
+        self.fields['faculty'].choices = [('', t('form.select_faculty'))] + [(f, f) for f in BUXDU_FACULTIES]
+        self.fields['education_stage'].choices = [('', t('form.select_course'))] + [
+            (key, t(f'stage.{key}')) for key, _label in COURSE_STAGE_CHOICES if key
+        ]
+        self.fields['academic_degree'].choices = [('', t('form.select_degree'))] + [
+            (key, t(f'degree.{key}')) for key, _label in DEGREE_CHOICES if key
+        ]
         self.fields['password1'].widget.attrs.update({
             'class': 'form-input',
             'placeholder': 'Parol',
@@ -311,13 +317,19 @@ class UserUpdateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        from .i18n import t
         self.fields['university'].choices = get_university_choices()
-        stage_choices = list(COURSE_STAGE_CHOICES)
+        stage_choices = [('', t('form.select_course'))] + [
+            (key, t(f'stage.{key}')) for key, _label in COURSE_STAGE_CHOICES if key
+        ]
         current = (getattr(self.instance, 'education_stage', '') or '').strip()
         if current and current not in dict(stage_choices):
             stage_choices.append((current, current))
         self.fields['education_stage'].choices = stage_choices
-        faculty_choices = list(FACULTY_CHOICES)
+        self.fields['academic_degree'].choices = [('', t('form.select_degree'))] + [
+            (key, t(f'degree.{key}')) for key, _label in DEGREE_CHOICES if key
+        ]
+        faculty_choices = [('', t('form.select_faculty'))] + [(f, f) for f in BUXDU_FACULTIES]
         current_faculty = (getattr(self.instance, 'faculty', '') or '').strip()
         if current_faculty and current_faculty not in dict(faculty_choices):
             faculty_choices.append((current_faculty, current_faculty))

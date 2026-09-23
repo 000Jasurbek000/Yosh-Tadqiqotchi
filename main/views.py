@@ -21,6 +21,12 @@ from .models import (Olympiad, StateScholarship, BuxduScholarship, Course, Artic
                      UserModuleProgress, UserTestResult, Question, AssessmentTest, AssessmentTestResult,
                      Literature, ScientificSupervisor, SupervisorRequest, OlympiadProgram, OlympiadApplication)
 from django.utils import timezone
+from .i18n import t
+from .language import set_language  # noqa: F401
+from .test_utils import (
+    get_assessment_for_user, assessment_unavailable_message,
+    shuffled_questions, clear_test_shuffle,
+)
 
 
 def index_view(request):
@@ -232,7 +238,7 @@ def course_test_view(request, course_id):
     
     if not is_admin and completed_modules < total_modules:
         print(f"DEBUG: REDIRECT - Modules not completed")
-        messages.error(request, f'Barcha modullarni tugatishingiz kerak! Tugatilgan: {completed_modules}/{total_modules}')
+        messages.error(request, t('courses.modules_needed', done=completed_modules, total=total_modules))
         return redirect('main:course_detail', pk=course_id)
     
     # Check if test already passed - allow retrying even if passed
@@ -248,7 +254,7 @@ def course_test_view(request, course_id):
         if time_since_last.total_seconds() < 480:  # 8 minutes (changed from 600)
             wait_minutes = int((480 - time_since_last.total_seconds()) / 60) + 1
             print(f"DEBUG: REDIRECT - Need to wait {wait_minutes} minutes")
-            messages.warning(request, f'Testni qayta topshirish uchun {wait_minutes} daqiqa kutishingiz kerak!')
+            messages.warning(request, t('courses.wait_retry', minutes=wait_minutes))
             return redirect('main:course_detail', pk=course_id)
     
     # Allow retrying test even if passed (removed the block that prevented retrying)
@@ -256,20 +262,20 @@ def course_test_view(request, course_id):
     # Get all questions for this course
     if not course.test_set:
         print(f"DEBUG: REDIRECT - No test set assigned")
-        messages.error(request, 'Ushbu kurs uchun test biriktirilmagan!')
+        messages.error(request, t('courses.no_set'))
         return redirect('main:course_detail', pk=course_id)
     
-    questions = Question.objects.filter(test_set=course.test_set).prefetch_related('answers').order_by('?')[:20]  # Random 20 questions
-    print(f"DEBUG: Questions count: {questions.count()}")
+    questions = shuffled_questions(request, course.test_set, 'course', user.id, limit=20)
+    print(f"DEBUG: Questions count: {len(questions)}")
     
-    if not questions.exists():
+    if not questions:
         print(f"DEBUG: REDIRECT - No questions available")
-        messages.error(request, 'Test savollari hozircha yuklanmagan!')
+        messages.error(request, t('courses.no_questions'))
         return redirect('main:course_detail', pk=course_id)
     
     print(f"DEBUG: SUCCESS - Rendering test page")
     # Calculate total time (time_per_question * total_questions)
-    total_time_minutes = course.time_per_question * questions.count()
+    total_time_minutes = course.time_per_question * len(questions)
     
     context = {
         'course': course,
@@ -296,8 +302,11 @@ def submit_test(request, course_id):
         data = json.loads(request.body)
         answers = data.get('answers', {})
         
-        # Get all questions
+        qkey = f'course_q_{course.test_set_id}_{user.id}'
+        shown_ids = request.session.get(qkey)
         questions = Question.objects.filter(test_set=course.test_set).prefetch_related('answers')
+        if shown_ids:
+            questions = questions.filter(id__in=shown_ids)
         total_questions = questions.count()
         correct_answers = 0
         
@@ -366,6 +375,8 @@ def submit_test(request, course_id):
                 print(f"Certificate generation error: {cert_error}")
         
         course_progress.save()
+        if course.test_set_id:
+            clear_test_shuffle(request, course.test_set, 'course', user.id)
         
         return JsonResponse({
             'success': True,
@@ -663,17 +674,13 @@ class IqtidorYoliView(LoginRequiredMixin, TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            messages.warning(request, "Iqtidor Yo'li sahifasiga kirish uchun login qiling.")
+            messages.warning(request, t('assessment.need_login'))
             return redirect('main:login')
 
         # Faqat iqtidorli talabalar kira oladi (adminlar bundan mustasno)
         is_admin = request.user.is_staff or request.user.is_superuser
         if not is_admin and request.user.assessment_status != 'iqtidorli':
-            messages.warning(
-                request,
-                "Iqtidor Yo'li sahifasi faqat iqtidorli talabalar uchun. "
-                "Avval saralash testidan o'tib iqtidorli holatga ega bo'ling."
-            )
+            messages.warning(request, t('assessment.need_pass'))
             return redirect('main:assessment_test')
 
         return super().dispatch(request, *args, **kwargs)
@@ -1344,18 +1351,18 @@ def settings_view(request):
             user_form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
             if user_form.is_valid():
                 user_form.save()
-                messages.success(request, 'Profilingiz muvaffaqiyatli yangilandi!')
+                messages.success(request, t('settings.profile_ok'))
                 return redirect('main:settings')
-            messages.error(request, 'Iltimos, barcha majburiy maydonlarni to\'ldiring.')
+            messages.error(request, t('settings.profile_err'))
 
         elif form_type == 'password':
             password_form = _no_pw_help(PasswordChangeForm(request.user, request.POST))
             if password_form.is_valid():
                 user = password_form.save()
                 update_session_auth_hash(request, user)
-                messages.success(request, 'Parolingiz muvaffaqiyatli o\'zgartirildi!')
+                messages.success(request, t('settings.password_ok'))
                 return redirect('main:settings')
-            messages.error(request, 'Parolni o\'zgartirishda xatolik yuz berdi.')
+            messages.error(request, t('settings.password_err'))
 
     context = {
         'user_form': user_form,
@@ -1369,7 +1376,7 @@ def settings_view(request):
 @login_required(login_url='main:login')
 def assessment_test_view(request):
     """Saralash testi haqida ma'lumot sahifasi"""
-    assessment_test = AssessmentTest.objects.filter(is_active=True).first()
+    assessment_test = get_assessment_for_user(request.user)
     
     # Test mavjud bo'lmasa ham sahifani ko'rsatamiz
     user = request.user
@@ -1406,6 +1413,7 @@ def assessment_test_view(request):
         'wait_time': wait_time,
         'last_result': last_result,
         'user_status': user.assessment_status,
+        'no_test_reason': '' if assessment_test else assessment_unavailable_message(user),
     }
     
     return render(request, 'assessment_test.html', context)
@@ -1414,22 +1422,23 @@ def assessment_test_view(request):
 @login_required(login_url='main:login')
 def start_assessment_test(request):
     """Saralash testini boshlash"""
-    assessment_test = AssessmentTest.objects.filter(is_active=True).first()
+    assessment_test = get_assessment_for_user(request.user)
     
     if not assessment_test:
-        messages.error(request, 'Test mavjud emas.')
+        messages.error(request, assessment_unavailable_message(request.user))
         return redirect('main:assessment_test')
     
     # Test to'plami borligini tekshirish
     if not assessment_test.test_set:
-        messages.error(request, 'Test savollari mavjud emas.')
+        messages.error(request, t('assessment.no_questions'))
         return redirect('main:assessment_test')
     
-    # Savollarni olish
-    questions = Question.objects.filter(test_set=assessment_test.test_set).prefetch_related('answers').order_by('number')
+    questions = shuffled_questions(
+        request, assessment_test.test_set, 'assessment', request.user.id
+    )
     
-    if not questions.exists():
-        messages.error(request, 'Test savollari topilmadi.')
+    if not questions:
+        messages.error(request, t('assessment.no_questions'))
         return redirect('main:assessment_test')
     
     # Foydalanuvchi qayta urinish qila olishini tekshirish (admin chetlab o'tadi)
@@ -1440,13 +1449,13 @@ def start_assessment_test(request):
         now = timezone.now()
         
         if now < user.assessment_next_attempt:
-            messages.warning(request, 'Siz hali testni qayta topshira olmaysiz. Iltimos, kutish vaqti tugashini kuting.')
+            messages.warning(request, t('assessment.wait'))
             return redirect('main:assessment_test')
     
     context = {
         'assessment_test': assessment_test,
         'questions': questions,
-        'total_questions': questions.count(),
+        'total_questions': len(questions),
         'time_limit_seconds': assessment_test.time_limit * 60,  # Daqiqalarni soniyalarga
     }
     
@@ -1469,13 +1478,16 @@ def submit_assessment_test(request):
         answers = data.get('answers', {})
         time_taken = data.get('time_taken', 0)
         
-        assessment_test = AssessmentTest.objects.filter(is_active=True).first()
+        assessment_test = get_assessment_for_user(request.user)
         
         if not assessment_test or not assessment_test.test_set:
-            return JsonResponse({'success': False, 'error': 'Test topilmadi'}, status=404)
+            return JsonResponse({'success': False, 'error': t('assessment.missing')}, status=404)
         
-        # Savollar va javoblarni olish
+        qkey = f'assessment_q_{assessment_test.test_set_id}_{request.user.id}'
+        shown_ids = request.session.get(qkey)
         questions = Question.objects.filter(test_set=assessment_test.test_set).prefetch_related('answers')
+        if shown_ids:
+            questions = questions.filter(id__in=shown_ids)
         total_questions = questions.count()
         correct_answers = 0
         
@@ -1521,6 +1533,7 @@ def submit_assessment_test(request):
             user.status = 'iqtidorli'  # Umumiy statusni ham o'zgartirish
         
         user.save()
+        clear_test_shuffle(request, assessment_test.test_set, 'assessment', user.id)
         
         return JsonResponse({
             'success': True,
@@ -1577,7 +1590,7 @@ class OlympiadProgramDetailView(LoginRequiredMixin, View):
             return redirect(self.login_url)
         # Faqat iqtidorli yoki admin ko'ra oladi
         if not (request.user.is_staff or request.user.assessment_status == 'iqtidorli'):
-            messages.warning(request, "Bu sahifaga faqat saralash testidan o'tgan iqtidorli talabalar kira oladi.")
+            messages.warning(request, t('assessment.page_only_iqtidor'))
             return redirect('main:iqtidor_yoli')
         return super().dispatch(request, *args, **kwargs)
 

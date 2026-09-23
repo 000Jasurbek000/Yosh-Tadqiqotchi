@@ -60,7 +60,7 @@
                     </div>
 
                     <div style="display: flex; flex-direction: column; gap: 12px; margin-left: 52px;">
-                        {% for answer in question.answers.all %}
+                        {% for answer in question.shuffled_answers %}
                         <label class="answer-option" style="display: flex; align-items: center; padding: 16px; background: white; border: 2px solid #e5e7eb; border-radius: 10px; cursor: pointer; transition: all 0.3s;">
                             <input type="radio" name="question_{{ question.id }}" value="{{ answer.id }}" style="width: 20px; height: 20px; margin-right: 12px; cursor: pointer;">
                             <span style="color: #374151; font-size: 16px;">{{ answer.text }}</span>

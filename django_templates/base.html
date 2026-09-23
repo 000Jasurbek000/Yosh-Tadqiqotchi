@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="{{ lang|default:'uz' }}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -32,7 +32,7 @@
     </div>
     <div style="display: flex; align-items: center; gap: 8px;" class="text-muted">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-      <span>Buxoro sh. M.Iqbol ko'chasi 11-uy</span>
+      <span>{{ tr.site.address }}</span>
     </div>
   </div>
 
@@ -44,80 +44,87 @@
       </a>
 
       <div class="nav-links">
-        <a href="{% url 'main:home' %}">Bosh Sahifa</a>
-        <a href="{% url 'main:courses' %}">Online Kurslar</a>
+        <a href="{% url 'main:home' %}">{{ tr.nav.home }}</a>
+        <a href="{% url 'main:courses' %}">{{ tr.nav.courses }}</a>
 
         <div class="dropdown">
           <button>
-            <span>Iqtidorli Talabamisiz?</span>
+            <span>{{ tr.nav.talent }}</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
           </button>
           <div class="dropdown-menu">
-            <a href="{% url 'main:iqtidorli_sorovnoma' %}">So'rovnoma</a>
-            <a href="{% url 'main:assessment_test' %}">Saralash testi</a>
-            <a href="{% url 'main:iqtidorli_baza' %}">Iqtidorli talabalar bazasi</a>
-            <a href="{% url 'main:iqtidor_yoli' %}">Iqtidor Yo'li</a>
+            <a href="{% url 'main:iqtidorli_sorovnoma' %}">{{ tr.nav.survey }}</a>
+            <a href="{% url 'main:assessment_test' %}">{{ tr.nav.assessment }}</a>
+            <a href="{% url 'main:iqtidorli_baza' %}">{{ tr.nav.talent_db }}</a>
+            <a href="{% url 'main:iqtidor_yoli' %}">{{ tr.nav.iqtidor_yoli }}</a>
           </div>
         </div>
 
         <div class="dropdown">
           <button>
-            <span>Imtiyozli stipendiyalar</span>
+            <span>{{ tr.nav.scholarships }}</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
           </button>
           <div class="dropdown-menu">
-            <a href="{% url 'main:davlat_stipendiyalari' %}">Davlat stipendiyalari</a>
-            <a href="{% url 'main:buxdu_stipendiyalari' %}">BuxDU stipendiyalari</a>
-            <a href="{% url 'main:buxdu_stipendiya_bazasi' %}">BuxDU stipendiya sovrindorlari bazasi</a>
+            <a href="{% url 'main:davlat_stipendiyalari' %}">{{ tr.nav.state_scholarships }}</a>
+            <a href="{% url 'main:buxdu_stipendiyalari' %}">{{ tr.nav.buxdu_scholarships }}</a>
+            <a href="{% url 'main:buxdu_stipendiya_bazasi' %}">{{ tr.nav.buxdu_winners }}</a>
           </div>
         </div>
 
         <div class="dropdown">
           <button>
-            <span>Xalqaro tanlov va olimpiadalar</span>
+            <span>{{ tr.nav.olympiads }}</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
           </button>
           <div class="dropdown-menu">
-            <a href="{% url 'main:xalqaro_olimpiadalar' %}">Xalqaro fan olimpiadalari</a>
-            <a href="{% url 'main:respublika_olimpiadalar' %}">Respublika fan olimpiadalari</a>
-            <a href="{% url 'main:onlayn_olimpiadalar' %}">Onlayn fan olimpiadalari</a>
-            <a href="{% url 'main:buxdu_olimpiadalari' %}">BuxDU olimpiadalari</a>
-            <a href="{% url 'main:buxdu_olimpiada_goliblari' %}">BuxDU olimpiada g'oliblari</a>
+            <a href="{% url 'main:xalqaro_olimpiadalar' %}">{{ tr.nav.intl_olympiads }}</a>
+            <a href="{% url 'main:respublika_olimpiadalar' %}">{{ tr.nav.republic_olympiads }}</a>
+            <a href="{% url 'main:onlayn_olimpiadalar' %}">{{ tr.nav.online_olympiads }}</a>
+            <a href="{% url 'main:buxdu_olimpiadalari' %}">{{ tr.nav.buxdu_olympiads }}</a>
+            <a href="{% url 'main:buxdu_olimpiada_goliblari' %}">{{ tr.nav.buxdu_olympiad_winners }}</a>
           </div>
         </div>
 
         <div class="dropdown">
           <button>
-            <span>Ilmiy nashrlar va bazalar</span>
+            <span>{{ tr.nav.science }}</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
           </button>
           <div class="dropdown-menu">
-            <a href="{% url 'main:mahalliy_oak_jurnallari' %}">Mahalliy OAK jurnallari</a>
-            <a href="{% url 'main:xalqaro_oak_jurnallari' %}">Xalqaro OAK jurnallari</a>
-            <a href="{% url 'main:xalqaro_konferensiyalar' %}">Xalqaro konferensiyalar</a>
-            <a href="{% url 'main:respublika_konferensiyalar' %}">Respublika konferensiyalar</a>
-            <a href="{% url 'main:dissertatsiyalar_banki' %}">Dissertatsiyalar banki</a>
-            <a href="{% url 'main:maqolalar_banki' %}">Maqolalar banki</a>
-            <a href="{% url 'main:adabiyotlar' %}">Adabiyotlar</a>
+            <a href="{% url 'main:mahalliy_oak_jurnallari' %}">{{ tr.nav.local_oak }}</a>
+            <a href="{% url 'main:xalqaro_oak_jurnallari' %}">{{ tr.nav.intl_oak }}</a>
+            <a href="{% url 'main:xalqaro_konferensiyalar' %}">{{ tr.nav.intl_conf }}</a>
+            <a href="{% url 'main:respublika_konferensiyalar' %}">{{ tr.nav.republic_conf }}</a>
+            <a href="{% url 'main:dissertatsiyalar_banki' %}">{{ tr.nav.dissertations }}</a>
+            <a href="{% url 'main:maqolalar_banki' %}">{{ tr.nav.articles }}</a>
+            <a href="{% url 'main:adabiyotlar' %}">{{ tr.nav.literature }}</a>
           </div>
         </div>
 
         <div class="dropdown">
           <button>
-            <span>Xizmatlar</span>
+            <span>{{ tr.nav.services }}</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
           </button>
           <div class="dropdown-menu">
-            <a href="{% url 'main:service' %}">Maqola tahriri va tarjima xizmati</a>
-            <a href="{% url 'main:maqola_jurnal_tavsiyasi' %}">Maqola mazmuniga mos jurnalni tavsiya etish</a>
-            <a href="{% url 'main:ilmiy_nizomlar' %}">Ilmiy tadqiqotchilar uchun nizomlar</a>
-            <a href="{% url 'main:platforma_haqida' %}">Platforma haqida</a>
+            <a href="{% url 'main:service' %}">{{ tr.nav.edit_translate }}</a>
+            <a href="{% url 'main:maqola_jurnal_tavsiyasi' %}">{{ tr.nav.journal_advice }}</a>
+            <a href="{% url 'main:ilmiy_nizomlar' %}">{{ tr.nav.regulations }}</a>
+            <a href="{% url 'main:platforma_haqida' %}">{{ tr.nav.about }}</a>
           </div>
         </div>
       </div>
 
       <div style="display: flex; align-items: center; gap: 16px;">
-        <button id="theme-toggle" class="theme-toggle-btn" title="Rangni o'zgartirish">
+        <form method="post" action="{% url 'main:set_language' %}" class="lang-switcher">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          {% for item in available_langs %}
+          <button type="submit" name="language" value="{{ item.code }}" class="lang-flag{% if lang == item.code %} active{% endif %}" title="{{ item.name }}">{{ item.flag }}</button>
+          {% endfor %}
+        </form>
+        <button id="theme-toggle" class="theme-toggle-btn" title="{{ tr.site.theme }}">
           <svg id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
             <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
           </svg>
@@ -145,25 +152,25 @@
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
               </svg>
-              <span>Profil</span>
+              <span>{{ tr.nav.profile }}</span>
             </a>
             <a href="{% url 'main:settings' %}" class="user-dropdown-item">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/>
               </svg>
-              <span>Sozlamalar</span>
+              <span>{{ tr.nav.settings }}</span>
             </a>
             <div class="user-dropdown-divider"></div>
             <a href="{% url 'main:logout' %}" class="user-dropdown-item logout-item">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
               </svg>
-              <span>Chiqish</span>
+              <span>{{ tr.nav.logout }}</span>
             </a>
           </div>
         </div>
         {% else %}
-        <a href="{% url 'main:login' %}" id="auth-button" class="auth-btn">Tizimga kirish</a>
+        <a href="{% url 'main:login' %}" id="auth-button" class="auth-btn">{{ tr.nav.login }}</a>
         {% endif %}
         
         <button id="open-menu" class="mobile-menu-btn">
@@ -175,25 +182,31 @@
 
   <!-- Mobile Menu -->
   <div id="mobile-navlinks" class="mobile-menu">
-    <a href="{% url 'main:home' %}">Bosh Sahifa</a>
-    <a href="{% url 'main:courses' %}">Online Kurslar</a>
-    <a href="{% url 'main:assessment_test' %}">Iqtidorli Talabamisiz?</a>
-    <a href="{% url 'main:davlat_stipendiyalari' %}">Davlat stipendiyalari</a>
-    <a href="{% url 'main:buxdu_stipendiyalari' %}">BuxDU stipendiyalari</a>
-    <a href="{% url 'main:buxdu_stipendiya_bazasi' %}">BuxDU stipendiya sovrindorlari</a>
-    <a href="#">Xalqaro grant va olimpiadalar</a>
-    <a href="{% url 'main:buxdu_olimpiada_goliblari' %}">BuxDU olimpiada g'oliblari</a>
-    <a href="{% url 'main:buxdu_olimpiadalari' %}">BuxDU olimpiadalari</a>
-    <a href="{% url 'main:mahalliy_oak_jurnallari' %}">Mahalliy OAK jurnallari</a>
-    <a href="{% url 'main:xalqaro_oak_jurnallari' %}">Xalqaro OAK jurnallari</a>
-    <a href="{% url 'main:xalqaro_konferensiyalar' %}">Xalqaro konferensiyalar</a>
-    <a href="{% url 'main:respublika_konferensiyalar' %}">Respublika konferensiyalar</a>
-    <a href="{% url 'main:dissertatsiyalar_banki' %}">Dissertatsiyalar banki</a>
-    <a href="{% url 'main:maqolalar_banki' %}">Maqolalar banki</a>
-    <a href="{% url 'main:service' %}">Xizmatlar</a>
-    <a href="{% url 'main:maqola_jurnal_tavsiyasi' %}">Maqola mazmuniga mos jurnalni tavsiya etish</a>
-    <a href="{% url 'main:ilmiy_nizomlar' %}">Ilmiy tadqiqotchilar uchun nizomlar</a>
-    <a href="{% url 'main:login' %}" id="mobile-auth-button" class="auth-btn" style="margin-top: 16px;">Tizimga kirish</a>
+    <a href="{% url 'main:home' %}">{{ tr.nav.home }}</a>
+    <a href="{% url 'main:courses' %}">{{ tr.nav.courses }}</a>
+    <a href="{% url 'main:assessment_test' %}">{{ tr.nav.talent }}</a>
+    <a href="{% url 'main:iqtidorli_sorovnoma' %}">{{ tr.nav.survey }}</a>
+    <a href="{% url 'main:iqtidor_yoli' %}">{{ tr.nav.iqtidor_yoli }}</a>
+    <a href="{% url 'main:davlat_stipendiyalari' %}">{{ tr.nav.state_scholarships }}</a>
+    <a href="{% url 'main:buxdu_stipendiyalari' %}">{{ tr.nav.buxdu_scholarships }}</a>
+    <a href="{% url 'main:buxdu_stipendiya_bazasi' %}">{{ tr.nav.buxdu_winners }}</a>
+    <a href="{% url 'main:xalqaro_olimpiadalar' %}">{{ tr.nav.intl_olympiads }}</a>
+    <a href="{% url 'main:respublika_olimpiadalar' %}">{{ tr.nav.republic_olympiads }}</a>
+    <a href="{% url 'main:onlayn_olimpiadalar' %}">{{ tr.nav.online_olympiads }}</a>
+    <a href="{% url 'main:buxdu_olimpiada_goliblari' %}">{{ tr.nav.buxdu_olympiad_winners }}</a>
+    <a href="{% url 'main:buxdu_olimpiadalari' %}">{{ tr.nav.buxdu_olympiads }}</a>
+    <a href="{% url 'main:mahalliy_oak_jurnallari' %}">{{ tr.nav.local_oak }}</a>
+    <a href="{% url 'main:xalqaro_oak_jurnallari' %}">{{ tr.nav.intl_oak }}</a>
+    <a href="{% url 'main:xalqaro_konferensiyalar' %}">{{ tr.nav.intl_conf }}</a>
+    <a href="{% url 'main:respublika_konferensiyalar' %}">{{ tr.nav.republic_conf }}</a>
+    <a href="{% url 'main:dissertatsiyalar_banki' %}">{{ tr.nav.dissertations }}</a>
+    <a href="{% url 'main:maqolalar_banki' %}">{{ tr.nav.articles }}</a>
+    <a href="{% url 'main:adabiyotlar' %}">{{ tr.nav.literature }}</a>
+    <a href="{% url 'main:service' %}">{{ tr.nav.services }}</a>
+    <a href="{% url 'main:maqola_jurnal_tavsiyasi' %}">{{ tr.nav.journal_advice }}</a>
+    <a href="{% url 'main:ilmiy_nizomlar' %}">{{ tr.nav.regulations }}</a>
+    <a href="{% url 'main:platforma_haqida' %}">{{ tr.nav.about }}</a>
+    <a href="{% url 'main:login' %}" id="mobile-auth-button" class="auth-btn" style="margin-top: 16px;">{{ tr.nav.login }}</a>
     <button id="close-menu" class="close-btn">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
     </button>
@@ -208,15 +221,15 @@
         <div class="footer-column footer-brand">
           <div class="footer-logo-row">
             <img src="{% static 'assets/favico.png' %}" alt="Yosh Tadqiqotchi" class="footer-logo" />
-            <span class="footer-brand-name">Yosh Tadqiqotchi Ta'lim Platformasi</span>
+            <span class="footer-brand-name">{{ tr.site.brand }}</span>
           </div>
           <p class="text-muted footer-brand-text">
-            Iqtidorli talabalar uchun imtiyozli stipendiyalar, fan olimpiadalari va ta'lim imkoniyatlari yagona platformada.
+            {{ tr.site.tagline }}
           </p>
         </div>
 
         <div class="footer-column">
-          <h3 class="footer-title">Aloqa</h3>
+          <h3 class="footer-title">{{ tr.footer.contact }}</h3>
           <ul class="footer-list">
             <li>
               <a href="mailto:u.m.xalikova@buxdu.uz">
@@ -233,33 +246,33 @@
             <li>
               <span>
                 <i class="fas fa-location-dot"></i>
-                Buxoro sh., M.Iqbol ko'chasi, 11-uy
+                {{ tr.site.address }}
               </span>
             </li>
           </ul>
         </div>
 
         <div class="footer-column">
-          <h3 class="footer-title">Tezkor linklar</h3>
+          <h3 class="footer-title">{{ tr.footer.quick }}</h3>
           <ul class="footer-list">
-            <li><a href="{% url 'main:home' %}">Bosh sahifa</a></li>
-            <li><a href="{% url 'main:davlat_stipendiyalari' %}">Imtiyozli stipendiyalar</a></li>
-            <li><a href="{% url 'main:home' %}#features">Kurslar</a></li>
-            <li><a href="{% url 'main:login' %}">Tizimga kirish</a></li>
+            <li><a href="{% url 'main:home' %}">{{ tr.nav.home }}</a></li>
+            <li><a href="{% url 'main:davlat_stipendiyalari' %}">{{ tr.nav.scholarships }}</a></li>
+            <li><a href="{% url 'main:home' %}#features">{{ tr.nav.courses }}</a></li>
+            <li><a href="{% url 'main:login' %}">{{ tr.nav.login }}</a></li>
           </ul>
         </div>
 
         <div class="footer-column">
-          <h3 class="footer-title">Foydali</h3>
+          <h3 class="footer-title">{{ tr.footer.useful }}</h3>
           <ul class="footer-list">
             <li>
               <a href="https://buxdu.uz" target="_blank" rel="noopener">
-                Buxoro Davlat Universiteti
+                {{ tr.footer.buxdu }}
               </a>
             </li>
             <li>
               <a href="{% url 'main:platforma_haqida' %}">
-                Platforma haqida
+                {{ tr.nav.about }}
               </a>
             </li>
           </ul>
@@ -268,7 +281,7 @@
 
       <div class="footer-bottom">
         <p class="text-muted">
-          © 2026 Yosh Tadqiqotchi Ta'lim Platformasi. Barcha huquqlar himoyalangan.
+          {{ tr.site.copyright }}
         </p>
       </div>
     </div>
@@ -278,6 +291,29 @@
   
   <!-- Scroll Animation Styles (Global) -->
   <style>
+  .lang-switcher {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(148, 163, 184, 0.12);
+      border-radius: 999px;
+      padding: 3px 5px;
+  }
+  .lang-flag {
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      opacity: 0.55;
+  }
+  .lang-flag.active, .lang-flag:hover {
+      opacity: 1;
+      background: rgba(139, 92, 246, 0.15);
+  }
   .scroll-section {
       opacity: 0;
       transform: translateY(80px) scale(0.95);
@@ -601,7 +637,7 @@
 
   <!-- Trigger -->
   <div class="chat-trigger" id="chatTrigger">
-    <span class="chat-bubble-hint">💬 Savolingiz Bormi?</span>
+    <span class="chat-bubble-hint">💬 {{ tr.chat.title }}</span>
     <button class="chat-btn" id="chatBtn" aria-label="Chatni ochish">
       <img class="chat-bot-img" src="{% static 'assets/chatbot.png' %}" alt="Tadqiqotchi AI" />
       <div class="chat-close-icon">
@@ -619,15 +655,15 @@
         <img src="{% static 'assets/chatbot.png' %}" alt="Bot" style="width:34px;height:34px;object-fit:cover;border-radius:50%;" onerror="this.style.display='none';this.parentElement.textContent='🤖';" />
       </div>
       <div class="chat-header-info">
-        <div class="chat-header-name">Yosh Tadqiqotchi AI</div>
-        <div class="chat-header-status">Onlayn · platforma yordamchisi</div>
+        <div class="chat-header-name">{{ tr.chat.bot }}</div>
+        <div class="chat-header-status">{{ tr.chat.online }}</div>
       </div>
     </div>
     <div class="chat-messages" id="chatMessages">
       <div class="chat-msg bot">Salom! Men Yosh Tadqiqotchi platformasi yordamchisiman. Stipendiya, olimpiada, kurslar, iqtidorli talaba va boshqa bo'limlar haqida so'rang — javoblar faqat shu sayt ma'lumotlariga asoslanadi.</div>
     </div>
     <div class="chat-input-row">
-      <input class="chat-input" id="chatInput" type="text" placeholder="Xabar yozing..." autocomplete="off" maxlength="500" />
+      <input class="chat-input" id="chatInput" type="text" placeholder="{{ tr.chat.placeholder }}" autocomplete="off" maxlength="500" />
       <button class="chat-send" id="chatSend" aria-label="Yuborish">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
@@ -745,7 +781,7 @@
       .then(r => r.json())
       .then(data => {
         typing.remove();
-        const replyText = data.reply || 'Javob olishda xatolik.';
+        const replyText = data.reply || '{{ tr.chat.error|escapejs }}';
         addMessage(replyText, 'bot');
         chatHistory.push({ role: 'user', content: userText });
         chatHistory.push({ role: 'assistant', content: replyText });
@@ -756,7 +792,7 @@
       })
       .catch(() => {
         typing.remove();
-        addMessage('Tarmoq xatosi. Qayta urinib ko\'ring.', 'bot');
+        addMessage('{{ tr.chat.network|escapejs }}', 'bot');
       });
     }
 

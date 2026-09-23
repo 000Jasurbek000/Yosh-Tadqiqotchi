@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Tizimga kirish - Yosh Tadqiqotchi{% endblock %}
+{% block title %}{{ tr.auth.login_title }} - {{ tr.site.name }}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -101,7 +101,7 @@
 
 <!-- Right Side - Login Form -->
 <div class="glass-effect animate-fadeInUp" style="animation-delay: 0.2s;">
-    <h2 class="title" style="font-size: 32px; margin-bottom: 8px; text-align: center;">Tizimga kirish</h2>
+    <h2 class="title" style="font-size: 32px; margin-bottom: 8px; text-align: center;">{{ tr.auth.login_title }}</h2>
     <p class="text-muted" style="text-align: center; margin-bottom: 32px;">Grant va stipendiyalar bo'limiga kirish uchun ma'lumotlaringizni kiriting</p>
 
     {% if messages %}
@@ -156,7 +156,7 @@
             <a href="#" class="text-link" style="font-size: 14px;">Parolni unutdingizmi?</a>
         </div>
 
-        <button type="submit" class="form-btn">Kirish</button>
+        <button type="submit" class="form-btn">{{ tr.auth.login_btn }}</button>
     </form>
 
     <p class="text-center mt-4 text-muted">

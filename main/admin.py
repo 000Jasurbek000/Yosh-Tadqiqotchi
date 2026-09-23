@@ -90,7 +90,7 @@ admin.site.login_form = AdminLoginForm
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     list_display = ('username', 'phone_number', 'email', 'first_name', 'last_name', 'faculty', 'education_direction', 'education_stage', 'role', 'status', 'assessment_status')
-    list_filter = ('role', 'status', 'academic_degree', 'assessment_status', 'faculty', 'is_staff', 'is_superuser')
+    list_filter = ('role', 'status', 'academic_degree', 'education_stage', 'assessment_status', 'faculty', 'is_staff', 'is_superuser')
     search_fields = ('username', 'email', 'first_name', 'last_name', 'phone_number', 'university', 'faculty', 'education_direction', 'education_stage')
     fieldsets = BaseUserAdmin.fieldsets + (
         ('Qo\'shimcha ma\'lumotlar', {'fields': ('phone_number', 'residence_region', 'university', 'faculty', 'education_direction', 'education_stage', 'academic_degree', 'role', 'profile_image')}),
@@ -135,10 +135,11 @@ class ModuleInline(admin.TabularInline):
 # Test to'plamlari admin
 @admin.register(TestSet)
 class TestSetAdmin(admin.ModelAdmin):
-    list_display = ('name', 'question_count', 'created_at')
+    list_display = ('name', 'target_level', 'question_count', 'created_at')
     search_fields = ('name', 'description')
+    list_filter = ('target_level',)
     readonly_fields = ('question_count', 'created_at', 'updated_at')
-    fields = ('name', 'description', 'question_count', 'created_at', 'updated_at')
+    fields = ('name', 'target_level', 'description', 'question_count', 'created_at', 'updated_at')
     
     def question_count(self, obj):
         if obj.pk:
@@ -549,7 +550,7 @@ class AssessmentTestResultAdmin(admin.ModelAdmin):
         'assessment_test', 'percentage_display', 'passed', 'correct_answers', 'total_questions', 'submitted_at',
     )
     list_display_links = ('user', 'assessment_test')
-    list_filter = ('passed', 'assessment_test', 'submitted_at', 'user__faculty')
+    list_filter = ('passed', 'assessment_test', 'submitted_at', 'user__faculty', 'user__education_stage', 'user__academic_degree')
     search_fields = (
         'user__email', 'user__first_name', 'user__last_name', 'user__phone_number',
         'user__faculty', 'user__education_direction', 'user__education_stage',

@@ -344,7 +344,7 @@
                 <div class="question-text">{{ question.text }}</div>
                 
                 <div class="answers">
-                    {% for answer in question.answers.all %}
+                    {% for answer in question.shuffled_answers %}
                     <div class="answer-option" onclick="selectAnswer({{ question.id }}, {{ answer.id }}, this)">
                         <div class="answer-radio"></div>
                         <div class="answer-text">{{ answer.text }}</div>
