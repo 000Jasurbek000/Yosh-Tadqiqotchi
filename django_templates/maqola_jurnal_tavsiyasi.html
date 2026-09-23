@@ -130,23 +130,22 @@
     <div class="subpage-hero-inner">
       <div class="subpage-hero-text">
         <div class="subpage-breadcrumb">
-          <a href="{% url 'main:home' %}">Bosh sahifa</a>
+          <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
           <span>//</span>
-          <span>Xizmatlar</span>
+          <span>{{ tr.nav.services }}</span>
           <span>//</span>
-          <span>Maqolaga mos jurnal tavsiyasi</span>
+          <span>{{ tr.pages.journal_advice }}</span>
         </div>
-        <h1 class="title subpage-title">Maqola mazmuniga mos jurnalni tavsiya etish</h1>
+        <h1 class="title subpage-title">{{ tr.pages.journal_advice }}</h1>
         <p class="subtitle subpage-subtitle">
-          Maqolangiz mazmuni, soha va tiliga mos, OAK yoki xalqaro bazalarda indekslangan jurnallarni tavsiya qilish xizmati.
-          So'rovingizni yuboring — mutaxassislar tez orada siz bilan bog'lanadi.
+          {{ tr.svc.journal_sub }}
         </p>
       </div>
       <div class="subpage-hero-illustration">
         <div class="subpage-hero-pill">
           <span class="badge" style="margin-bottom: 0;">
             <i class="fas fa-newspaper"></i>
-            <span>Jurnal tavsiyasi</span>
+            <span>{{ tr.svc.journal_badge }}</span>
           </span>
         </div>
         <div class="subpage-hero-image-wrapper">
@@ -160,7 +159,7 @@
     <div class="stipendiya-container">
       <div class="card stipendiya-table-card">
         <div class="stipendiya-table-header">
-          <h2 class="subtitle">1. Maqola faylini va ma'lumotlarni yuborish</h2>
+          <h2 class="subtitle">{{ tr.svc.send_file }}</h2>
           <p class="text-muted">
             Quyidagi forma orqali maqolangiz faylini yuklab, F.I.O va aloqa ma'lumotlaringizni kiritib, mavzuga mos jurnal
             tavsiyasi uchun so'rov yuborishingiz mumkin.
@@ -227,7 +226,7 @@
             </div>
 
             <div>
-              <h3 class="subtitle" style="font-size: 15px;">Murojaatchi ma'lumotlari</h3>
+              <h3 class="subtitle" style="font-size: 15px;">{{ tr.svc.applicant }}</h3>
               <p class="text-muted" style="font-size: 13px;">
                 Jurnal tavsiyasi tayyor bo'lgach siz bilan bog'lanish uchun quyidagi ma'lumotlarni to'ldiring.
               </p>
@@ -239,13 +238,13 @@
                          placeholder="Familiya Ism Sharifingiz" />
                 </div>
                 <div class="journal-form-field">
-                  <label>Email manzilingiz</label>
+                  <label>{{ tr.auth.email }}</label>
                   <input type="email" name="email" required
                          value="{{ prefill_email }}"
                          placeholder="email@manzil.uz" />
                 </div>
                 <div class="journal-form-field">
-                  <label>Telefon raqam</label>
+                  <label>{{ tr.auth.phone }}</label>
                   <input type="text" name="phone"
                          value="{{ prefill_phone }}"
                          placeholder="+998 XX XXX XX XX" />
@@ -259,7 +258,7 @@
             </div>
 
             <div>
-              <h3 class="subtitle" style="font-size: 15px;">To'lov</h3>
+              <h3 class="subtitle" style="font-size: 15px;">{{ tr.svc.pay }}</h3>
               <p class="text-muted" style="font-size: 13px;">
                 So'rov yuborilgach, to'lov tafsilotlari siz bilan alohida kelishiladi.
                 Click, Payme yoki bank o'tkazmasi orqali to'lash mumkin.
@@ -269,7 +268,7 @@
             <div class="journal-form-footer">
               <button class="btn-gradient stipendiya-action-btn" type="submit">
                 <i class="fas fa-paper-plane"></i>
-                So'rovni yuborish
+                {{ tr.svc.send_req }}
               </button>
             </div>
           </form>

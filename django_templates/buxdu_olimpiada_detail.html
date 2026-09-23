@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ olympiad.subject }} - BuxDU olimpiadasi - Yosh Tadqiqotchi{% endblock %}
+{% block title %}{{ olympiad.subject }} - {{ tr.pages.buxdu_olympiads }} - {{ tr.site.name }}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -346,9 +346,9 @@
 <section class="olympiad-detail-section">
     <!-- Breadcrumb -->
     <div class="detail-breadcrumb">
-        <a href="{% url 'main:home' %}">Bosh sahifa</a>
+        <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
         <span>//</span>
-        <a href="{% url 'main:buxdu_olimpiadalari' %}">BuxDU olimpiadalari</a>
+        <a href="{% url 'main:buxdu_olimpiadalari' %}">{{ tr.pages.buxdu_olympiads }}</a>
         <span>//</span>
         <span>{{ olympiad.subject }}</span>
     </div>
@@ -367,10 +367,10 @@
             <div class="status-badge {% if olympiad.is_finished %}status-finished{% else %}status-upcoming{% endif %}">
                 {% if olympiad.is_finished %}
                     <i class="fas fa-check-circle"></i>
-                    <span>Tugagan</span>
+                    <span>{{ tr.ui.finished }}</span>
                 {% else %}
                     <i class="fas fa-clock"></i>
-                    <span>Kutilmoqda</span>
+                    <span>{{ tr.ui.pending }}</span>
                 {% endif %}
             </div>
             <div class="date-badge">
@@ -390,7 +390,7 @@
     <div style="margin-bottom: 20px;">
         <a href="{{ olympiad.program_file.url }}" download class="download-btn">
             <i class="fas fa-file-pdf"></i>
-            <span>Olimpiada dasturini yuklash</span>
+            <span>{{ tr.olimp.program_dl }}</span>
         </a>
     </div>
     {% endif %}
@@ -401,7 +401,7 @@
             {% if olympiad.registration_link_1 or olympiad.registration_link_2 %}
             <h3>
                 <i class="fas fa-user-plus"></i>
-                Ro'yxatdan o'tish
+                {{ tr.olimp.reg }}
             </h3>
             
             {% if olympiad.registration_link_1 %}
@@ -423,7 +423,7 @@
             <div class="gallery-section">
                 <h3>
                     <i class="fas fa-images"></i>
-                    Olimpiada jarayonidan fotolavhalar
+                    {{ tr.olimp.gallery }}
                 </h3>
                 
                 {% if gallery_images %}
@@ -437,7 +437,7 @@
                 {% else %}
                 <div class="gallery-empty">
                     <i class="fas fa-info-circle" style="font-size: 32px; margin-bottom: 12px; display: block; opacity: 0.5;"></i>
-                    <p>Hozircha fotolavhalar yuklanmagan</p>
+                    <p>{{ tr.olimp.no_photos }}</p>
                 </div>
                 {% endif %}
             </div>
@@ -446,7 +446,7 @@
             <div style="margin-top: 32px;">
                 <a href="{{ olympiad.result_file.url }}" download class="download-btn">
                     <i class="fas fa-file-alt"></i>
-                    <span>Olimpiada natijalari va ma'lumotlarini yuklash</span>
+                    <span>{{ tr.olimp.results_dl }}</span>
                 </a>
             </div>
             {% endif %}

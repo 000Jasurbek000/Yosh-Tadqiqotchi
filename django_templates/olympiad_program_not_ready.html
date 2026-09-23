@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ olympiad_title }} — Tayyorlash bosqichida{% endblock %}
+{% block title %}{{ olympiad_title }} — {{ tr.pages.not_ready }}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -53,20 +53,20 @@
         <div class="subpage-hero-inner">
             <div class="subpage-hero-text">
                 <div class="subpage-breadcrumb">
-                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                     <span>//</span>
-                    <a href="{% url 'main:iqtidor_yoli' %}">Iqtidor Yo'li</a>
+                    <a href="{% url 'main:iqtidor_yoli' %}">{{ tr.nav.iqtidor_yoli }}</a>
                     <span>//</span>
-                    <span>Topshiriqlar bazasi</span>
+                    <span>{{ tr.ui.tasks }}</span>
                 </div>
                 <h1 class="title subpage-title">{{ olympiad_title }}</h1>
-                <p class="subtitle subpage-subtitle">Olimpiada uchun topshiriqlar bazasi</p>
+                <p class="subtitle subpage-subtitle">{{ tr.olimp.soon_sub }}</p>
             </div>
             <div class="subpage-hero-illustration">
                 <div class="subpage-hero-pill">
                     <span class="badge" style="margin-bottom: 0;">
                         <i class="fas fa-clock"></i>
-                        <span>Tez orada</span>
+                        <span>{{ tr.ui.coming_soon }}</span>
                     </span>
                 </div>
                 <div class="subpage-hero-image-wrapper">
@@ -79,13 +79,13 @@
     <div class="nr-container">
         <div class="nr-card">
             <div class="nr-icon"><i class="fas fa-hourglass-half"></i></div>
-            <h2>Tez orada tayyor bo'ladi</h2>
+            <h2>{{ tr.olimp.soon_title }}</h2>
             <p>
                 Hozircha ushbu olimpiada uchun topshiriqlar bazasi va batafsil ma'lumotlar admin
                 tomonidan kiritilmoqda. Iltimos, biroz vaqtdan keyin yana tashrif buyuring.
             </p>
             <a href="{% url 'main:iqtidor_yoli' %}" class="nr-back">
-                <i class="fas fa-arrow-left"></i> Iqtidor Yo'li sahifasiga qaytish
+                <i class="fas fa-arrow-left"></i> {{ tr.olimp.soon_back }}
             </a>
         </div>
     </div>

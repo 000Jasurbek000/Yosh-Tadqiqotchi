@@ -229,7 +229,7 @@
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                         <path d="m9 11 3 3L22 4"/>
                     </svg>
-                    Faol
+                    {{ tr.ui.active }}
                 </span>
                 {% if user.residence_region %}
                 <span class="profile-badge badge-region">
@@ -312,62 +312,62 @@
                         <circle cx="12" cy="7" r="4"/>
                     </svg>
                 </div>
-                <h2 class="profile-card-title">Shaxsiy ma'lumotlar</h2>
+                <h2 class="profile-card-title">{{ tr.prof.personal }}</h2>
             </div>
             <ul class="profile-info-list">
                 <li class="profile-info-item">
-                    <span class="info-label">Ism</span>
+                    <span class="info-label">{{ tr.auth.first_name }}</span>
                     <span class="info-value">{{ user.first_name }}</span>
                 </li>
                 <li class="profile-info-item">
-                    <span class="info-label">Familiya</span>
+                    <span class="info-label">{{ tr.auth.last_name }}</span>
                     <span class="info-value">{{ user.last_name }}</span>
                 </li>
                 {% if user.email %}
                 <li class="profile-info-item full-width">
-                    <span class="info-label">Email</span>
+                    <span class="info-label">{{ tr.auth.email }}</span>
                     <span class="info-value">{{ user.email }}</span>
                 </li>
                 {% endif %}
                 {% if user.phone_number %}
                 <li class="profile-info-item">
-                    <span class="info-label">Telefon</span>
+                    <span class="info-label">{{ tr.auth.phone }}</span>
                     <span class="info-value">{{ user.phone_number }}</span>
                 </li>
                 {% endif %}
                 {% if user.residence_region %}
                 <li class="profile-info-item">
-                    <span class="info-label">Yashash xudud</span>
+                    <span class="info-label">{{ tr.auth.region }}</span>
                     <span class="info-value">{{ user.residence_region }}</span>
                 </li>
                 {% endif %}
                 {% if user.academic_degree %}
                 <li class="profile-info-item">
-                    <span class="info-label">Ilmiy daraja</span>
+                    <span class="info-label">{{ tr.auth.degree }}</span>
                     <span class="info-value">{{ user.get_academic_degree_display }}</span>
                 </li>
                 {% endif %}
                 {% if user.university %}
                 <li class="profile-info-item full-width">
-                    <span class="info-label">O'qigan/O'qiyotgan joy</span>
+                    <span class="info-label">{{ tr.auth.university }}</span>
                     <span class="info-value">{{ user.university }}</span>
                 </li>
                 {% endif %}
                 {% if user.faculty %}
                 <li class="profile-info-item full-width">
-                    <span class="info-label">Fakultet</span>
+                    <span class="info-label">{{ tr.auth.faculty }}</span>
                     <span class="info-value">{{ user.faculty }}</span>
                 </li>
                 {% endif %}
                 {% if user.education_direction %}
                 <li class="profile-info-item full-width">
-                    <span class="info-label">Ta'lim yo'nalishi</span>
+                    <span class="info-label">{{ tr.auth.direction }}</span>
                     <span class="info-value">{{ user.education_direction }}</span>
                 </li>
                 {% endif %}
                 {% if user.education_stage %}
                 <li class="profile-info-item">
-                    <span class="info-label">Ta'lim bosqichi / kurs</span>
+                    <span class="info-label">{{ tr.auth.stage }}</span>
                     <span class="info-value">{{ user.education_stage }}</span>
                 </li>
                 {% endif %}
@@ -387,19 +387,19 @@
                         <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
                     </svg>
                 </div>
-                <h2 class="profile-card-title">Faoliyat</h2>
+                <h2 class="profile-card-title">{{ tr.prof.activity }}</h2>
             </div>
             <ul class="profile-info-list">
                 <li class="profile-info-item">
-                    <span class="info-label">Ro'yxatdan o'tgan</span>
+                    <span class="info-label">{{ tr.prof.registered }}</span>
                     <span class="info-value">{{ user.date_joined|date:"d.m.Y" }}</span>
 </li>
                 <li class="profile-info-item">
-                    <span class="info-label">Oxirgi kirish</span>
-                    <span class="info-value">{% if user.last_login %}{{ user.last_login|date:"d.m.Y H:i" }}{% else %}Birinchi marta{% endif %}</span>
+                    <span class="info-label">{{ tr.prof.last_login }}</span>
+                    <span class="info-value">{% if user.last_login %}{{ user.last_login|date:"d.m.Y H:i" }}{% else %}{{ tr.prof.first_time }}{% endif %}</span>
                 </li>
                 <li class="profile-info-item">
-                    <span class="info-label">Status</span>
+                    <span class="info-label">{{ tr.prof.status }}</span>
                     <span class="info-value">{{ user.status|capfirst }}</span>
                 </li>
             </ul>
@@ -414,13 +414,13 @@
                         <path d="M6 12v5c3 3 9 3 12 0v-5"/>
                     </svg>
                 </div>
-                <h2 class="profile-card-title">Saralash testi</h2>
+                <h2 class="profile-card-title">{{ tr.prof.test }}</h2>
             </div>
             <div style="padding: 20px;">
                 <div style="background: linear-gradient(135deg, {% if user.assessment_status == 'iqtidorli' %}#4facfe 0%, #00f2fe{% else %}#f093fb 0%, #f5576c{% endif %} 100%); color: white; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 15px;">
                     <h3 style="margin: 0 0 8px 0; font-size: 18px;">
                         {% if user.assessment_status == 'iqtidorli' %}
-                            <i class="fas fa-star"></i> Iqtidorli talaba
+                            <i class="fas fa-star"></i> {{ tr.prof.talented }}
                         {% else %}
                             <i class="fas fa-user"></i> {{ user.assessment_status|capfirst }}
                         {% endif %}
@@ -428,13 +428,13 @@
                     {% if user.assessment_score > 0 %}
                     <p style="margin: 0; font-size: 28px; font-weight: 700;">{{ user.assessment_score|floatformat:1 }}%</p>
                     {% else %}
-                    <p style="margin: 0; font-size: 14px; opacity: 0.95;">Hali test topshirilmagan</p>
+                    <p style="margin: 0; font-size: 14px; opacity: 0.95;">{{ tr.prof.not_taken }}</p>
                     {% endif %}
                 </div>
                 
                 {% if assessment_results.exists %}
                 <div style="margin-bottom: 15px;">
-                    <h4 style="margin-bottom: 10px; color: #333; font-size: 14px;">Oxirgi natija:</h4>
+                    <h4 style="margin-bottom: 10px; color: #333; font-size: 14px;">{{ tr.prof.last_score }}</h4>
                     {% with assessment_results.first as result %}
                     <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; border-left: 4px solid {% if result.passed %}#10b981{% else %}#ef4444{% endif %};">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
@@ -444,9 +444,9 @@
                             </span>
                         </div>
                         <div style="font-size: 13px; color: #666;">
-                            <i class="fas fa-check-circle" style="color: #10b981;"></i> To'g'ri: {{ result.correct_answers }}/{{ result.total_questions }}
+                            <i class="fas fa-check-circle" style="color: #10b981;"></i> {{ tr.prof.correct }} {{ result.correct_answers }}/{{ result.total_questions }}
                             {% if result.time_taken %}
-                            • <i class="fas fa-clock" style="color: #667eea;"></i> Vaqt: {{ result.time_taken }}s
+                            • <i class="fas fa-clock" style="color: #667eea;"></i> {{ tr.prof.time }} {{ result.time_taken }}s
                             {% endif %}
                         </div>
                     </div>
@@ -458,13 +458,13 @@
                     {% if can_take_assessment %}
                     <a href="{% url 'main:assessment_test' %}" style="flex: 1; background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; padding: 14px 20px; border-radius: 10px; text-decoration: none; text-align: center; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <i class="fas fa-play"></i>
-                        {% if user.assessment_score > 0 %}Qayta topshirish{% else %}Test topshirish{% endif %}
+                        {% if user.assessment_score > 0 %}{{ tr.prof.retake }}{% else %}{{ tr.prof.take_test }}{% endif %}
                     </a>
                     {% else %}
                     <div style="flex: 1; background: #f0f0f0; color: #666; padding: 14px 20px; border-radius: 10px; text-align: center; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; flex-direction: column;">
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <i class="fas fa-lock"></i>
-                            <span>Keyingi urinish</span>
+                            <span>{{ tr.prof.next_try }}</span>
                         </div>
                         <span style="font-size: 18px; color: #667eea;" id="assessmentTimer">{{ assessment_wait_time.hours }}:{{ assessment_wait_time.minutes|stringformat:"02d" }}:00</span>
                     </div>
@@ -481,7 +481,7 @@
             <div class="profile-card-icon" style="background: linear-gradient(135deg,#8b5cf6,#d946ef);">
                 <i class="fas fa-user-tie" style="color:#fff;"></i>
             </div>
-            <h2 class="profile-card-title">Ilmiy rahbarlik so'rovlari</h2>
+            <h2 class="profile-card-title">{{ tr.prof.sup_req }}</h2>
         </div>
         <div class="profile-card-body">
             {% if accepted_supervisors %}
@@ -512,10 +512,10 @@
                 <table style="width:100%;border-collapse:collapse;font-size:14px;">
                     <thead>
                         <tr style="background:#f9fafb;border-bottom:2px solid #e5e7eb;">
-                            <th style="padding:12px 14px;text-align:left;font-weight:700;color:#4b5563;">Rahbar</th>
-                            <th style="padding:12px 14px;text-align:center;font-weight:700;color:#4b5563;">Holat</th>
-                            <th style="padding:12px 14px;text-align:left;font-weight:700;color:#4b5563;">Yuborilgan</th>
-                            <th style="padding:12px 14px;text-align:left;font-weight:700;color:#4b5563;">Javob</th>
+                            <th style="padding:12px 14px;text-align:left;font-weight:700;color:#4b5563;">{{ tr.prof.supervisor }}</th>
+                            <th style="padding:12px 14px;text-align:center;font-weight:700;color:#4b5563;">{{ tr.prof.state }}</th>
+                            <th style="padding:12px 14px;text-align:left;font-weight:700;color:#4b5563;">{{ tr.prof.sent_at }}</th>
+                            <th style="padding:12px 14px;text-align:left;font-weight:700;color:#4b5563;">{{ tr.prof.answer }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -528,15 +528,15 @@
                             <td style="padding:12px 14px;text-align:center;">
                                 {% if req.status == 'pending' %}
                                     <span style="background:#fef3c7;color:#92400e;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">
-                                        <i class="fas fa-hourglass-half"></i> Kutilmoqda
+                                        <i class="fas fa-hourglass-half"></i> {{ tr.prof.waiting }}
                                     </span>
                                 {% elif req.status == 'accepted' %}
                                     <span style="background:#d1fae5;color:#065f46;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">
-                                        <i class="fas fa-check-circle"></i> Qabul qilindi
+                                        <i class="fas fa-check-circle"></i> {{ tr.prof.accepted }}
                                     </span>
                                 {% else %}
                                     <span style="background:#fee2e2;color:#991b1b;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">
-                                        <i class="fas fa-times-circle"></i> Rad etildi
+                                        <i class="fas fa-times-circle"></i> {{ tr.ui.rejected }}
                                     </span>
                                 {% endif %}
                             </td>
@@ -560,16 +560,16 @@
             <div class="profile-card-icon" style="background: linear-gradient(135deg,#f59e0b,#d97706);">
                 <i class="fas fa-trophy" style="color:#fff;"></i>
             </div>
-            <h2 class="profile-card-title">Olimpiada va volontyor arizalari</h2>
+            <h2 class="profile-card-title">{{ tr.prof.apps }}</h2>
         </div>
         <div class="profile-card-body">
             <div style="overflow-x:auto;">
                 <table style="width:100%;border-collapse:collapse;font-size:14px;">
                     <thead>
                         <tr style="background:#f9fafb;border-bottom:2px solid #e5e7eb;">
-                            <th style="padding:12px 14px;text-align:left;font-weight:700;color:#4b5563;">Yo'nalish</th>
-                            <th style="padding:12px 14px;text-align:center;font-weight:700;color:#4b5563;">Holat</th>
-                            <th style="padding:12px 14px;text-align:left;font-weight:700;color:#4b5563;">Yuborilgan</th>
+                            <th style="padding:12px 14px;text-align:left;font-weight:700;color:#4b5563;">{{ tr.prof.direction }}</th>
+                            <th style="padding:12px 14px;text-align:center;font-weight:700;color:#4b5563;">{{ tr.prof.state }}</th>
+                            <th style="padding:12px 14px;text-align:left;font-weight:700;color:#4b5563;">{{ tr.prof.sent_at }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -584,19 +584,19 @@
                             <td style="padding:12px 14px;text-align:center;">
                                 {% if app.status == 'new' %}
                                     <span style="background:#dbeafe;color:#1e40af;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">
-                                        <i class="fas fa-clock"></i> Yangi
+                                        <i class="fas fa-clock"></i> {{ tr.ui.new }}
                                     </span>
                                 {% elif app.status == 'reviewed' %}
                                     <span style="background:#fef3c7;color:#92400e;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">
-                                        <i class="fas fa-eye"></i> Ko'rib chiqildi
+                                        <i class="fas fa-eye"></i> {{ tr.ui.reviewed }}
                                     </span>
                                 {% elif app.status == 'approved' %}
                                     <span style="background:#d1fae5;color:#065f46;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">
-                                        <i class="fas fa-check-circle"></i> Tasdiqlandi
+                                        <i class="fas fa-check-circle"></i> {{ tr.ui.approved }}
                                     </span>
                                 {% else %}
                                     <span style="background:#fee2e2;color:#991b1b;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">
-                                        <i class="fas fa-times-circle"></i> Rad etildi
+                                        <i class="fas fa-times-circle"></i> {{ tr.ui.rejected }}
                                     </span>
                                 {% endif %}
                             </td>
@@ -620,7 +620,7 @@
                     <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
                 </svg>
             </div>
-            <h2 class="profile-card-title">Mening kurslarim</h2>
+            <h2 class="profile-card-title">{{ tr.prof.my_courses }}</h2>
         </div>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; margin-top: 20px;">
@@ -639,7 +639,7 @@
                     <!-- Progress Bar -->
                     <div style="margin-bottom: 12px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                            <span style="font-size: 13px; font-weight: 600; color: #6b7280;">Progress</span>
+                            <span style="font-size: 13px; font-weight: 600; color: #6b7280;">{{ tr.prof.progress }}</span>
                             <span style="font-size: 13px; font-weight: 600; color: #3b82f6;">{{ data.progress_percentage }}%</span>
                         </div>
                         <div style="height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
@@ -651,12 +651,12 @@
                     <div style="display: flex; gap: 16px; margin-bottom: 16px; font-size: 13px; color: #6b7280;">
                         <div style="display: flex; align-items: center; gap: 4px;">
                             <i class="fas fa-check-circle" style="color: #10b981;"></i>
-                            <span>{{ data.completed_modules }}/{{ data.total_modules }} modul</span>
+                            <span>{{ data.completed_modules }}/{{ data.total_modules }} {{ tr.prof.module }}</span>
                         </div>
                         {% if data.progress.test_passed %}
                         <div style="display: flex; align-items: center; gap: 4px;">
                             <i class="fas fa-trophy" style="color: #f59e0b;"></i>
-                            <span>Test topshirildi</span>
+                            <span>{{ tr.prof.tested }}</span>
                         </div>
                         {% endif %}
                     </div>
@@ -665,16 +665,16 @@
                     <div style="display: flex; gap: 8px;">
                         {% if data.progress.is_completed and data.progress.test_passed %}
                         <button style="flex: 1; padding: 10px 16px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer;">
-                            <i class="fas fa-check-double"></i> Tugatilgan
+                            <i class="fas fa-check-double"></i> {{ tr.cp.done }}
                         </button>
                         {% else %}
                         <button style="flex: 1; padding: 10px 16px; background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer;">
-                            <i class="fas fa-play"></i> Davom ettirish
+                            <i class="fas fa-play"></i> {{ tr.prof.continue }}
                         </button>
                         {% endif %}
                         
                         <div style="font-size: 12px; color: #9ca3af; padding: 10px 0;">
-                            Boshlangan: {{ data.progress.started_at|date:"d.m.Y" }}
+                            {{ tr.prof.started }} {{ data.progress.started_at|date:"d.m.Y" }}
                         </div>
                     </div>
                 </div>
@@ -685,11 +685,11 @@
     {% else %}
     <div class="profile-card" style="grid-column: 1 / -1; text-align: center; padding: 60px 40px;">
         <i class="fas fa-book-open" style="font-size: 64px; color: #d1d5db; margin-bottom: 20px;"></i>
-        <h3 style="font-size: 20px; font-weight: 600; color: #6b7280; margin: 0 0 12px 0;">Hozircha kurslar yo'q</h3>
+        <h3 style="font-size: 20px; font-weight: 600; color: #6b7280; margin: 0 0 12px 0;">{{ tr.prof.no_courses }}</h3>
         <p style="color: #9ca3af; margin: 0 0 24px 0;">Siz hali birorta kursni boshlamagansiz</p>
         <a href="{% url 'main:courses' %}" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
             <i class="fas fa-book"></i>
-            <span>Kurslarni ko'rish</span>
+            <span>{{ tr.prof.see_courses }}</span>
         </a>
     </div>
     {% endif %}
@@ -708,7 +708,7 @@
                 <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
             </svg>
         </div>
-        <h2 class="profile-card-title">Mening sertifikatlarim</h2>
+        <h2 class="profile-card-title">{{ tr.prof.certs }}</h2>
         {% if certificates %}
         <span style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: 600; margin-left: auto;">{{ certificates|length }} ta</span>
         {% endif %}
@@ -743,7 +743,7 @@
                     <div style="display: flex; justify-content: space-between;">
                         <span style="font-size: 14px; color: #6b7280;">
                             <i class="fas fa-check-circle" style="font-size: 12px; margin-right: 4px;"></i>
-                            To'g'ri javoblar:
+                            {{ tr.cp.correct }}:
                         </span>
                         <span style="font-size: 14px; font-weight: 600; color: #3b82f6;">{{ certificate.test_result.correct_answers }}/{{ certificate.test_result.total_questions }}</span>
                     </div>
@@ -751,7 +751,7 @@
                 
                 <a href="{% url 'main:download_certificate' certificate.id %}" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; transition: all 0.3s; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(245, 158, 11, 0.35)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(245, 158, 11, 0.25)'">
                     <i class="fas fa-download"></i>
-                    <span>Yuklab olish</span>
+                    <span>{{ tr.ui.download }}</span>
                 </a>
             </div>
         </div>
@@ -763,13 +763,13 @@
         <div style="background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
             <i class="fas fa-award" style="font-size: 36px; color: white;"></i>
         </div>
-        <h3 style="font-size: 20px; font-weight: 600; color: #92400e; margin: 0 0 12px 0;">Hozircha sertifikatlar yo'q</h3>
+        <h3 style="font-size: 20px; font-weight: 600; color: #92400e; margin: 0 0 12px 0;">{{ tr.prof.no_certs }}</h3>
         <p style="color: #b45309; margin: 0 0 24px 0; max-width: 400px; margin-left: auto; margin-right: auto;">
             Kurslarni tugatib, testlardan muvaffaqiyatli o'ting va sertifikatlar oling
         </p>
         <a href="{% url 'main:courses' %}" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);">
             <i class="fas fa-book"></i>
-            <span>Kurslarni ko'rish</span>
+            <span>{{ tr.prof.see_courses }}</span>
         </a>
     </div>
     {% endif %}

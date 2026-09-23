@@ -33,14 +33,19 @@ class AttrDict:
 def load_catalog(lang):
     if lang not in SUPPORTED_LANGS:
         lang = DEFAULT_LANG
-    if lang in _cache:
-        return _cache[lang]
     path = _LOCALE_DIR / f'{lang}.json'
+    try:
+        mtime = path.stat().st_mtime
+    except OSError:
+        mtime = 0
+    cache_key = (lang, mtime)
+    if cache_key in _cache:
+        return _cache[cache_key]
     try:
         data = json.loads(path.read_text(encoding='utf-8'))
     except Exception:
         data = {}
-    _cache[lang] = data
+    _cache[cache_key] = data
     return data
 
 

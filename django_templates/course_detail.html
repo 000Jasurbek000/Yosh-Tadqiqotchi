@@ -2,7 +2,7 @@
 {% load static %}
 {% load custom_filters %}
 
-{% block title %}{{ course.name }} - Yosh Tadqiqotchi{% endblock %}
+{% block title %}{{ course.name }} - {{ tr.site.name }}{% endblock %}
 
 {% block extra_head %}
 <!-- PDF.js -->
@@ -154,9 +154,9 @@
     <div class="subpage-hero-inner">
         <div class="subpage-hero-text">
             <div class="subpage-breadcrumb">
-                <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                 <span>//</span>
-                <a href="{% url 'main:courses' %}">Kurslar</a>
+                <a href="{% url 'main:courses' %}">{{ tr.nav.courses }}</a>
                 <span>//</span>
                 <span>{{ course.name }}</span>
             </div>
@@ -166,7 +166,7 @@
             <div style="display: flex; gap: 24px; margin-top: 20px; flex-wrap: wrap;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-book" style="color: #3b82f6; font-size: 20px;"></i>
-                    <span style="color: #6b7280; font-weight: 500;">{{ course.module_count }} ta modul</span>
+                    <span style="color: #6b7280; font-weight: 500;">{{ course.module_count }} {{ tr.ui.modules }}</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-clock" style="color: #10b981; font-size: 20px;"></i>
@@ -174,7 +174,7 @@
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-trophy" style="color: #f59e0b; font-size: 20px;"></i>
-                    <span style="color: #6b7280; font-weight: 500;">O'tish: {{ course.passing_score }}%</span>
+                    <span style="color: #6b7280; font-weight: 500;">{{ tr.cp.pass_score }}: {{ course.passing_score }}%</span>
                 </div>
             </div>
         </div>
@@ -192,8 +192,8 @@
     <div class="stipendiya-container">
         <div class="card stipendiya-table-card">
             <div class="stipendiya-table-header">
-                <h2 class="subtitle">Kurs modullari</h2>
-                <p class="text-muted">Modullarni ketma-ket o'rganing. Har bir modulni tugatsangiz, keyingisi ochiladi.</p>
+                <h2 class="subtitle">{{ tr.cp.modules_title }}</h2>
+                <p class="text-muted">{{ tr.cp.modules_hint }}</p>
             </div>
             
             {% if modules %}
@@ -210,11 +210,11 @@
                             </div>
                             {% if module.is_completed %}
                             <span style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: white; color: #10b981; border-radius: 8px; font-size: 15px; font-weight: 600;">
-                                <i class="fas fa-check-circle"></i> Tugatilgan
+                                <i class="fas fa-check-circle"></i> {{ tr.cp.done }}
                             </span>
                             {% elif not module.is_unlocked %}
                             <span style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.3); color: white; border-radius: 8px; font-size: 15px; font-weight: 600;">
-                                <i class="fas fa-lock"></i> Yopiq
+                                <i class="fas fa-lock"></i> {{ tr.cp.locked }}
                             </span>
                             {% endif %}
                         </div>
@@ -231,7 +231,7 @@
                                         <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(255, 0, 0, 0.3);">
                                             <i class="fab fa-youtube" style="color: white; font-size: 26px;"></i>
                                         </div>
-                                        <span>Video Dars</span>
+                                        <span>{{ tr.cp.video }}</span>
                                     </h4>
                                     <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); border: 4px solid #e2e8f0;">
                                         <iframe 
@@ -250,7 +250,7 @@
                             <div style="padding: 40px; background: white; border-bottom: 4px solid #e2e8f0;">
                                 <div style="max-width: 1400px; margin: 0 auto; padding: 60px; background: #f9fafb; border-radius: 20px; border: 3px dashed #cbd5e1; text-align: center;">
                                     <i class="fas fa-video-slash" style="font-size: 64px; color: #cbd5e1; margin-bottom: 20px;"></i>
-                                    <p style="color: #64748b; margin: 0; font-size: 18px; font-weight: 600;">Video dars hozircha yuklanmagan</p>
+                                    <p style="color: #64748b; margin: 0; font-size: 18px; font-weight: 600;">{{ tr.cp.no_video }}</p>
                                 </div>
                             </div>
                             {% endif %}
@@ -263,7 +263,7 @@
                                         <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(239,68,68,0.4);">
                                             <i class="fas fa-file-pdf" style="color: white; font-size: 24px;"></i>
                                         </div>
-                                        <span>Taqdimot Materiallari (PDF)</span>
+                                        <span>{{ tr.cp.pdf }}</span>
                                     </h4>
 
                                     <!-- Flipbook Container -->
@@ -274,7 +274,7 @@
                                         <!-- Loading -->
                                         <div class="pflipper-loading" id="pflipper-loading-{{ module.id }}">
                                             <div class="pflipper-spinner"></div>
-                                            <p>PDF yuklanmoqda...</p>
+                                            <p>{{ tr.cp.pdf_loading }}</p>
                                             <div class="pflipper-progress-wrap">
                                                 <div class="pflipper-progress-bar" id="pflipper-bar-{{ module.id }}"></div>
                                             </div>
@@ -290,7 +290,7 @@
                                                         style="background: linear-gradient(135deg, #1e40af 0%, #0ea5e9 100%); color: white; border: none; border-radius: 50px; padding: 12px 25px; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(30,64,175,0.3);" 
                                                         onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(30,64,175,0.4)'" 
                                                         onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(30,64,175,0.3)'">
-                                                    <i class="fas fa-chevron-left"></i> Oldingi
+                                                    <i class="fas fa-chevron-left"></i> {{ tr.cp.prev }}
                                                 </button>
                                                 <div style="font-size: 15px; font-weight: 600; color: #1e40af; padding: 0 15px;">
                                                     <span id="pflipper-cur-{{ module.id }}">1</span>
@@ -301,13 +301,13 @@
                                                         style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; border-radius: 50px; padding: 12px 25px; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(245,158,11,0.3);" 
                                                         onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(245,158,11,0.4)'" 
                                                         onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(245,158,11,0.3)'">
-                                                    <i class="fas fa-external-link-alt"></i> To'liq ekran
+                                                    <i class="fas fa-external-link-alt"></i> {{ tr.cp.fullscreen }}
                                                 </button>
                                                 <button class="pflipper-next" id="pflipper-next-{{ module.id }}" disabled
                                                         style="background: linear-gradient(135deg, #1e40af 0%, #0ea5e9 100%); color: white; border: none; border-radius: 50px; padding: 12px 25px; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(30,64,175,0.3);" 
                                                         onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(30,64,175,0.4)'" 
                                                         onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(30,64,175,0.3)'">
-                                                    Keyingi <i class="fas fa-chevron-right"></i>
+                                                    {{ tr.cp.next }} <i class="fas fa-chevron-right"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -317,7 +317,7 @@
                             <div style="padding: 40px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
                                 <div style="max-width: 1400px; margin: 0 auto; padding: 60px; background: white; border-radius: 20px; border: 3px dashed #cbd5e1; text-align: center;">
                                     <i class="fas fa-file-pdf" style="font-size: 64px; color: #cbd5e1; margin-bottom: 20px;"></i>
-                                    <p style="color: #64748b; margin: 0; font-size: 18px; font-weight: 600;">Taqdimot hozircha yuklanmagan</p>
+                                    <p style="color: #64748b; margin: 0; font-size: 18px; font-weight: 600;">{{ tr.cp.no_pdf }}</p>
                                 </div>
                             </div>
                             {% endif %}
@@ -332,8 +332,8 @@
                                                 <i class="fas fa-{% if module.progress and module.progress.watched_video %}check-circle{% else %}circle{% endif %} video-status-{{ module.id }}" style="color: {% if module.progress and module.progress.watched_video %}white{% else %}#cbd5e1{% endif %}; font-size: 32px; transition: all 0.3s;"></i>
                                             </div>
                                             <div style="flex: 1;">
-                                                <div style="font-size: 18px; font-weight: 700; color: {% if module.progress and module.progress.watched_video %}#047857{% else %}#6b7280{% endif %}; margin-bottom: 4px;">Video Dars</div>
-                                                <div style="font-size: 14px; color: {% if module.progress and module.progress.watched_video %}#059669{% else %}#9ca3af{% endif %};">{% if module.progress and module.progress.watched_video %}✓ To'liq ko'rildi{% else %}80% ko'rish kerak{% endif %}</div>
+                                                <div style="font-size: 18px; font-weight: 700; color: {% if module.progress and module.progress.watched_video %}#047857{% else %}#6b7280{% endif %}; margin-bottom: 4px;">{{ tr.cp.video }}</div>
+                                                <div style="font-size: 14px; color: {% if module.progress and module.progress.watched_video %}#059669{% else %}#9ca3af{% endif %};">{% if module.progress and module.progress.watched_video %}✓ {{ tr.cp.video_full }}{% else %}{{ tr.cp.video_need }}{% endif %}</div>
                                             </div>
                                         </div>
                                         
@@ -342,8 +342,8 @@
                                                 <i class="fas fa-{% if module.progress and module.progress.viewed_presentation %}check-circle{% else %}circle{% endif %} presentation-status-{{ module.id }}" style="color: {% if module.progress and module.progress.viewed_presentation %}white{% else %}#cbd5e1{% endif %}; font-size: 32px; transition: all 0.3s;"></i>
                                             </div>
                                             <div style="flex: 1;">
-                                                <div style="font-size: 18px; font-weight: 700; color: {% if module.progress and module.progress.viewed_presentation %}#b91c1c{% else %}#6b7280{% endif %}; margin-bottom: 4px;">PDF Taqdimot</div>
-                                                <div style="font-size: 14px; color: {% if module.progress and module.progress.viewed_presentation %}#dc2626{% else %}#9ca3af{% endif %};">{% if module.progress and module.progress.viewed_presentation %}✓ Oxirgi sahifa ko'rildi{% else %}Oxirigacha o'qing{% endif %}</div>
+                                                <div style="font-size: 18px; font-weight: 700; color: {% if module.progress and module.progress.viewed_presentation %}#b91c1c{% else %}#6b7280{% endif %}; margin-bottom: 4px;">{{ tr.cp.pdf }}</div>
+                                                <div style="font-size: 14px; color: {% if module.progress and module.progress.viewed_presentation %}#dc2626{% else %}#9ca3af{% endif %};">{% if module.progress and module.progress.viewed_presentation %}✓ {{ tr.cp.pdf_last }}{% else %}{{ tr.cp.pdf_read }}{% endif %}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -359,20 +359,20 @@
                                                 data-presentation-done="{% if module.progress and module.progress.viewed_presentation %}true{% else %}false{% endif %}"
                                                 style="width: 100%; padding: 20px 32px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; border: none; border-radius: 16px; font-weight: 700; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4); transition: all 0.4s; {% if not is_admin and not module.progress or not is_admin and not module.progress.watched_video or not is_admin and not module.progress.viewed_presentation %}opacity: 0.4; pointer-events: none; filter: grayscale(1);{% endif %}">
                                             <i class="fas fa-check-double" style="font-size: 24px;"></i>
-                                            <span>Modulni tugatdim - Keyingisiga o'tish</span>
+                                            <span>{{ tr.cp.finish_module }}</span>
                                         </button>
                                     </div>
                                     {% else %}
                                     <div style="padding: 20px 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 16px; font-weight: 700; font-size: 20px; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);">
                                         <i class="fas fa-check-circle" style="font-size: 24px;"></i>
-                                        <span>Modul muvaffaqiyatli tugatildi!</span>
+                                        <span>{{ tr.cp.module_ok }}</span>
                                     </div>
                                     {% endif %}
                                     
                                     <!-- Info Message -->
                                     <div style="margin-top: 24px; padding: 20px; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-radius: 12px; border: 3px solid #fbbf24; text-align: center;">
                                         <i class="fas fa-info-circle" style="color: #f59e0b; font-size: 20px; margin-right: 8px;"></i>
-                                        <span style="color: #92400e; font-size: 16px; font-weight: 600;">Video va PDFni to'liq ko'rib chiqing, so'ngra "Modulni tugatdim" tugmasini bosing</span>
+                                        <span style="color: #92400e; font-size: 16px; font-weight: 600;">{{ tr.cp.finish_hint }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -380,8 +380,8 @@
                         <!-- Locked Module Content -->
                         <div style="padding: 48px; text-align: center; background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);">
                             <i class="fas fa-lock" style="font-size: 64px; color: #9ca3af; margin-bottom: 16px;"></i>
-                            <h4 style="margin: 0 0 8px 0; font-size: 20px; font-weight: 600; color: #6b7280;">Modul yopiq</h4>
-                            <p style="margin: 0; color: #9ca3af; font-size: 15px;">Avvalgi modulni tugatib, ushbu modulni oching</p>
+                            <h4 style="margin: 0 0 8px 0; font-size: 20px; font-weight: 600; color: #6b7280;">{{ tr.cp.locked_title }}</h4>
+                            <p style="margin: 0; color: #9ca3af; font-size: 15px;">{{ tr.cp.locked_hint }}</p>
                         </div>
                         {% endif %}
                     </div>
@@ -395,7 +395,7 @@
                     <div style="padding: 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 16px; margin: 24px; text-align: center; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);">
                         <i class="fas fa-award" style="font-size: 72px; color: white; margin-bottom: 16px;"></i>
                         <h3 style="color: white; margin: 0 0 12px 0; font-size: 28px; font-weight: 700;">
-                            Tabriklaymiz!
+                            {{ tr.cp.congrats }}
                         </h3>
                         <p style="color: rgba(255,255,255,0.95); font-size: 18px; margin: 0 0 24px 0;">
                             Siz kursni muvaffaqiyatli yakunladingiz! Natija: {{ course_progress.test_score }}%
@@ -404,7 +404,7 @@
                         <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
                             <a href="{% url 'main:course_test' course.id %}" class="btn-gradient" style="display: inline-flex; align-items: center; gap: 10px; padding: 16px 32px; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 17px; border: 2px solid white;">
                                 <i class="fas fa-redo" style="font-size: 20px;"></i>
-                                <span>Takrorlash</span>
+                                <span>{{ tr.cp.repeat }}</span>
                             </a>
                         </div>
                     </div>
@@ -416,26 +416,26 @@
                                 <!-- Can retry now -->
                                 <i class="fas fa-trophy" style="font-size: 72px; color: white; margin-bottom: 16px;"></i>
                                 <h3 style="color: white; margin: 0 0 12px 0; font-size: 28px; font-weight: 700;">
-                                    Testni qayta topshiring
+                                    {{ tr.cp.retake }}
                                 </h3>
                                 <p style="color: rgba(255,255,255,0.95); margin: 0 0 8px 0; font-size: 17px;">
-                                    Oxirgi natija: {{ last_test.percentage }}% (O'tish bali: {{ course.passing_score }}%)
+                                    {{ tr.assess_ui.last_result }}: {{ last_test.percentage }}% ({{ tr.cp.pass_score }}: {{ course.passing_score }}%)
                                 </p>
                                 <p style="color: rgba(255,255,255,0.85); margin: 0 0 24px 0; font-size: 15px;">
                                     Testni ixtiyoriy takrorlashingiz mumkin
                                 </p>
                                 <a href="{% url 'main:course_test' course.id %}" class="btn-gradient" style="display: inline-flex; align-items: center; gap: 10px; padding: 16px 40px; background: white; color: #667eea; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 17px; box-shadow: 0 6px 20px rgba(0,0,0,0.15);">
                                     <i class="fas fa-redo" style="font-size: 20px;"></i>
-                                    <span>Qayta boshlash</span>
+                                    <span>{{ tr.cp.restart }}</span>
                                 </a>
                             {% else %}
                                 <!-- Waiting period -->
                                 <i class="fas fa-clock" style="font-size: 72px; color: white; margin-bottom: 16px;"></i>
                                 <h3 style="color: white; margin: 0 0 12px 0; font-size: 28px; font-weight: 700;">
-                                    Kutish vaqti
+                                    {{ tr.cp.wait }}
                                 </h3>
                                 <p style="color: rgba(255,255,255,0.95); margin: 0 0 8px 0; font-size: 17px;">
-                                    Oxirgi natija: {{ last_test.percentage }}% (O'tish bali: {{ course.passing_score }}%)
+                                    {{ tr.assess_ui.last_result }}: {{ last_test.percentage }}% ({{ tr.cp.pass_score }}: {{ course.passing_score }}%)
                                 </p>
                                 <p style="color: rgba(255,255,255,0.85); margin: 0 0 16px 0; font-size: 15px;">
                                     Testni qayta topshirish uchun kutish vaqti:
@@ -445,21 +445,21 @@
                                 </div>
                                 <button disabled class="btn-gradient" style="display: inline-flex; align-items: center; gap: 10px; padding: 16px 40px; background: rgba(255,255,255,0.3); color: white; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 17px; border: none; cursor: not-allowed; opacity: 0.7;">
                                     <i class="fas fa-lock" style="font-size: 20px;"></i>
-                                    <span>Qayta boshlash</span>
+                                    <span>{{ tr.cp.restart }}</span>
                                 </button>
                             {% endif %}
                         {% else %}
                             <!-- First time taking test -->
                             <i class="fas fa-trophy" style="font-size: 72px; color: white; margin-bottom: 16px;"></i>
                             <h3 style="color: white; margin: 0 0 12px 0; font-size: 28px; font-weight: 700;">
-                                Barcha modullar tugatildi!
+                                {{ tr.cp.all_done }}
                             </h3>
                             <p style="color: rgba(255,255,255,0.95); margin: 0 0 24px 0; font-size: 17px;">
-                                Endi yakuniy testni topshirish vaqti. Test o'tish bali: {{ course.passing_score }}%
+                                {{ tr.cp.final_test }}. {{ tr.cp.pass_score }}: {{ course.passing_score }}%
                             </p>
                             <a href="{% url 'main:course_test' course.id %}" class="btn-gradient" style="display: inline-flex; align-items: center; gap: 10px; padding: 16px 40px; background: white; color: #667eea; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 17px; box-shadow: 0 6px 20px rgba(0,0,0,0.15);">
                                 <i class="fas fa-clipboard-check" style="font-size: 20px;"></i>
-                                <span>Testni boshlash</span>
+                                <span>{{ tr.cp.start_test }}</span>
                             </a>
                         {% endif %}
                     </div>
@@ -468,14 +468,14 @@
                 <div style="padding: 32px; background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%); border-radius: 16px; margin: 24px; text-align: center; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);">
                     <i class="fas fa-graduation-cap" style="font-size: 64px; color: white; margin-bottom: 16px;"></i>
                     <h3 style="color: white; margin: 0 0 12px 0; font-size: 24px; font-weight: 700;">
-                        Barcha modullarni tugating!
+                        {{ tr.cp.finish_all }}
                     </h3>
                     <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 16px;">
                         Yakuniy test ochilishi uchun barcha modullarni tugatishingiz kerak
                     </p>
                     <div style="margin-top: 16px; padding: 12px 24px; background: rgba(255,255,255,0.2); border-radius: 8px; display: inline-block;">
                         <span style="color: white; font-weight: 600; font-size: 15px;">
-                            <i class="fas fa-lock"></i> Test yopiq
+                            <i class="fas fa-lock"></i> {{ tr.cp.test_locked }}
                         </span>
                     </div>
                 </div>
@@ -483,7 +483,7 @@
             {% else %}
                 <div style="padding: 48px; text-align: center;">
                     <i class="fas fa-book-open" style="font-size: 48px; color: #9ca3af;"></i>
-                    <p class="text-muted" style="margin-top: 16px;">Hozircha modullar mavjud emas</p>
+                    <p class="text-muted" style="margin-top: 16px;">{{ tr.cp.no_modules }}</p>
                 </div>
             {% endif %}
         </div>
@@ -887,7 +887,7 @@ function updateProgressCards(moduleId) {
             // Update text to completed
             const statusText = card.querySelector('div[style*="font-size: 14px"]');
             if (statusText && statusText.textContent.includes('Oxirgacha')) {
-                statusText.textContent = 'Oxirgi sahifa ko\'rildi';
+                statusText.textContent = '{{ tr.cp.pdf_last|escapejs }}';
             }
         }
     });

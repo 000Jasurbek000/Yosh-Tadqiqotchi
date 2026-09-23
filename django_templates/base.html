@@ -701,7 +701,7 @@
   <!-- Trigger -->
   <div class="chat-trigger" id="chatTrigger">
     <span class="chat-bubble-hint">💬 {{ tr.chat.title }}</span>
-    <button class="chat-btn" id="chatBtn" aria-label="Chatni ochish">
+    <button class="chat-btn" id="chatBtn" aria-label="{{ tr.chat.open }}">
       <img class="chat-bot-img" src="{% static 'assets/chatbot.png' %}" alt="Tadqiqotchi AI" />
       <div class="chat-close-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
@@ -723,11 +723,11 @@
       </div>
     </div>
     <div class="chat-messages" id="chatMessages">
-      <div class="chat-msg bot">Salom! Men Yosh Tadqiqotchi platformasi yordamchisiman. Stipendiya, olimpiada, kurslar, iqtidorli talaba va boshqa bo'limlar haqida so'rang — javoblar faqat shu sayt ma'lumotlariga asoslanadi.</div>
+      <div class="chat-msg bot">{{ tr.chat.hello }}</div>
     </div>
     <div class="chat-input-row">
       <input class="chat-input" id="chatInput" type="text" placeholder="{{ tr.chat.placeholder }}" autocomplete="off" maxlength="500" />
-      <button class="chat-send" id="chatSend" aria-label="Yuborish">
+      <button class="chat-send" id="chatSend" aria-label="{{ tr.chat.send }}">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
         </svg>

@@ -235,23 +235,22 @@
         <div class="subpage-hero-inner">
             <div class="subpage-hero-text">
                 <div class="subpage-breadcrumb">
-                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                     <span>//</span>
-                    <a href="{% url 'main:iqtidor_yoli' %}">Iqtidor Yo'li</a>
+                    <a href="{% url 'main:iqtidor_yoli' %}">{{ tr.nav.iqtidor_yoli }}</a>
                     <span>//</span>
-                    <span>Ilmiy rahbarlar</span>
+                    <span>{{ tr.pages.supervisors }}</span>
                 </div>
-                <h1 class="title subpage-title">Ilmiy rahbarlar</h1>
+                <h1 class="title subpage-title">{{ tr.pages.supervisors }}</h1>
                 <p class="subtitle subpage-subtitle">
-                    Tajribali ilmiy rahbarlarimiz bilan tanishing va o'z sohangizdagi
-                    mutaxassis bilan bog'lanib, tadqiqot faoliyatingizni boshlang.
+                    {{ tr.iy.sup_sub }}
                 </p>
             </div>
             <div class="subpage-hero-illustration">
                 <div class="subpage-hero-pill">
                     <span class="badge" style="margin-bottom: 0;">
                         <i class="fas fa-user-tie"></i>
-                        <span>Ilmiy rahbarlar</span>
+                        <span>{{ tr.pages.supervisors }}</span>
                     </span>
                 </div>
                 <div class="subpage-hero-image-wrapper">
@@ -284,13 +283,13 @@
             {% endif %}
             <div style="flex:1;min-width:200px;">
                 <div style="font-size:13px;font-weight:700;color:#065f46;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">
-                    <i class="fas fa-check-circle"></i> Sizning ilmiy rahbaringiz
+                    <i class="fas fa-check-circle"></i> {{ tr.iy.your_sup }}
                 </div>
                 <div style="font-size:17px;font-weight:800;color:#065f46;">{{ accepted_supervisor.full_name }}</div>
                 <div style="font-size:13px;color:#047857;">{{ accepted_supervisor.position }}</div>
             </div>
             <div style="font-size:12.5px;color:#065f46;background:#fff;padding:10px 14px;border-radius:10px;line-height:1.5;max-width:280px;">
-                <i class="fas fa-info-circle"></i> Boshqa rahbarga murojaat yuborib bo'lmaydi.
+                <i class="fas fa-info-circle"></i> {{ tr.iy.no_other }}
                 Rahbar o'zgartirish uchun <b>admin bilan bog'laning</b>.
             </div>
         </div>
@@ -336,37 +335,37 @@
                 {% if user.is_authenticated and user_status|get_item:sup.id == 'accepted' %}
                     {# Bu rahbar — joriy foydalanuvchining rahbari #}
                     <div class="sup-status-badge sup-status-accepted">
-                        <i class="fas fa-check-circle"></i> Sizning rahbaringiz
+                        <i class="fas fa-check-circle"></i> {{ tr.iy.your_lead }}
                     </div>
                 {% elif accepted_supervisor %}
                     {# Talabada boshqa rahbar bor — bu kartochka bloklangan #}
                     <div class="sup-status-badge sup-status-full">
-                        <i class="fas fa-lock"></i> Murojaat yuborib bo'lmaydi
+                        <i class="fas fa-lock"></i> {{ tr.iy.cannot_send }}
                     </div>
                 {% elif sup.is_full %}
                     <div class="sup-status-badge sup-status-full">
-                        <i class="fas fa-users-slash"></i> To'liq band ({{ sup.accepted_count }}/{{ sup.max_students }})
+                        <i class="fas fa-users-slash"></i> {{ tr.iy.full }} ({{ sup.accepted_count }}/{{ sup.max_students }})
                     </div>
                 {% elif user.is_authenticated and user_status|get_item:sup.id == 'pending' %}
                     <div class="sup-status-badge sup-status-pending">
-                        <i class="fas fa-hourglass-half"></i> Javob kutilmoqda
+                        <i class="fas fa-hourglass-half"></i> {{ tr.iy.waiting }}
                     </div>
                 {% elif sup.email %}
                     {% if user.is_authenticated %}
                         <form method="post" action="{% url 'main:send_supervisor_request' sup.id %}" onsubmit="return confirm('{{ sup.full_name }} ga rahbarlik so\'rovi yuborilsinmi?\n\nMurojaat sizning profil ma\'lumotlaringiz bilan email orqali yuboriladi.');">
                             {% csrf_token %}
                             <button type="submit" class="sup-request-btn">
-                                <i class="fas fa-paper-plane"></i> Murojaat yuborish
+                                <i class="fas fa-paper-plane"></i> {{ tr.ui.send_request }}
                             </button>
                         </form>
                         {% if user_status|get_item:sup.id == 'rejected' %}
                         <p style="text-align:center;font-size:11.5px;color:#991b1b;margin:6px 0 0;">
-                            <i class="fas fa-info-circle"></i> Avvalgi murojaat rad etilgan
+                            <i class="fas fa-info-circle"></i> {{ tr.iy.prev_rejected }}
                         </p>
                         {% endif %}
                     {% else %}
                         <a href="{% url 'main:login' %}?next={% url 'main:ilmiy_rahbarlar' %}" class="sup-login-btn">
-                            <i class="fas fa-sign-in-alt"></i> Murojaat uchun login qiling
+                            <i class="fas fa-sign-in-alt"></i> {{ tr.ui.login_to_apply }}
                         </a>
                     {% endif %}
                 {% endif %}
@@ -375,7 +374,7 @@
             {% empty %}
             <div class="sup-empty" style="grid-column: 1 / -1;">
                 <div class="sup-empty-icon"><i class="fas fa-user-tie"></i></div>
-                <p>Hozircha ilmiy rahbarlar qo'shilmagan.<br>Admin paneldan ilmiy rahbarlarni qo'shing.</p>
+                <p>{{ tr.iy.sup_empty }}</p>
             </div>
             {% endfor %}
         </div>

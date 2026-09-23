@@ -206,27 +206,26 @@
         <div class="subpage-hero-inner">
             <div class="subpage-hero-text">
                 <div class="subpage-breadcrumb">
-                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                     <span>//</span>
-                    <span>Xalqaro grant va olimpiadalar</span>
+                    <span>{{ tr.olimp.crumb }}</span>
                     <span>//</span>
-                    <span>BuxDU olimpiadalari</span>
+                    <span>{{ tr.nav.buxdu_olympiads }}</span>
                 </div>
-                <h1 class="title subpage-title">BuxDU tomonidan tashkillashtirilgan olimpiadalar</h1>
+                <h1 class="title subpage-title">{{ tr.olimp.buxdu_title }}</h1>
                 <p class="subtitle subpage-subtitle">
-                    Buxoro davlat universiteti mezbonligida o'tkaziladigan xalqaro va respublika fan olimpiadalari
-                    haqida qisqacha ma'lumot, sanasi, fan yo'nalishi, dasturi va ro'yxatdan o'tish havolalari.
+                    {{ tr.olimp.buxdu_sub }}
                 </p>
             </div>
             <div class="subpage-hero-illustration">
                 <div class="subpage-hero-pill">
                     <span class="badge" style="margin-bottom: 0;">
                         <i class="fas fa-trophy"></i>
-                        <span>BuxDU olimpiadalari</span>
+                        <span>{{ tr.pages.buxdu_olympiads }}</span>
                     </span>
                 </div>
                 <div class="subpage-hero-image-wrapper">
-                    <img src="{% static 'assets/hero-section-showcase.png' %}" alt="BuxDU olimpiadalari" class="subpage-hero-image" />
+                    <img src="{% static 'assets/hero-section-showcase.png' %}" alt="{{ tr.pages.buxdu_olympiads }}" class="subpage-hero-image" />
                 </div>
             </div>
         </div>
@@ -236,9 +235,9 @@
         <div class="buxdu-olympiad-container">
             {% if upcoming_olympiads %}
             <div class="buxdu-olympiad-header">
-                <h2 class="subtitle">Kutilayotgan BuxDU olimpiadalari</h2>
+                <h2 class="subtitle">{{ tr.olimp.buxdu_section }}</h2>
                 <p class="buxdu-olympiad-count">
-                    Hozirda {{ upcoming_olympiads|length }} ta kutilayotgan olimpiada mavjud
+                    {{ upcoming_olympiads|length }} {{ tr.ui.count_suffix }}
                 </p>
             </div>
 
@@ -248,7 +247,7 @@
                     <div class="buxdu-olympiad-thumb">
                         <span class="status-badge status-upcoming">
                             <i class="fas fa-clock"></i>
-                            <span>Kutilmoqda</span>
+                            <span>{{ tr.ui.pending }}</span>
                         </span>
                         {% if olympiad.image %}
                         <img src="{{ olympiad.image.url }}" alt="{{ olympiad.subject }}" />
@@ -267,7 +266,7 @@
                         <p class="buxdu-olympiad-code" style="word-wrap: break-word; white-space: normal;">{{ olympiad.description|truncatewords:15 }}</p>
                         <div class="buxdu-olympiad-footer" style="margin-top: 12px;">
                             <a href="{% url 'main:buxdu_olimpiada_detail' olympiad.id %}" class="btn-gradient stipendiya-action-btn" style="font-size: 13px; padding: 8px 16px; width: 100%; text-decoration: none;">
-                                <i class="fas fa-info-circle"></i> Batafsil ma'lumot
+                                <i class="fas fa-info-circle"></i> {{ tr.ui.more_info }}
                             </a>
                         </div>
                     </div>
@@ -280,7 +279,7 @@
             <div class="section-divider">
                 <h3>
                     <i class="fas fa-check-circle"></i>
-                    Tugagan olimpiadalar
+                    {{ tr.olimp.buxdu_finished }}
                 </h3>
             </div>
 
@@ -290,7 +289,7 @@
                     <div class="buxdu-olympiad-thumb">
                         <span class="status-badge status-finished">
                             <i class="fas fa-check"></i>
-                            <span>Tugagan</span>
+                            <span>{{ tr.ui.finished }}</span>
                         </span>
                         {% if olympiad.image %}
                         <img src="{{ olympiad.image.url }}" alt="{{ olympiad.subject }}" />
@@ -309,7 +308,7 @@
                         <p class="buxdu-olympiad-code" style="word-wrap: break-word; white-space: normal;">{{ olympiad.description|truncatewords:15 }}</p>
                         <div class="buxdu-olympiad-footer" style="margin-top: 12px;">
                             <a href="{% url 'main:buxdu_olimpiada_detail' olympiad.id %}" class="btn-gradient stipendiya-action-btn" style="font-size: 13px; padding: 8px 16px; width: 100%; text-decoration: none;">
-                                <i class="fas fa-images"></i> Fotolavhalar
+                                <i class="fas fa-images"></i> {{ tr.ui.photos }}
                             </a>
                         </div>
                     </div>
@@ -322,7 +321,7 @@
             <div class="card" style="padding: 40px 20px; text-align: center;">
                 <i class="fas fa-trophy" style="font-size: 48px; color: var(--text-muted); margin-bottom: 16px; display: block;"></i>
                 <p class="text-muted" style="font-size: 16px;">
-                    Hozircha BuxDU olimpiadalari ro'yxati bo'sh
+                    {{ tr.olimp.buxdu_empty }}
                 </p>
             </div>
             {% endif %}

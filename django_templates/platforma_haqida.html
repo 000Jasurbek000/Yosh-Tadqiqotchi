@@ -225,25 +225,24 @@
         <div class="subpage-hero-inner">
             <div class="subpage-hero-text">
                 <div class="subpage-breadcrumb">
-                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                     <span>//</span>
-                    <span>Platforma haqida</span>
+                    <span>{{ tr.nav.about }}</span>
                 </div>
-                <h1 class="title subpage-title">Platforma haqida</h1>
+                <h1 class="title subpage-title">{{ tr.pages.about }}</h1>
                 <p class="subtitle subpage-subtitle">
-                    "Yosh Tadqiqotchi" — talabalar, magistrlar va yosh tadqiqotchilar uchun ilmiy
-                    izlanish, ta'lim va kasbiy rivojlanishni qo'llab-quvvatlovchi yagona zamonaviy platforma.
+                    {{ tr.about.sub }}
                 </p>
             </div>
             <div class="subpage-hero-illustration">
                 <div class="subpage-hero-pill">
                     <span class="badge" style="margin-bottom: 0;">
                         <i class="fas fa-info-circle"></i>
-                        <span>Platforma haqida</span>
+                        <span>{{ tr.nav.about }}</span>
                     </span>
                 </div>
                 <div class="subpage-hero-image-wrapper">
-                    <img src="{% static 'assets/stipendia.jpg' %}" alt="Platforma haqida" class="subpage-hero-image" />
+                    <img src="{% static 'assets/stipendia.jpg' %}" alt="{{ tr.pages.about }}" class="subpage-hero-image" />
                 </div>
             </div>
         </div>
@@ -255,18 +254,13 @@
         <div class="about-block scroll-section">
             <h2 class="about-title">
                 <span class="about-title-icon"><i class="fas fa-users"></i></span>
-                Biz haqimizda
+                {{ tr.about.who }}
             </h2>
             <p class="about-text">
-                <strong>"Yosh Tadqiqotchi"</strong> — Buxoro davlat universiteti hamda yosh tadqiqotchilar
-                hamkorligida tashkil etilgan ilmiy va ta'lim platformasi. Platforma talabalar va
-                magistrantlar uchun ilmiy izlanishlarni boshlash, kasbiy ko'nikmalarini oshirish va
-                imkoniyatlarni topish uchun barcha zarur xizmatlarni yagona joyda taqdim etadi.
+                {{ tr.about.who_p1 }}
             </p>
             <p class="about-text">
-                Bizning maqsadimiz — har bir yosh tadqiqotchining ilmiy salohiyatini ro'yobga
-                chiqarish, ularga zamonaviy bilimlar, qulay tahririyat xizmatlari va kuchli
-                ma'lumotlar bazasi orqali yordam berish.
+                {{ tr.about.who_p2 }}
             </p>
         </div>
 
@@ -274,23 +268,19 @@
         <div class="about-block scroll-section">
             <h2 class="about-title">
                 <span class="about-title-icon"><i class="fas fa-bullseye"></i></span>
-                Bizning missiyamiz
+                {{ tr.about.mission }}
             </h2>
             <div class="mission-grid">
                 <div class="mission-card">
-                    <h4><i class="fas fa-rocket"></i> Maqsad</h4>
+                    <h4><i class="fas fa-rocket"></i> {{ tr.about.goal }}</h4>
                     <p>
-                        Yosh tadqiqotchilarning ilmiy faoliyatini qo'llab-quvvatlash, ularga sifatli
-                        ta'lim resurslari va imkoniyatlarni taqdim etish orqali O'zbekiston fanini
-                        rivojlantirishga hissa qo'shish.
+                        {{ tr.about.goal_text }}
                     </p>
                 </div>
                 <div class="mission-card">
-                    <h4><i class="fas fa-eye"></i> Vazifa</h4>
+                    <h4><i class="fas fa-eye"></i> {{ tr.about.task }}</h4>
                     <p>
-                        Talabalar, magistrlar va doktorantlar uchun ilmiy nashrlar bazasi,
-                        stipendiyalar, olimpiadalar, kurslar va tahririyat xizmatlarini bitta
-                        zamonaviy platformaga jamlash.
+                        {{ tr.about.task_text }}
                     </p>
                 </div>
             </div>
@@ -300,56 +290,56 @@
         <div class="about-block scroll-section">
             <h2 class="about-title">
                 <span class="about-title-icon"><i class="fas fa-star"></i></span>
-                Platformaning asosiy imkoniyatlari
+                {{ tr.about.feats }}
             </h2>
             <div class="features-grid">
 
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fas fa-graduation-cap"></i></div>
-                    <h3 class="feature-name">Stipendiyalar</h3>
-                    <p class="feature-desc">Davlat, BuxDU va xalqaro imtiyozli stipendiyalar haqida to'liq ma'lumot va arizalar.</p>
+                    <h3 class="feature-name">{{ tr.about.f_stip }}</h3>
+                    <p class="feature-desc">{{ tr.about.f_stip_d }}</p>
                 </div>
 
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fas fa-trophy"></i></div>
-                    <h3 class="feature-name">Olimpiadalar</h3>
-                    <p class="feature-desc">Xalqaro tanlovlar, BuxDU olimpiadalari va g'oliblar bazasi bilan tanishish.</p>
+                    <h3 class="feature-name">{{ tr.about.f_ol }}</h3>
+                    <p class="feature-desc">{{ tr.about.f_ol_d }}</p>
                 </div>
 
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fas fa-book"></i></div>
-                    <h3 class="feature-name">Ilmiy nashrlar</h3>
-                    <p class="feature-desc">OAK jurnallari, konferensiyalar, dissertatsiya va maqolalar banki.</p>
+                    <h3 class="feature-name">{{ tr.about.f_pub }}</h3>
+                    <p class="feature-desc">{{ tr.about.f_pub_d }}</p>
                 </div>
 
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fas fa-edit"></i></div>
-                    <h3 class="feature-name">Tahrir xizmati</h3>
-                    <p class="feature-desc">Maqola tahriri, tarjima va mavzuga mos jurnal tavsiyasi xizmati.</p>
+                    <h3 class="feature-name">{{ tr.about.f_ed }}</h3>
+                    <p class="feature-desc">{{ tr.about.f_ed_d }}</p>
                 </div>
 
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fas fa-laptop-code"></i></div>
-                    <h3 class="feature-name">Onlayn kurslar</h3>
-                    <p class="feature-desc">Tadqiqotchilar uchun maxsus ishlab chiqilgan onlayn kurs va sertifikatlar.</p>
+                    <h3 class="feature-name">{{ tr.about.f_co }}</h3>
+                    <p class="feature-desc">{{ tr.about.f_co_d }}</p>
                 </div>
 
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fas fa-database"></i></div>
-                    <h3 class="feature-name">Adabiyotlar bazasi</h3>
-                    <p class="feature-desc">Sohaga mos PDF, Word kitoblar va internetdagi ishonchli ilmiy manbalar.</p>
+                    <h3 class="feature-name">{{ tr.about.f_lit }}</h3>
+                    <p class="feature-desc">{{ tr.about.f_lit_d }}</p>
                 </div>
 
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fas fa-robot"></i></div>
-                    <h3 class="feature-name">Tadqiqotchi AI</h3>
-                    <p class="feature-desc">Sun'iy intellekt yordamchisi — tadqiqot va o'qish jarayonida qulay maslahatchi.</p>
+                    <h3 class="feature-name">{{ tr.about.f_ai }}</h3>
+                    <p class="feature-desc">{{ tr.about.f_ai_d }}</p>
                 </div>
 
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fas fa-file-alt"></i></div>
-                    <h3 class="feature-name">Nizomlar</h3>
-                    <p class="feature-desc">Yosh tadqiqotchilar uchun barcha rasmiy nizomlar va hujjatlar to'plami.</p>
+                    <h3 class="feature-name">{{ tr.about.f_reg }}</h3>
+                    <p class="feature-desc">{{ tr.about.f_reg_d }}</p>
                 </div>
 
             </div>
@@ -359,39 +349,39 @@
         <div class="about-block scroll-section">
             <h2 class="about-title">
                 <span class="about-title-icon"><i class="fas fa-chart-line"></i></span>
-                Bir nigohda platforma
+                {{ tr.about.glance }}
             </h2>
             <div class="stats-row">
                 <div class="stat-card">
                     <p class="stat-number">10+</p>
-                    <p class="stat-label">Asosiy xizmat</p>
+                    <p class="stat-label">{{ tr.about.stat_svc }}</p>
                 </div>
                 <div class="stat-card">
                     <p class="stat-number">100+</p>
-                    <p class="stat-label">Ilmiy manba</p>
+                    <p class="stat-label">{{ tr.about.stat_src }}</p>
                 </div>
                 <div class="stat-card">
                     <p class="stat-number">24/7</p>
-                    <p class="stat-label">AI yordamchi</p>
+                    <p class="stat-label">{{ tr.about.stat_ai }}</p>
                 </div>
                 <div class="stat-card">
                     <p class="stat-number">∞</p>
-                    <p class="stat-label">Imkoniyatlar</p>
+                    <p class="stat-label">{{ tr.about.stat_opp }}</p>
                 </div>
             </div>
         </div>
 
         <!-- CTA -->
         <div class="about-cta scroll-section">
-            <h3>Bugun ro'yxatdan o'ting</h3>
-            <p>"Yosh Tadqiqotchi" platformasining barcha xizmatlaridan bepul foydalaning va ilmiy yo'lingizni biz bilan boshlang.</p>
+            <h3>{{ tr.about.cta }}</h3>
+            <p>{{ tr.about.cta_sub }}</p>
             {% if user.is_authenticated %}
                 <a href="{% url 'main:profile' %}" class="about-cta-btn">
-                    <i class="fas fa-user"></i> Profilga o'tish
+                    <i class="fas fa-user"></i> {{ tr.about.go_profile }}
                 </a>
             {% else %}
                 <a href="{% url 'main:register' %}" class="about-cta-btn">
-                    <i class="fas fa-user-plus"></i> Ro'yxatdan o'tish
+                    <i class="fas fa-user-plus"></i> {{ tr.auth.register_btn }}
                 </a>
             {% endif %}
         </div>

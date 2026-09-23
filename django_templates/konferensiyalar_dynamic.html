@@ -30,26 +30,26 @@
         <div class="subpage-hero-inner">
             <div class="subpage-hero-text">
                 <div class="subpage-breadcrumb">
-                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                     <span>//</span>
-                    <span>Ilmiy nashrlar va bazalar</span>
+                    <span>{{ tr.sci.crumb }}</span>
                     <span>//</span>
-                    <span id="breadcrumb-title">Konferensiyalar</span>
+                    <span id="breadcrumb-title">{{ tr.pages.conferences }}</span>
                 </div>
-                <h1 class="title subpage-title" id="hero-title">Konferensiyalar</h1>
+                <h1 class="title subpage-title" id="hero-title">{{ tr.pages.conferences }}</h1>
                 <p class="subtitle subpage-subtitle" id="hero-subtitle">
-                    BuxDU tadqiqotchilari ishtirok etishi mumkin bo'lgan ilmiy-amaliy konferensiyalar haqida ma'lumot.
+                    {{ tr.sci.cint_sub }}
                 </p>
             </div>
             <div class="subpage-hero-illustration">
                 <div class="subpage-hero-pill">
                     <span class="badge" style="margin-bottom: 0;">
                         <span id="hero-icon"><i class="fas fa-chalkboard-teacher"></i></span>
-                        <span id="hero-badge">Konferensiyalar</span>
+                        <span id="hero-badge">{{ tr.pages.conferences }}</span>
                     </span>
                 </div>
                 <div class="subpage-hero-image-wrapper">
-                    <img src="{% static 'assets/konferensiya.jpg' %}" alt="Konferensiyalar" class="subpage-hero-image" id="hero-image" />
+                    <img src="{% static 'assets/konferensiya.jpg' %}" alt="{{ tr.pages.conferences }}" class="subpage-hero-image" id="hero-image" />
                 </div>
             </div>
         </div>
@@ -59,9 +59,9 @@
         <div class="stipendiya-container">
             <div class="card stipendiya-table-card">
                 <div class="stipendiya-table-header">
-                    <h2 class="subtitle" id="section-title">Konferensiyalar ro'yxati</h2>
+                    <h2 class="subtitle" id="section-title">{{ tr.sci.conf_list }}</h2>
                     <p class="text-muted" id="section-description">
-                        Har bir konferensiya haqida qisqacha ma'lumot va rasmiy axborot xatlari havolalari.
+                        {{ tr.sci.cint_sub }}
                     </p>
                 </div>
                 {% if conferences %}
@@ -69,11 +69,11 @@
                         <table class="stipendiya-table">
                             <thead>
                                 <tr>
-                                    <th style="width: 60px;">T/r</th>
-                                    <th>Konferensiya nomi</th>
-                                    <th id="table-about-header">Konferensiya</th>
-                                    <th>Axborot xati</th>
-                                    <th style="text-align: right;">Tashkilotchiga ulanish</th>
+                                    <th style="width: 60px;">{{ tr.ui.nr }}</th>
+                                    <th>{{ tr.sci.conf_name }}</th>
+                                    <th id="table-about-header">{{ tr.sci.cint_about }}</th>
+                                    <th>{{ tr.sci.letter }}</th>
+                                    <th style="text-align: right;">{{ tr.ui.org_connect }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -85,14 +85,14 @@
                                     <td class="stipendiya-table-action">
                                         {% if conference.get_information_letter_url %}
                                         <a href="{{ conference.get_information_letter_url }}" target="_blank" rel="noopener" class="btn-gradient stipendiya-action-btn">
-                                            {% if conference.is_external_letter_link %}Axborot xatini ko'rish{% else %}Axborot xatini ochish{% endif %}
+                                            {% if conference.is_external_letter_link %}{{ tr.ui.letter_view }}{% else %}{{ tr.ui.letter_open }}{% endif %}
                                         </a>
                                         {% else %}
-                                        <span class="text-muted">Mavjud emas</span>
+                                        <span class="text-muted">{{ tr.ui.unavailable }}</span>
                                         {% endif %}
                                     </td>
                                     <td class="stipendiya-table-action">
-                                        <a href="{{ conference.organizer_link }}" target="_blank" class="btn-gradient stipendiya-action-btn">Tashkilotchiga ulanish</a>
+                                        <a href="{{ conference.organizer_link }}" target="_blank" class="btn-gradient stipendiya-action-btn">{{ tr.ui.org_connect }}</a>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -102,7 +102,7 @@
                 {% else %}
                     <div style="display: flex; flex-direction: column; gap: 16px; padding: 32px; text-align: center;">
                         <i class="fas fa-chalkboard-teacher" style="font-size: 48px; color: #9CA3AF;" id="empty-icon"></i>
-                        <p class="text-muted" id="empty-message">Hozircha konferensiyalar ma'lumotlari mavjud emas</p>
+                        <p class="text-muted" id="empty-message">{{ tr.sci.conf_empty }}</p>
                     </div>
                 {% endif %}
             </div>
@@ -120,28 +120,28 @@
     // Konferensiya turi bo'yicha konfiguratsiya
     const config = {
         xalqaro: {
-            title: 'Xalqaro konferensiyalar',
-            subtitle: 'BuxDU tadqiqotchilari ishtirok etishi mumkin bo\'lgan yirik xalqaro ilmiy-amaliy konferensiyalar haqida qisqacha ma\'lumot va rasmiy axborot xatlari havolalari.',
+            title: "{{ tr.sci.cint_title|escapejs }}",
+            subtitle: "{{ tr.sci.cint_sub|escapejs }}",
             icon: '<i class="fas fa-globe"></i>',
-            badge: 'Xalqaro konferensiyalar',
-            sectionTitle: 'Xalqaro konferensiyalar ro\'yxati',
-            sectionDesc: 'Har bir satrda konferensiya nomi, qisqacha ma\'lumot, axborot xati havolasi va tashkilotchiga ulanish uchun havolalar keltiriladi.',
-            aboutHeader: 'Xalqaro konferensiya haqida',
-            aboutText: 'Bu xalqaro miqyosdagi konferensiya',
+            badge: "{{ tr.sci.cint_badge|escapejs }}",
+            sectionTitle: "{{ tr.sci.conf_list|escapejs }}",
+            sectionDesc: "{{ tr.sci.cint_sub|escapejs }}",
+            aboutHeader: "{{ tr.sci.cint_about|escapejs }}",
+            aboutText: "{{ tr.sci.cint_about_text|escapejs }}",
             emptyIcon: 'fas fa-globe',
-            emptyMessage: 'Hozircha xalqaro konferensiyalar ma\'lumotlari mavjud emas'
+            emptyMessage: "{{ tr.sci.conf_empty|escapejs }}"
         },
         respublika: {
-            title: 'Respublika konferensiyalari',
-            subtitle: 'O\'zbekiston Respublikasida o\'tkaziladigan ilmiy-amaliy konferensiyalar haqida qisqacha ma\'lumot va rasmiy axborot xatlari havolalari.',
+            title: "{{ tr.sci.crep_title|escapejs }}",
+            subtitle: "{{ tr.sci.crep_sub|escapejs }}",
             icon: '<i class="fas fa-flag"></i>',
-            badge: 'Respublika konferensiyalari',
-            sectionTitle: 'Respublika konferensiyalari ro\'yxati',
-            sectionDesc: 'Har bir satrda konferensiya nomi, qisqacha ma\'lumot, axborot xati havolasi va tashkilotchiga ulanish uchun havolalar keltiriladi.',
-            aboutHeader: 'Respublika konferensiyasi haqida',
-            aboutText: 'Bu respublika miqyosidagi konferensiya',
+            badge: "{{ tr.sci.crep_badge|escapejs }}",
+            sectionTitle: "{{ tr.sci.conf_list|escapejs }}",
+            sectionDesc: "{{ tr.sci.crep_sub|escapejs }}",
+            aboutHeader: "{{ tr.sci.crep_about|escapejs }}",
+            aboutText: "{{ tr.sci.crep_about_text|escapejs }}",
             emptyIcon: 'fas fa-flag',
-            emptyMessage: 'Hozircha respublika konferensiyalari ma\'lumotlari mavjud emas'
+            emptyMessage: "{{ tr.sci.conf_empty|escapejs }}"
         }
     };
 

@@ -124,11 +124,11 @@
 {% block content %}
 <section class="buxdu-detail-wrapper scroll-section">
     <div class="subpage-breadcrumb" style="margin-bottom: 8px;">
-        <a href="{% url 'main:home' %}">Bosh sahifa</a>
+        <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
         <span>//</span>
-        <span>Xalqaro grant va olimpiadalar</span>
+        <span>{{ tr.olimp.crumb }}</span>
         <span>//</span>
-        <a href="{% url 'main:buxdu_olimpiadalari' %}">BuxDU olimpiadalari</a>
+        <a href="{% url 'main:buxdu_olimpiadalari' %}">{{ tr.pages.buxdu_olympiads }}</a>
     </div>
 
     {% block olympiad_image %}

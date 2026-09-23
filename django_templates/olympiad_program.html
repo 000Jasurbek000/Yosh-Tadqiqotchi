@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ program.title }} — Topshiriqlar bazasi{% endblock %}
+{% block title %}{{ program.title }} — {{ tr.ui.tasks }}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -304,11 +304,11 @@
         <div class="subpage-hero-inner">
             <div class="subpage-hero-text">
                 <div class="subpage-breadcrumb">
-                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                     <span>//</span>
-                    <a href="{% url 'main:iqtidor_yoli' %}">Iqtidor Yo'li</a>
+                    <a href="{% url 'main:iqtidor_yoli' %}">{{ tr.nav.iqtidor_yoli }}</a>
                     <span>//</span>
-                    <span>Topshiriqlar bazasi</span>
+                    <span>{{ tr.ui.tasks }}</span>
                 </div>
                 <h1 class="title subpage-title">{{ program.title }}</h1>
                 <p class="subtitle subpage-subtitle">
@@ -319,7 +319,7 @@
                 <div class="subpage-hero-pill">
                     <span class="badge" style="margin-bottom: 0;">
                         <i class="fas fa-trophy"></i>
-                        <span>Topshiriqlar bazasi</span>
+                        <span>{{ tr.ui.tasks }}</span>
                     </span>
                 </div>
                 <div class="subpage-hero-image-wrapper">
@@ -345,14 +345,14 @@
         <div class="op-intro scroll-section">
             <div class="op-intro-head">
                 <div class="op-intro-icon"><i class="fas fa-medal"></i></div>
-                <h2 class="op-intro-title">Olimpiada haqida</h2>
+                <h2 class="op-intro-title">{{ tr.olimp.about }}</h2>
             </div>
             <p class="op-intro-text">{{ program.short_intro }}</p>
         </div>
 
         <!-- Diqqat -->
         <div class="op-note scroll-section">
-            <b>⚠️ Diqqat!</b> Quyidagi ma'lumotlar bilan tanishib chiqing va o'zingizning bilim
+            <b>⚠️ {{ tr.ui.attention }}</b> Quyidagi ma'lumotlar bilan tanishib chiqing va o'zingizning bilim
             darajangizni shu olimpiadaga muvofiqligiga ishonch hosil qilgandan so'nggina ariza
             yuboring. Saralash bosqichida kerakli bilim va ko'nikmalar talab qilinadi.
         </div>
@@ -362,7 +362,7 @@
         <div class="op-block scroll-section">
             <div class="op-block-head">
                 <div class="op-block-icon skills"><i class="fas fa-cogs"></i></div>
-                <h3 class="op-block-title">Talab qilinadigan ko'nikmalar</h3>
+                <h3 class="op-block-title">{{ tr.olimp.skills }}</h3>
             </div>
             <p class="op-block-text">{{ program.required_skills }}</p>
         </div>
@@ -373,7 +373,7 @@
         <div class="op-block scroll-section">
             <div class="op-block-head">
                 <div class="op-block-icon knowledge"><i class="fas fa-book-open"></i></div>
-                <h3 class="op-block-title">Tekshiriladigan bilim sohalari va mavzular</h3>
+                <h3 class="op-block-title">{{ tr.olimp.topics }}</h3>
             </div>
             <p class="op-block-text">{{ program.knowledge_areas }}</p>
         </div>
@@ -384,7 +384,7 @@
         <div class="op-block scroll-section">
             <div class="op-block-head">
                 <div class="op-block-icon self"><i class="fas fa-clipboard-check"></i></div>
-                <h3 class="op-block-title">O'zingizning bilim darajangizni tekshiring</h3>
+                <h3 class="op-block-title">{{ tr.olimp.check_level }}</h3>
             </div>
             <p class="op-block-text">{{ program.self_check_text }}</p>
         </div>
@@ -395,7 +395,7 @@
         <div class="op-block scroll-section">
             <div class="op-block-head">
                 <div class="op-block-icon file"><i class="fas fa-file-alt"></i></div>
-                <h3 class="op-block-title">Topshiriqlar fayli</h3>
+                <h3 class="op-block-title">{{ tr.olimp.tasks_file }}</h3>
             </div>
             <div class="op-file-card">
                 <div class="op-file-icon"><i class="fas fa-file-download"></i></div>
@@ -404,7 +404,7 @@
                     <p class="op-file-sub">Namunaviy topshiriqlar to'plamini yuklab oling va o'z bilimingizni sinab ko'ring.</p>
                 </div>
                 <a href="{{ program.task_file.url }}" target="_blank" class="op-file-btn">
-                    <i class="fas fa-download"></i> Yuklab olish
+                    <i class="fas fa-download"></i> {{ tr.ui.download }}
                 </a>
             </div>
         </div>
@@ -415,7 +415,7 @@
         <div class="op-block scroll-section">
             <div class="op-block-head">
                 <div class="op-block-icon extra"><i class="fas fa-info-circle"></i></div>
-                <h3 class="op-block-title">Qo'shimcha ma'lumot</h3>
+                <h3 class="op-block-title">{{ tr.olimp.extra }}</h3>
             </div>
             <p class="op-block-text">{{ program.additional_info }}</p>
         </div>
@@ -425,7 +425,7 @@
         <div class="op-apply-section scroll-section" id="apply">
             {% if existing_application %}
                 {% if existing_application.status == 'new' or existing_application.status == 'reviewed' or existing_application.status == 'approved' %}
-                <h3>Siz allaqachon ariza yuborgansiz</h3>
+                <h3>{{ tr.olimp.already }}</h3>
                 <p>
                     {% if existing_application.status == 'approved' %}
                         Arizangiz tasdiqlangan. Admin siz bilan bog'lanadi.
@@ -440,7 +440,7 @@
                     <span class="op-status-badge">{{ existing_application.get_status_display }}</span>
                 </div>
                 {% else %}
-                <h3>Ariza yuborish</h3>
+                <h3>{{ tr.olimp.send_app }}</h3>
                 <p>
                     Oldingi arizangiz rad etilgan. Qayta ariza yuborishingiz mumkin.
                 </p>
@@ -451,12 +451,12 @@
                               placeholder="Motivatsiyangizni qisqacha yozing (ixtiyoriy)"
                               maxlength="2000"></textarea>
                     <button type="submit" class="op-submit-btn">
-                        <i class="fas fa-paper-plane"></i> Qayta ariza yuborish
+                        <i class="fas fa-paper-plane"></i> {{ tr.ui.reapply }}
                     </button>
                 </form>
                 {% endif %}
             {% else %}
-                <h3>Ariza yuborish</h3>
+                <h3>{{ tr.olimp.send_app }}</h3>
                 <p>
                     Yuqoridagi ma'lumotlar bilan tanishib chiqdingizmi? Agar o'zingizni ushbu olimpiadaga
                     munosib deb hisoblasangiz, quyidagi tugma orqali ariza yuboring. Adminlar arizangizni
@@ -469,7 +469,7 @@
                               placeholder="Motivatsiyangizni qisqacha yozing (ixtiyoriy) — nima uchun bu olimpiadaga qatnashmoqchisiz, oldingi tajribangiz va boshqalar."
                               maxlength="2000"></textarea>
                     <button type="submit" class="op-submit-btn">
-                        <i class="fas fa-paper-plane"></i> Ariza yuborish
+                        <i class="fas fa-paper-plane"></i> {{ tr.olimp.send_app }}
                     </button>
                 </form>
             {% endif %}

@@ -39,26 +39,26 @@
         <div class="subpage-hero-inner">
             <div class="subpage-hero-text">
                 <div class="subpage-breadcrumb">
-                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                     <span>//</span>
-                    <span>Xalqaro grant va olimpiadalar</span>
+                    <span>{{ tr.olimp.crumb }}</span>
                     <span>//</span>
-                    <span>{% block breadcrumb_title %}Fan olimpiadalari{% endblock %}</span>
+                    <span>{% block breadcrumb_title %}{{ tr.olimp.default_title }}{% endblock %}</span>
                 </div>
-                <h1 class="title subpage-title">{% block hero_title %}Fan olimpiadalari{% endblock %}</h1>
+                <h1 class="title subpage-title">{% block hero_title %}{{ tr.olimp.default_title }}{% endblock %}</h1>
                 <p class="subtitle subpage-subtitle">
-                    {% block hero_subtitle %}Iqtidorli talabalar uchun fan olimpiadalari, qisqacha ma'lumot, axborot xati va ro'yxatdan o'tish havolalari.{% endblock %}
+                    {% block hero_subtitle %}{{ tr.olimp.default_sub }}{% endblock %}
                 </p>
             </div>
             <div class="subpage-hero-illustration">
                 <div class="subpage-hero-pill">
                     <span class="badge" style="margin-bottom: 0;">
                         {% block hero_icon %}<i class="fas fa-trophy"></i>{% endblock %}
-                        <span>{% block hero_badge %}Olimpiadalar{% endblock %}</span>
+                        <span>{% block hero_badge %}{{ tr.olimp.default_badge }}{% endblock %}</span>
                     </span>
                 </div>
                 <div class="subpage-hero-image-wrapper">
-                    <img src="{% static 'assets/xalqaro.jpg' %}" alt="{% block hero_image_alt %}Fan olimpiadalari{% endblock %}" class="subpage-hero-image" />
+                    <img src="{% static 'assets/xalqaro.jpg' %}" alt="{% block hero_image_alt %}{{ tr.olimp.default_title }}{% endblock %}" class="subpage-hero-image" />
                 </div>
             </div>
         </div>
@@ -68,9 +68,9 @@
     <section class="olympiad-section scroll-section">
         <div class="olympiad-container">
             <div class="olympiad-header">
-                <h2 class="subtitle">{% block section_title %}Faol fan olimpiadalari{% endblock %}</h2>
+                <h2 class="subtitle">{% block section_title %}{{ tr.olimp.default_section }}{% endblock %}</h2>
                 <p class="text-muted">
-                    {% block section_description %}Har bir olimpiada uchun alohida karta: nomi, o'tkaziladigan davlat, qisqacha ma'lumot, axborot xatini yuklab olish va rasmiy ro'yxatdan o'tish havolasi.{% endblock %}
+                    {% block section_description %}{{ tr.olimp.default_section_sub }}{% endblock %}
                 </p>
             </div>
 
@@ -94,19 +94,19 @@
                                     </span>
                                 </div>
                                 <h3 class="olympiad-title" style="word-wrap: break-word; white-space: normal; overflow-wrap: break-word; word-break: break-word;">{{ olympiad.name }}</h3>
-                                <p class="olympiad-meta-label">O'tkaziladigan davlat</p>
+                                <p class="olympiad-meta-label">{{ tr.ui.country }}</p>
                                 <p class="olympiad-country" style="word-wrap: break-word; white-space: normal; overflow-wrap: break-word; word-break: break-word;">{{ olympiad.country }}</p>
                                 <p class="olympiad-desc" style="word-wrap: break-word; white-space: normal; overflow-wrap: break-word; word-break: break-word;">{{ olympiad.short_description }}</p>
                                 <div class="olympiad-links">
                                     {% if olympiad.get_information_letter_url %}
                                     <a href="{{ olympiad.get_information_letter_url }}" target="_blank" rel="noopener" class="btn-gradient stipendiya-action-btn">
                                         <i class="fas fa-download"></i>
-                                        Axborot xatini yuklash
+                                        {{ tr.ui.letter_download }}
                                     </a>
                                     {% endif %}
                                     <a href="{{ olympiad.registration_link }}" target="_blank" class="secondary-link">
                                         <i class="fas fa-link"></i>
-                                        Rasmiy ro'yxatdan o'tish havolasi
+                                        {{ tr.ui.official_reg }}
                                     </a>
                                 </div>
                             </div>
@@ -117,7 +117,7 @@
             {% else %}
                 <div style="display: flex; flex-direction: column; gap: 16px; padding: 48px; text-align: center;">
                     <i class="fas fa-medal" style="font-size: 64px; color: #9CA3AF;"></i>
-                    <p class="text-muted" style="font-size: 18px;">{% block empty_message %}Hozircha olimpiadalar ro'yxati bo'sh{% endblock %}</p>
+                    <p class="text-muted" style="font-size: 18px;">{% block empty_message %}{{ tr.olimp.empty }}{% endblock %}</p>
                 </div>
             {% endif %}
         </div>

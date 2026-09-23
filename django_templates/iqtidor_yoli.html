@@ -258,22 +258,22 @@
         <div class="subpage-hero-inner">
             <div class="subpage-hero-text">
                 <div class="subpage-breadcrumb">
-                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                     <span>//</span>
-                    <span>Iqtidorli Talabamisiz?</span>
+                    <span>{{ tr.nav.talent }}</span>
                     <span>//</span>
-                    <span>Iqtidor Yo'li</span>
+                    <span>{{ tr.nav.iqtidor_yoli }}</span>
                 </div>
-                <h1 class="title subpage-title">Iqtidorli talabani qiziqishiga qarab yo'naltirish</h1>
+                <h1 class="title subpage-title">{{ tr.iy.title }}</h1>
                 <p class="subtitle subpage-subtitle">
-                    O'zingizga mos yo'nalishni tanlang va imkoniyatlardan foydalaning!
+                    {{ tr.iy.sub }}
                 </p>
             </div>
             <div class="subpage-hero-illustration">
                 <div class="subpage-hero-pill">
                     <span class="badge" style="margin-bottom: 0;">
                         <i class="fas fa-star"></i>
-                        <span>Iqtidor Yo'li</span>
+                        <span>{{ tr.pages.iqtidor_yoli }}</span>
                     </span>
                 </div>
                 <div class="subpage-hero-image-wrapper">
@@ -289,27 +289,26 @@
         <div class="iy-section scroll-section">
             <div class="iy-section-header">
                 <div class="iy-section-number">1</div>
-                <h2 class="iy-section-title">Ilmiy tadqiqot faoliyati bilan shug'ullanish istagida bo'lgan talabalar uchun</h2>
+                <h2 class="iy-section-title">{{ tr.iqtidor.research }}</h2>
             </div>
 
             <div class="iy-grid-2">
                 <div>
-                    <p class="iy-helper">Agar bu bo'limni tanlasangiz quyidagi imkoniyatlarga ega bo'lasiz:</p>
+                    <p class="iy-helper">{{ tr.iy.helper }}</p>
                     <ol class="iy-list">
-                        <li>Prezident va nomli davlat stipendiyalari tanlovlariga tayyorlash</li>
-                        <li>Rektor stipendiyasiga tanlovlariga tayyorlash</li>
-                        <li>Fitrat stipendiyasiga tayyorlov</li>
-                        <li>Mutaxassisligiga oid tadqiqotlar olib borish imkoniyati</li>
+                        <li>{{ tr.iy.item1 }}</li>
+                        <li>{{ tr.iy.item2 }}</li>
+                        <li>{{ tr.iy.item3 }}</li>
+                        <li>{{ tr.iy.item4 }}</li>
                     </ol>
                 </div>
                 <div>
-                    <p class="iy-helper"><strong>Faoliyatni boshlash uchun ilmiy rahbar tanlang:</strong></p>
+                    <p class="iy-helper"><strong>{{ tr.iy.choose_sup }}:</strong></p>
                     <a href="{% url 'main:ilmiy_rahbarlar' %}" class="iy-cta-btn">
-                        <i class="fas fa-user-tie"></i> Faoliyatni boshlash uchun ilmiy rahbar tanlang
+                        <i class="fas fa-user-tie"></i> {{ tr.iqtidor.choose_supervisor }}
                     </a>
                     <div class="iy-warning">
-                        <b>⚠️ Diqqat! Izoh:</b> Ilmiy rahbar tanlashda o'z mutaxassisligingiz yoki ta'lim
-                        yo'nalishingiz doirasida tanlashingiz maqsadga muvofiq.
+                        <b>⚠️ {{ tr.ui.attention }} {{ tr.ui.note }}</b> {{ tr.iy.sup_warn }}
                     </div>
                 </div>
             </div>
@@ -319,16 +318,14 @@
         <div class="iy-section scroll-section">
             <div class="iy-section-header">
                 <div class="iy-section-number">2</div>
-                <h2 class="iy-section-title">Fan olimpiadalari markaziga a'zo bo'lish</h2>
+                <h2 class="iy-section-title">{{ tr.iqtidor.olympiad_center }}</h2>
             </div>
 
             <div class="iy-note">
-                <b>Izoh:</b> Agar bu bo'limni tanlasangiz siz xalqaro va respublika darajasidagi fan
-                olimpiadalarida ishtirok etish uchun tayyorlov kurslarida malakangizni oshirasiz va
-                olimpiada jarayonlarida ishtirok etish imkoniyatiga ega bo'lasiz.
+                <b>{{ tr.ui.note }}</b> {{ tr.iy.olimp_note }}
             </div>
             <p class="iy-helper">
-                <b>Fan olimpiadalari tarmog'idan quyidagi birini o'zingizning ta'lim yo'nalishingiz yoki mutaxassisligingizdan kelib chiqib tanlang!</b>
+                <b>{{ tr.iy.pick_fan }}</b>
             </p>
 
             <div class="iy-olympiad-grid">
@@ -339,8 +336,8 @@
                         <h3 class="iy-olympiad-name">{{ item.order }}. {{ item.title }}</h3>
                     </div>
                     <div class="iy-olympiad-actions">
-                        <a href="{% url 'main:olympiad_program' code=item.code %}" class="iy-action iy-action-base">Topshiriqlar bazasi</a>
-                        <a href="{% url 'main:olympiad_program' code=item.code %}#apply" class="iy-action iy-action-apply">A'zo bo'lish uchun murojaat</a>
+                        <a href="{% url 'main:olympiad_program' code=item.code %}" class="iy-action iy-action-base">{{ tr.iqtidor.tasks }}</a>
+                        <a href="{% url 'main:olympiad_program' code=item.code %}#apply" class="iy-action iy-action-apply">{{ tr.iqtidor.join }}</a>
                     </div>
                 </div>
                 {% endfor %}
@@ -351,37 +348,35 @@
         <div class="iy-section scroll-section">
             <div class="iy-section-header">
                 <div class="iy-section-number">3</div>
-                <h2 class="iy-section-title">BuxDU iqtidorli talabalar VOLONTYOR JAMOASI'ga a'zolik</h2>
+                <h2 class="iy-section-title">{{ tr.iqtidor.volunteer }}</h2>
             </div>
 
             <div class="iy-volunteer-wrap">
                 <div class="iy-volunteer-text">
                     <div class="iy-note">
-                        <b>Izoh:</b> Volontyorlar jamoasiga a'zo bo'lish uchun asosiy shartlar —
-                        ingliz tili yoki rus tilini mukammal bilish va Buxoro davlat universitetida
-                        tahsil olayotgan davrda bo'lishingiz shart.
+                        <b>{{ tr.ui.note }}</b> {{ tr.iy.vol_note }}
                     </div>
 
                     <div class="iy-volunteer-actions">
                         {% if volunteer_application %}
                             <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:12px;padding:16px 20px;max-width:420px;">
                                 <p style="margin:0 0 8px;font-weight:700;color:#4338ca;">
-                                    <i class="fas fa-check-circle"></i> Arizangiz yuborilgan
+                                    <i class="fas fa-check-circle"></i> {{ tr.iy.sent_status }}
                                 </p>
                                 <p style="margin:0 0 6px;font-size:13.5px;color:#4b5563;">
-                                    Volontyor jamoasiga arizangiz holati:
+                                    {{ tr.iy.vol_status }}
                                 </p>
                                 {% if volunteer_application.status == 'new' %}
-                                    <span style="display:inline-block;background:#dbeafe;color:#1e40af;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">Yangi</span>
+                                    <span style="display:inline-block;background:#dbeafe;color:#1e40af;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">{{ tr.ui.new }}</span>
                                 {% elif volunteer_application.status == 'reviewed' %}
-                                    <span style="display:inline-block;background:#fef3c7;color:#92400e;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">Ko'rib chiqildi</span>
+                                    <span style="display:inline-block;background:#fef3c7;color:#92400e;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">{{ tr.ui.reviewed }}</span>
                                 {% elif volunteer_application.status == 'approved' %}
-                                    <span style="display:inline-block;background:#d1fae5;color:#065f46;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">Tasdiqlandi</span>
+                                    <span style="display:inline-block;background:#d1fae5;color:#065f46;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">{{ tr.ui.approved }}</span>
                                 {% else %}
-                                    <span style="display:inline-block;background:#fee2e2;color:#991b1b;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">Rad etildi</span>
+                                    <span style="display:inline-block;background:#fee2e2;color:#991b1b;padding:5px 12px;border-radius:14px;font-size:12px;font-weight:700;">{{ tr.ui.rejected }}</span>
                                 {% endif %}
                                 <p style="margin:8px 0 0;font-size:12px;color:#6b7280;">
-                                    Yuborilgan: {{ volunteer_application.created_at|date:"d.m.Y H:i" }}
+                                    {{ tr.ui.sent }}: {{ volunteer_application.created_at|date:"d.m.Y H:i" }}
                                 </p>
                             </div>
                             {% if volunteer_application.status == 'rejected' %}
@@ -389,7 +384,7 @@
                                   onsubmit="return confirm('Volontyor jamoasiga qayta ariza yuborilsinmi?');">
                                 {% csrf_token %}
                                 <button type="submit" class="iy-action iy-action-apply">
-                                    <i class="fas fa-redo"></i> Qayta ariza yuborish
+                                    <i class="fas fa-redo"></i> {{ tr.ui.reapply }}
                                 </button>
                             </form>
                             {% endif %}
@@ -398,7 +393,7 @@
                                   onsubmit="return confirm('Volontyor jamoasiga ariza yuborilsinmi?');">
                                 {% csrf_token %}
                                 <button type="submit" class="iy-action iy-action-apply">
-                                    <i class="fas fa-envelope-open-text"></i> A'zo bo'lish uchun murojaat
+                                    <i class="fas fa-envelope-open-text"></i> {{ tr.ui.apply_join }}
                                 </button>
                             </form>
                         {% endif %}

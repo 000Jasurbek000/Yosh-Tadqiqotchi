@@ -232,8 +232,8 @@
 {% block content %}
 <div class="settings-container scroll-section">
     <div class="settings-header">
-        <h1>Sozlamalar</h1>
-        <p>Profilingiz va xavfsizlik sozlamalarini boshqaring</p>
+        <h1>{{ tr.pages.settings }}</h1>
+        <p>{{ tr.set.sub }}</p>
     </div>
     
     {% if messages %}
@@ -257,13 +257,13 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle; margin-right: 6px;">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
             </svg>
-            Profil ma'lumotlari
+            {{ tr.set.tab_profile }}
         </button>
         <button class="tab-btn" data-tab="password">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle; margin-right: 6px;">
                 <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
             </svg>
-            Xavfsizlik
+            {{ tr.set.tab_security }}
         </button>
     </div>
     
@@ -276,7 +276,7 @@
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                     </svg>
                 </span>
-                Shaxsiy ma'lumotlar
+                {{ tr.set.personal }}
             </h2>
             
             <form method="post" enctype="multipart/form-data">
@@ -284,7 +284,7 @@
                 <input type="hidden" name="form_type" value="profile">
                 
                 <div class="form-group">
-                    <label class="form-label">Profil rasmi</label>
+                    <label class="form-label">{{ tr.auth.photo }}</label>
                     {% if user.profile_image %}
                     <div style="margin-bottom: 16px;">
                         <img src="{{ user.profile_image.url }}" alt="Profile" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid var(--border-color-soft);">
@@ -298,14 +298,14 @@
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="{{ user_form.first_name.id_for_label }}">Ism</label>
+                        <label class="form-label" for="{{ user_form.first_name.id_for_label }}">{{ tr.auth.first_name }}</label>
                         {{ user_form.first_name }}
                         {% if user_form.first_name.errors %}
                             <span style="color: #ef4444; font-size: 13px;">{{ user_form.first_name.errors.0 }}</span>
                         {% endif %}
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="{{ user_form.last_name.id_for_label }}">Familiya</label>
+                        <label class="form-label" for="{{ user_form.last_name.id_for_label }}">{{ tr.auth.last_name }}</label>
                         {{ user_form.last_name }}
                         {% if user_form.last_name.errors %}
                             <span style="color: #ef4444; font-size: 13px;">{{ user_form.last_name.errors.0 }}</span>
@@ -314,7 +314,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="{{ user_form.email.id_for_label }}">Email (ixtiyoriy)</label>
+                    <label class="form-label" for="{{ user_form.email.id_for_label }}">{{ tr.set.email_opt }}</label>
                     {{ user_form.email }}
                     {% if user_form.email.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ user_form.email.errors.0 }}</span>
@@ -325,7 +325,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="{{ user_form.phone_number.id_for_label }}">Telefon raqam</label>
+                    <label class="form-label" for="{{ user_form.phone_number.id_for_label }}">{{ tr.auth.phone }}</label>
                     {{ user_form.phone_number }}
                     {% if user_form.phone_number.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ user_form.phone_number.errors.0 }}</span>
@@ -333,7 +333,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="{{ user_form.residence_region.id_for_label }}">Yashash xudud</label>
+                    <label class="form-label" for="{{ user_form.residence_region.id_for_label }}">{{ tr.auth.region }}</label>
                     {{ user_form.residence_region }}
                     {% if user_form.residence_region.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ user_form.residence_region.errors.0 }}</span>
@@ -341,7 +341,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="{{ user_form.university.id_for_label }}">O'qigan/O'qiyotgan joy</label>
+                    <label class="form-label" for="{{ user_form.university.id_for_label }}">{{ tr.auth.university }}</label>
                     {{ user_form.university }}
                     {% if user_form.university.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ user_form.university.errors.0 }}</span>
@@ -349,7 +349,7 @@
                 </div>
 
                 <div class="form-group" id="faculty-group">
-                    <label class="form-label" for="{{ user_form.faculty.id_for_label }}">Fakultet</label>
+                    <label class="form-label" for="{{ user_form.faculty.id_for_label }}">{{ tr.auth.faculty }}</label>
                     {{ user_form.faculty }}
                     {% if user_form.faculty.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ user_form.faculty.errors.0 }}</span>
@@ -357,7 +357,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="{{ user_form.education_direction.id_for_label }}">Ta'lim yo'nalishi</label>
+                    <label class="form-label" for="{{ user_form.education_direction.id_for_label }}">{{ tr.auth.direction }}</label>
                     {{ user_form.education_direction }}
                     {% if user_form.education_direction.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ user_form.education_direction.errors.0 }}</span>
@@ -365,7 +365,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="{{ user_form.education_stage.id_for_label }}">Ta'lim bosqichi / kurs</label>
+                    <label class="form-label" for="{{ user_form.education_stage.id_for_label }}">{{ tr.auth.stage }}</label>
                     {{ user_form.education_stage }}
                     {% if user_form.education_stage.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ user_form.education_stage.errors.0 }}</span>
@@ -373,15 +373,15 @@
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="{{ user_form.academic_degree.id_for_label }}">Ilmiy daraja</label>
+                    <label class="form-label" for="{{ user_form.academic_degree.id_for_label }}">{{ tr.auth.degree }}</label>
                     {{ user_form.academic_degree }}
                     {% if user_form.academic_degree.errors %}
                         <span style="color: #ef4444; font-size: 13px;">{{ user_form.academic_degree.errors.0 }}</span>
                     {% endif %}
                 </div>
                 
-                <button type="submit" class="btn-primary">O'zgarishlarni saqlash</button>
-                <a href="{% url 'main:profile' %}" class="btn-secondary">Bekor qilish</a>
+                <button type="submit" class="btn-primary">{{ tr.set.save_changes }}</button>
+                <a href="{% url 'main:profile' %}" class="btn-secondary">{{ tr.form.cancel }}</a>
             </form>
         </div>
     </div>
@@ -395,7 +395,7 @@
                         <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                     </svg>
                 </span>
-                Parolni o'zgartirish
+                {{ tr.auth.change_password }}
             </h2>
             
             <form method="post">
@@ -403,21 +403,21 @@
                 <input type="hidden" name="form_type" value="password">
                 
                 <div class="form-group">
-                    <label class="form-label" for="{{ password_form.old_password.id_for_label }}">Joriy parol</label>
+                    <label class="form-label" for="{{ password_form.old_password.id_for_label }}">{{ tr.auth.old_password }}</label>
                     {{ password_form.old_password.as_widget }}
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="{{ password_form.new_password1.id_for_label }}">Yangi parol</label>
+                    <label class="form-label" for="{{ password_form.new_password1.id_for_label }}">{{ tr.auth.new_password }}</label>
                     {{ password_form.new_password1.as_widget }}
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="{{ password_form.new_password2.id_for_label }}">Yangi parolni tasdiqlang</label>
+                    <label class="form-label" for="{{ password_form.new_password2.id_for_label }}">{{ tr.auth.new_password2 }}</label>
                     {{ password_form.new_password2.as_widget }}
                 </div>
                 
-                <button type="submit" class="btn-primary">Parolni o'zgartirish</button>
+                <button type="submit" class="btn-primary">{{ tr.auth.change_password }}</button>
             </form>
         </div>
     </div>

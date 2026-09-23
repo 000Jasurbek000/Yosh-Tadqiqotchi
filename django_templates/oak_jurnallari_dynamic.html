@@ -30,26 +30,26 @@
         <div class="subpage-hero-inner">
             <div class="subpage-hero-text">
                 <div class="subpage-breadcrumb">
-                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                     <span>//</span>
-                    <span>Ilmiy nashrlar va bazalar</span>
+                    <span>{{ tr.sci.crumb }}</span>
                     <span>//</span>
-                    <span id="breadcrumb-title">OAK jurnallari</span>
+                    <span id="breadcrumb-title">{{ tr.pages.oak }}</span>
                 </div>
-                <h1 class="title subpage-title" id="hero-title">OAK jurnallari</h1>
+                <h1 class="title subpage-title" id="hero-title">{{ tr.pages.oak }}</h1>
                 <p class="subtitle subpage-subtitle" id="hero-subtitle">
-                    OAK ro'yxatiga kiritilgan ilmiy jurnallar haqida ma'lumot.
+                    {{ tr.sci.loc_sub }}
                 </p>
             </div>
             <div class="subpage-hero-illustration">
                 <div class="subpage-hero-pill">
                     <span class="badge" style="margin-bottom: 0;">
                         <span id="hero-icon"><i class="fas fa-book"></i></span>
-                        <span id="hero-badge">OAK jurnallari</span>
+                        <span id="hero-badge">{{ tr.pages.oak }}</span>
                     </span>
                 </div>
                 <div class="subpage-hero-image-wrapper">
-                    <img src="{% static 'assets/OAK.jpg' %}" alt="OAK jurnallari" class="subpage-hero-image" id="hero-image" />
+                    <img src="{% static 'assets/OAK.jpg' %}" alt="{{ tr.pages.oak }}" class="subpage-hero-image" id="hero-image" />
                 </div>
             </div>
         </div>
@@ -59,10 +59,9 @@
         <div class="stipendiya-container">
             <div class="card stipendiya-table-card">
                 <div class="stipendiya-table-header">
-                    <h2 class="subtitle" id="section-title">OAK jurnallari ro'yxati</h2>
+                    <h2 class="subtitle" id="section-title">{{ tr.sci.oak_list }}</h2>
                     <p class="text-muted" id="section-description">
-                        Har bir satrda jurnal nomi, OAK ro'yxatiga kiritilgan ilmiy sohalar, OAK bazasi uchun havola va jurnal
-                        tahririyatiga ulanish keltiriladi.
+                        {{ tr.sci.loc_sub }}
                     </p>
                 </div>
                 {% if journals %}
@@ -70,11 +69,11 @@
                         <table class="stipendiya-table">
                             <thead>
                                 <tr>
-                                    <th style="width: 60px;">T/r</th>
-                                    <th>Jurnal nomi</th>
-                                    <th>OAK ga kiritilgan sohalari</th>
-                                    <th>OAK bazasi</th>
-                                    <th style="text-align: right;">Jurnal tahririyatiga ulanish</th>
+                                    <th style="width: 60px;">{{ tr.ui.nr }}</th>
+                                    <th>{{ tr.sci.journal }}</th>
+                                    <th>{{ tr.sci.fields }}</th>
+                                    <th>{{ tr.sci.oak_base }}</th>
+                                    <th style="text-align: right;">{{ tr.sci.connect }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -84,10 +83,10 @@
                                     <td>{{ journal.journal_name }}</td>
                                     <td>{{ journal.fields }}</td>
                                     <td class="stipendiya-table-action">
-                                        <a href="{{ journal.database_link }}" target="_blank" class="btn-gradient stipendiya-action-btn">OAK bazasiga o'tish</a>
+                                        <a href="{{ journal.database_link }}" target="_blank" class="btn-gradient stipendiya-action-btn">{{ tr.ui.oak_go }}</a>
                                     </td>
                                     <td class="stipendiya-table-action">
-                                        <a href="{{ journal.editorial_link }}" target="_blank" class="btn-gradient stipendiya-action-btn">Tahririyat bilan bog'lanish</a>
+                                        <a href="{{ journal.editorial_link }}" target="_blank" class="btn-gradient stipendiya-action-btn">{{ tr.ui.contact_edit }}</a>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -97,7 +96,7 @@
                 {% else %}
                     <div style="display: flex; flex-direction: column; gap: 16px; padding: 32px; text-align: center;">
                         <i class="fas fa-book" style="font-size: 48px; color: #9CA3AF;" id="empty-icon"></i>
-                        <p class="text-muted" id="empty-message">Hozircha jurnallar ro'yxati bo'sh</p>
+                        <p class="text-muted" id="empty-message">{{ tr.sci.oak_empty }}</p>
                     </div>
                 {% endif %}
             </div>
@@ -115,24 +114,24 @@
     // OAK turi bo'yicha konfiguratsiya
     const config = {
         mahalliy: {
-            title: 'Mahalliy OAK jurnallari',
-            subtitle: 'O\'zbekiston Respublikasidagi OAK ro\'yxatiga kiritilgan mahalliy ilmiy jurnallar, ularning sohalari, OAK bazasi va jurnal tahririyati bilan bog\'lanish uchun ma\'lumotlar.',
+            title: "{{ tr.sci.loc_title|escapejs }}",
+            subtitle: "{{ tr.sci.loc_sub|escapejs }}",
             icon: '<i class="fas fa-book"></i>',
-            badge: 'Mahalliy OAK jurnallari',
-            sectionTitle: 'Mahalliy OAK jurnallari ro\'yxati',
-            sectionDesc: 'Har bir satrda jurnal nomi, OAK ro\'yxatiga kiritilgan ilmiy sohalar, OAK bazasi uchun havola va jurnal tahririyatiga ulanish (veb-sayt, telefon raqami yoki manzil) keltiriladi.',
+            badge: "{{ tr.sci.loc_badge|escapejs }}",
+            sectionTitle: "{{ tr.sci.oak_list|escapejs }}",
+            sectionDesc: "{{ tr.sci.loc_sub|escapejs }}",
             emptyIcon: 'fas fa-book',
-            emptyMessage: 'Hozircha jurnallar ro\'yxati bo\'sh'
+            emptyMessage: "{{ tr.sci.loc_empty|escapejs }}"
         },
         xalqaro: {
-            title: 'Xalqaro OAK jurnallari',
-            subtitle: 'Xalqaro darajadagi ilmiy jurnallar va ularda maqola chop etish uchun zarur ma\'lumotlar.',
+            title: "{{ tr.sci.int_title|escapejs }}",
+            subtitle: "{{ tr.sci.int_sub|escapejs }}",
             icon: '<i class="fas fa-globe"></i>',
-            badge: 'Xalqaro OAK jurnallari',
-            sectionTitle: 'Xalqaro OAK jurnallari ro\'yxati',
-            sectionDesc: 'Har bir satrda jurnal nomi, OAK ro\'yxatiga kiritilgan ilmiy sohalar, OAK bazasi uchun havola va jurnal tahririyatiga ulanish keltiriladi.',
+            badge: "{{ tr.sci.int_badge|escapejs }}",
+            sectionTitle: "{{ tr.sci.oak_list|escapejs }}",
+            sectionDesc: "{{ tr.sci.int_sub|escapejs }}",
             emptyIcon: 'fas fa-globe',
-            emptyMessage: 'Hozircha xalqaro jurnallar ro\'yxati bo\'sh'
+            emptyMessage: "{{ tr.sci.int_empty|escapejs }}"
         }
     };
 

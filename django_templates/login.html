@@ -74,27 +74,27 @@
                 <span style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background: rgb(34, 197, 94); opacity: 0.75; animation: ping 1s infinite;"></span>
                 <span style="position: relative; display: inline-flex; width: 12px; height: 12px; border-radius: 50%; background: rgb(34, 197, 94);"></span>
             </span>
-            <span style="font-size: 14px;">Minglab iqtidorli talabalar bir platformada</span>
+            <span style="font-size: 14px;">{{ tr.authx.login_lead }}</span>
         </div>
 
         <h1 class="title" style="font-size: 48px; margin: 24px 0; background: linear-gradient(to right, var(--text-primary), rgb(244, 114, 182)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-            Xush kelibsiz!
+            {{ tr.authx.welcome }}
         </h1>
 
         <p class="subtitle" style="font-size: 18px; line-height: 1.6;">
-            Profilingizga kiring va sizga mos stipendiya hamda grant imkoniyatlarini bir joyda ko'ring.
+            {{ tr.authx.login_sub }}
         </p>
     </div>
     
     <div style="display: flex; flex-direction: column; gap: 16px;">
         <div class="card" style="padding: 20px;">
-            <h3 class="subtitle" style="font-size: 18px; margin-bottom: 8px;">🎓 Stipendiya va grantlar</h3>
-            <p class="text-muted" style="font-size: 14px;">Xalqaro va mahalliy dasturlar, talablar va muddatlar bir joyda</p>
+            <h3 class="subtitle" style="font-size: 18px; margin-bottom: 8px;">🎓 {{ tr.authx.feat1 }}</h3>
+            <p class="text-muted" style="font-size: 14px;">{{ tr.authx.feat1_d }}</p>
         </div>
 
         <div class="card" style="padding: 20px;">
-            <h3 class="subtitle" style="font-size: 18px; margin-bottom: 8px;">🚀 Tez va qulay ariza</h3>
-            <p class="text-muted" style="font-size: 14px;">Kerakli hujjatlarni tayyorlash va topshirish bo'yicha yo'riqnomalar</p>
+            <h3 class="subtitle" style="font-size: 18px; margin-bottom: 8px;">🚀 {{ tr.authx.feat2 }}</h3>
+            <p class="text-muted" style="font-size: 14px;">{{ tr.authx.feat2_d }}</p>
         </div>
     </div>
 </div>
@@ -102,7 +102,7 @@
 <!-- Right Side - Login Form -->
 <div class="glass-effect animate-fadeInUp" style="animation-delay: 0.2s;">
     <h2 class="title" style="font-size: 32px; margin-bottom: 8px; text-align: center;">{{ tr.auth.login_title }}</h2>
-    <p class="text-muted" style="text-align: center; margin-bottom: 32px;">Grant va stipendiyalar bo'limiga kirish uchun ma'lumotlaringizni kiriting</p>
+    <p class="text-muted" style="text-align: center; margin-bottom: 32px;">{{ tr.authx.login_sub }}</p>
 
     {% if messages %}
         {% for message in messages %}
@@ -133,7 +133,7 @@
     <form method="post">
         {% csrf_token %}
         <div class="form-group">
-            <label for="{{ form.username.id_for_label }}">Telefon raqam</label>
+            <label for="{{ form.username.id_for_label }}">{{ tr.auth.phone }}</label>
             {{ form.username }}
             {% if form.username.errors %}
                 <span style="color: #ef4444; font-size: 13px;">{{ form.username.errors.0 }}</span>
@@ -141,7 +141,7 @@
         </div>
 
         <div class="form-group">
-            <label for="{{ form.password.id_for_label }}">Parol</label>
+            <label for="{{ form.password.id_for_label }}">{{ tr.auth.password }}</label>
             {{ form.password }}
             {% if form.password.errors %}
                 <span style="color: #ef4444; font-size: 13px;">{{ form.password.errors.0 }}</span>
@@ -151,17 +151,17 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin: 16px 0;">
             <div class="checkbox-wrapper">
                 <input type="checkbox" id="remember" name="remember">
-                <label for="remember">Eslab qol</label>
+                <label for="remember">{{ tr.authx.remember }}</label>
             </div>
-            <a href="#" class="text-link" style="font-size: 14px;">Parolni unutdingizmi?</a>
+            <a href="#" class="text-link" style="font-size: 14px;">{{ tr.authx.forgot }}</a>
         </div>
 
         <button type="submit" class="form-btn">{{ tr.auth.login_btn }}</button>
     </form>
 
     <p class="text-center mt-4 text-muted">
-        Akkauntingiz yo'qmi?
-        <a href="{% url 'main:register' %}" class="text-link">Ro'yxatdan o'tish</a>
+        {{ tr.auth.no_account }}
+        <a href="{% url 'main:register' %}" class="text-link">{{ tr.auth.register_btn }}</a>
     </p>
 </div>
 

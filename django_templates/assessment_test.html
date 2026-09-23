@@ -227,8 +227,8 @@
 <div class="assessment-container">
         <!-- Header -->
         <div class="assessment-header">
-            <h1><i class="fas fa-graduation-cap"></i> Iqtidorli talabalarni saralash testi</h1>
-            <p>Iqtidorli talaba maqomiga ega bo'lish uchun testdan o'ting!</p>
+            <h1><i class="fas fa-graduation-cap"></i> {{ tr.assess_ui.h1 }}</h1>
+            <p>{{ tr.assess_ui.sub }}</p>
         </div>
         
         {% if not assessment_test %}
@@ -240,7 +240,7 @@
             <h2 style="color: #666; margin-bottom: 10px;">{{ tr.assessment.missing }}</h2>
             <p style="color: #999; margin-bottom: 30px;">{{ no_test_reason|default:tr.assessment.no_test }}</p>
             <a href="{% url 'main:home' %}" class="btn-secondary" style="display: inline-flex; text-decoration: none;">
-                <i class="fas fa-home"></i> Bosh sahifaga qaytish
+                <i class="fas fa-home"></i> {{ tr.ui.home_back }}
             </a>
         </div>
         {% else %}
@@ -249,47 +249,47 @@
         {% if last_result %}
             {% if last_result.passed %}
                 <div class="status-card success">
-                    <h3><i class="fas fa-star"></i> Siz iqtidorli talaba maqomiga ega bo'ldingiz!</h3>
+                    <h3><i class="fas fa-star"></i> {{ tr.assess_ui.passed }}</h3>
                     <p>Test natijasi: {{ last_result.percentage|floatformat:1 }}%</p>
                 </div>
             {% else %}
                 <div class="status-card">
-                    <h3><i class="fas fa-info-circle"></i> Hozirgi statusingiz: {{ user.status|capfirst }}</h3>
+                    <h3><i class="fas fa-info-circle"></i> {{ tr.assess_ui.status_now }} {{ user.status|capfirst }}</h3>
                     <p>Oxirgi test natijasi: {{ last_result.percentage|floatformat:1 }}%</p>
                 </div>
             {% endif %}
         {% else %}
             <div class="status-card">
-                <h3><i class="fas fa-user"></i> Hozirgi statusingiz: {{ user.status|capfirst }}</h3>
-                <p>Siz hali saralash testini topshirmadingiz</p>
+                <h3><i class="fas fa-user"></i> {{ tr.assess_ui.status_now }} {{ user.status|capfirst }}</h3>
+                <p>{{ tr.assess_ui.not_taken }}</p>
             </div>
         {% endif %}
         
         <!-- Test Info -->
         <div class="info-card">
-            <h2><i class="fas fa-info-circle"></i> Test haqida ma'lumot</h2>
+            <h2><i class="fas fa-info-circle"></i> {{ tr.assess_ui.about }}</h2>
             <p style="margin-bottom: 20px; color: #666; line-height: 1.6;">{{ assessment_test.description }}</p>
             
             <ul class="info-list">
                 <li>
                     <i class="fas fa-clock"></i>
-                    <strong>Vaqt limiti:</strong> {{ assessment_test.time_limit }} daqiqa
+                    <strong>{{ tr.assess_ui.time_limit }}</strong> {{ assessment_test.time_limit }} daqiqa
                 </li>
                 <li>
                     <i class="fas fa-chart-line"></i>
-                    <strong>O'tish foizi:</strong> {{ assessment_test.pass_percentage }}%
+                    <strong>{{ tr.assess_ui.pass_pct }}</strong> {{ assessment_test.pass_percentage }}%
                 </li>
                 <li>
                     <i class="fas fa-redo"></i>
-                    <strong>Qayta urinish:</strong> {{ assessment_test.retry_delay_hours }} soatdan keyin
+                    <strong>{{ tr.assess_ui.retry }}</strong> {{ assessment_test.retry_delay_hours }} soatdan keyin
                 </li>
                 <li>
                     <i class="fas fa-exclamation-triangle"></i>
-                    <strong>Muhim:</strong> Sahifani yangilasangiz yoki chiqsangiz, test qaytadan boshlanadi!
+                    <strong>{{ tr.assess_ui.important }}</strong> Sahifani yangilasangiz yoki chiqsangiz, test qaytadan boshlanadi!
                 </li>
                 <li>
                     <i class="fas fa-hourglass-end"></i>
-                    <strong>Vaqt tugashi:</strong> Belgilangan javoblar qabul qilinadi, qolganlari xato hisoblanadi
+                    <strong>{{ tr.assess_ui.time_end }}</strong> Belgilangan javoblar qabul qilinadi, qolganlari xato hisoblanadi
                 </li>
             </ul>
         </div>
@@ -297,26 +297,26 @@
         <!-- Last Result -->
         {% if last_result %}
         <div class="info-card">
-            <h2><i class="fas fa-chart-bar"></i> Oxirgi test natijasi</h2>
+            <h2><i class="fas fa-chart-bar"></i> {{ tr.assess_ui.last_result }}</h2>
             <div class="result-summary">
                 <h4>{{ last_result.submitted_at|date:"d.m.Y H:i" }}da topshirilgan</h4>
                 <div class="result-stats">
                     <div class="stat-item">
                         <div class="stat-value">{{ last_result.percentage|floatformat:1 }}%</div>
-                        <div class="stat-label">Natija</div>
+                        <div class="stat-label">{{ tr.assess_ui.result }}</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value">{{ last_result.correct_answers }}</div>
-                        <div class="stat-label">To'g'ri javoblar</div>
+                        <div class="stat-label">{{ tr.assess_ui.correct }}</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value">{{ last_result.total_questions }}</div>
-                        <div class="stat-label">Jami savollar</div>
+                        <div class="stat-label">{{ tr.assess_ui.total }}</div>
                     </div>
                     {% if last_result.time_taken %}
                     <div class="stat-item">
                         <div class="stat-value">{{ last_result.time_taken|floatformat:0 }}s</div>
-                        <div class="stat-label">Sarflangan vaqt</div>
+                        <div class="stat-label">{{ tr.assess_ui.spent }}</div>
                     </div>
                     {% endif %}
                 </div>
@@ -329,7 +329,7 @@
         <div class="timer-warning">
             <i class="fas fa-clock"></i>
             <div>
-                <strong>Keyingi urinish uchun kutish vaqti:</strong>
+                <strong>{{ tr.assess_ui.wait_next }}</strong>
                 <div id="waitTimer">{{ wait_time.hours }}:{{ wait_time.minutes|stringformat:"02d" }}:00</div>
             </div>
         </div>
@@ -343,11 +343,11 @@
                 </a>
             {% else %}
                 <button class="btn-primary" disabled>
-                    <i class="fas fa-lock"></i> Testni boshlash ({{ wait_time.hours }}:{{ wait_time.minutes|stringformat:"02d" }} kutish)
+                    <i class="fas fa-lock"></i> {{ tr.assess_ui.start_wait }} ({{ wait_time.hours }}:{{ wait_time.minutes|stringformat:"02d" }})
                 </button>
             {% endif %}
             <a href="{% url 'main:profile' %}" class="btn-secondary">
-                <i class="fas fa-arrow-left"></i> Profilga qaytish
+                <i class="fas fa-arrow-left"></i> {{ tr.ui.profile_back }}
             </a>
         </div>
         {% endif %}

@@ -1,8 +1,10 @@
+import json
+
 from django.shortcuts import redirect
 
 from .i18n import (
     SUPPORTED_LANGS, DEFAULT_LANG, set_current_language,
-    get_current_language, translations_for,
+    get_current_language, translations_for, load_catalog,
 )
 
 
@@ -44,11 +46,13 @@ def language_context(request):
         item['url'] = _lang_url(request, item['code'])
         item['active'] = item['code'] == lang
     current = next((item for item in langs if item['active']), langs[0])
+    home = (load_catalog(lang) or {}).get('home') or {}
     return {
         'lang': lang,
         'tr': translations_for(lang),
         'available_langs': langs,
         'current_lang': current,
+        'home_typing_words_json': json.dumps(home.get('typing_words') or [], ensure_ascii=False),
     }
 
 

@@ -79,32 +79,32 @@
                         <span style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background: rgb(34, 197, 94); opacity: 0.75; animation: ping 1s infinite;"></span>
                         <span style="position: relative; display: inline-flex; width: 12px; height: 12px; border-radius: 50%; background: rgb(34, 197, 94);"></span>
                     </span>
-                    <span style="font-size: 14px;">Iqtidorli talabalar hamjamiyatiga qo'shiling</span>
+                    <span style="font-size: 14px;">{{ tr.authx.reg_lead }}</span>
                 </div>
 
                 <h1 class="title" style="font-size: 48px; margin: 24px 0; background: linear-gradient(to right, var(--text-primary), rgb(244, 114, 182)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                    Boshlang
+                    {{ tr.authx.reg_start }}
                 </h1>
 
                 <p class="subtitle" style="font-size: 18px; line-height: 1.6;">
-                    Profil yarating va sizga mos grant hamda stipendiya imkoniyatlarini bir joyda kuzating.
+                    {{ tr.authx.reg_sub }}
                 </p>
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 16px;">
                 <div class="card" style="padding: 20px;">
-                    <h3 class="subtitle" style="font-size: 18px; margin-bottom: 8px;">🎓 Grant va stipendiyalar</h3>
-                    <p class="text-muted" style="font-size: 14px;">Xalqaro va mahalliy dasturlar, talablar va muddatlar haqida aniq ma'lumot</p>
+                    <h3 class="subtitle" style="font-size: 18px; margin-bottom: 8px;">🎓 {{ tr.authx.reg_f1 }}</h3>
+                    <p class="text-muted" style="font-size: 14px;">{{ tr.authx.reg_f1_d }}</p>
                 </div>
 
                 <div class="card" style="padding: 20px;">
-                    <h3 class="subtitle" style="font-size: 18px; margin-bottom: 8px;">📝 Ariza uchun yo'riqnomalar</h3>
-                    <p class="text-muted" style="font-size: 14px;">Hujjatlar ro'yxati, tavsiyalar va topshirish bosqichlari bo'yicha ko'rsatmalar</p>
+                    <h3 class="subtitle" style="font-size: 18px; margin-bottom: 8px;">📝 {{ tr.authx.reg_f2 }}</h3>
+                    <p class="text-muted" style="font-size: 14px;">{{ tr.authx.reg_f2_d }}</p>
                 </div>
 
                 <div class="card" style="padding: 20px;">
-                    <h3 class="subtitle" style="font-size: 18px; margin-bottom: 8px;">🔔 Eslatmalar va yangiliklar</h3>
-                    <p class="text-muted" style="font-size: 14px;">Yangi imkoniyatlar va deadline'lar haqida tezkor xabardor bo'ling</p>
+                    <h3 class="subtitle" style="font-size: 18px; margin-bottom: 8px;">🔔 {{ tr.authx.reg_f3 }}</h3>
+                    <p class="text-muted" style="font-size: 14px;">{{ tr.authx.reg_f3_d }}</p>
                 </div>
             </div>
         </div>
@@ -227,7 +227,7 @@
             </form>
 
             <p class="text-center mt-4 text-muted">
-                Allaqachon akkauntingiz bormi?
+                {{ tr.auth.have_account }}
                 <a href="{% url 'main:login' %}" class="text-link">{{ tr.nav.login }}</a>
             </p>
         </div>

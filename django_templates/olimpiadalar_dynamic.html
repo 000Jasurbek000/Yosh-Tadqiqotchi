@@ -46,29 +46,29 @@
         <div class="subpage-hero-inner">
             <div class="subpage-hero-text">
                 <div class="subpage-breadcrumb">
-                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                     <span>//</span>
-                    <span>Xalqaro grant va olimpiadalar</span>
+                    <span>{{ tr.olimp.crumb }}</span>
                     <span>//</span>
-                    <span id="breadcrumb-title">Fan olimpiadalari</span>
+                    <span id="breadcrumb-title">{{ tr.olimp.default_title }}</span>
                 </div>
-                <h1 class="title subpage-title" id="hero-title">Fan olimpiadalari</h1>
+                <h1 class="title subpage-title" id="hero-title">{{ tr.olimp.default_title }}</h1>
                 <p class="subtitle subpage-subtitle" id="hero-subtitle">
-                    Iqtidorli talabalar uchun fan olimpiadalari, qisqacha ma'lumot, axborot xati va ro'yxatdan o'tish havolalari.
+                    {{ tr.olimp.default_sub }}
                 </p>
             </div>
             <div class="subpage-hero-illustration">
                 <div class="subpage-hero-pill">
                     <span class="badge" style="margin-bottom: 0;">
                         <span id="hero-icon"><i class="fas fa-trophy"></i></span>
-                        <span id="hero-badge">Olimpiadalar</span>
+                        <span id="hero-badge">{{ tr.olimp.default_badge }}</span>
                     </span>
                 </div>
                 <div class="subpage-hero-image-wrapper">
                     {% if hero_image %}
-                        <img src="{% static hero_image %}" alt="Fan olimpiadalari" class="subpage-hero-image" id="hero-image" />
+                        <img src="{% static hero_image %}" alt="{{ tr.olimp.default_title }}" class="subpage-hero-image" id="hero-image" />
                     {% else %}
-                        <img src="{% static 'assets/hero-section-showcase.png' %}" alt="Fan olimpiadalari" class="subpage-hero-image" id="hero-image" />
+                        <img src="{% static 'assets/hero-section-showcase.png' %}" alt="{{ tr.olimp.default_title }}" class="subpage-hero-image" id="hero-image" />
                     {% endif %}
                 </div>
             </div>
@@ -79,9 +79,9 @@
     <section class="olympiad-section scroll-section">
         <div class="olympiad-container">
             <div class="olympiad-header">
-                <h2 class="subtitle" id="section-title">Faol fan olimpiadalari</h2>
+                <h2 class="subtitle" id="section-title">{{ tr.olimp.default_section }}</h2>
                 <p class="text-muted" id="section-description">
-                    Har bir olimpiada uchun alohida karta: nomi, o'tkaziladigan davlat, qisqacha ma'lumot, axborot xatini yuklab olish va rasmiy ro'yxatdan o'tish havolasi.
+                    {{ tr.olimp.default_section_sub }}
                 </p>
             </div>
 
@@ -105,23 +105,23 @@
                                 <div class="olympiad-tags">
                                     <span class="olympiad-tag">
                                         <i class="fas fa-hashtag"></i>
-                                        {{ forloop.counter }}-olimpiada
+                                        {{ forloop.counter }}{{ tr.ui.olympiad_n }}
                                     </span>
                                 </div>
                                 <h3 class="olympiad-title" style="word-wrap: break-word; white-space: normal; overflow-wrap: break-word; word-break: break-word;">{{ olympiad.name }}</h3>
-                                <p class="olympiad-meta-label">O'tkaziladigan davlat</p>
+                                <p class="olympiad-meta-label">{{ tr.ui.country }}</p>
                                 <p class="olympiad-country" style="word-wrap: break-word; white-space: normal; overflow-wrap: break-word; word-break: break-word;">{{ olympiad.country }}</p>
                                 <p class="olympiad-desc" style="word-wrap: break-word; white-space: normal; overflow-wrap: break-word; word-break: break-word;">{{ olympiad.short_description }}</p>
                                 <div class="olympiad-links">
                                     {% if olympiad.get_information_letter_url %}
                                     <a href="{{ olympiad.get_information_letter_url }}" target="_blank" rel="noopener" class="btn-gradient stipendiya-action-btn">
                                         <i class="fas fa-{% if olympiad.is_external_letter_link %}external-link-alt{% else %}download{% endif %}"></i>
-                                        {% if olympiad.is_external_letter_link %}Axborot xatini ko'rish{% else %}Axborot xatini yuklash{% endif %}
+                                        {% if olympiad.is_external_letter_link %}{{ tr.ui.letter_view }}{% else %}{{ tr.ui.letter_download }}{% endif %}
                                     </a>
                                     {% endif %}
                                     <a href="{{ olympiad.registration_link }}" target="_blank" class="secondary-link">
                                         <i class="fas fa-link"></i>
-                                        Rasmiy ro'yxatdan o'tish havolasi
+                                        {{ tr.ui.official_reg }}
                                     </a>
                                 </div>
                             </div>
@@ -132,7 +132,7 @@
             {% else %}
                 <div style="display: flex; flex-direction: column; gap: 16px; padding: 48px; text-align: center;">
                     <i class="fas fa-medal" style="font-size: 64px; color: #9CA3AF;"></i>
-                    <p class="text-muted" style="font-size: 18px;" id="empty-message">Hozircha olimpiadalar ro'yxati bo'sh</p>
+                    <p class="text-muted" style="font-size: 18px;" id="empty-message">{{ tr.olimp.empty }}</p>
                 </div>
             {% endif %}
         </div>
@@ -149,28 +149,28 @@
     // Olimpiada turiga qarab matn va iconlar
     const config = {
         xalqaro: {
-            title: 'Xalqaro fan olimpiadalari',
-            subtitle: 'Iqtidorli talabalar uchun yirik xalqaro fan olimpiadalari, qisqacha ma\'lumot, axborot xati va ro\'yxatdan o\'tish havolalari.',
+            title: "{{ tr.olimp.intl_title|escapejs }}",
+            subtitle: "{{ tr.olimp.intl_sub|escapejs }}",
             icon: '<i class="fas fa-globe"></i>',
-            badge: 'Xalqaro imkoniyatlar',
-            sectionTitle: 'Faol xalqaro fan olimpiadalari',
-            emptyMessage: 'Hozircha xalqaro olimpiadalar ro\'yxati bo\'sh'
+            badge: "{{ tr.olimp.intl_badge|escapejs }}",
+            sectionTitle: "{{ tr.olimp.intl_section|escapejs }}",
+            emptyMessage: "{{ tr.olimp.intl_empty|escapejs }}"
         },
         respublika: {
-            title: 'Respublika fan olimpiadalari',
-            subtitle: 'Iqtidorli talabalar uchun respublika miqyosidagi fan olimpiadalari, qisqacha ma\'lumot, axborot xati va ro\'yxatdan o\'tish havolalari.',
+            title: "{{ tr.olimp.rep_title|escapejs }}",
+            subtitle: "{{ tr.olimp.rep_sub|escapejs }}",
             icon: '<i class="fas fa-flag"></i>',
-            badge: 'Respublika imkoniyatlari',
-            sectionTitle: 'Faol respublika fan olimpiadalari',
-            emptyMessage: 'Hozircha respublika olimpiadalar ro\'yxati bo\'sh'
+            badge: "{{ tr.olimp.rep_badge|escapejs }}",
+            sectionTitle: "{{ tr.olimp.rep_section|escapejs }}",
+            emptyMessage: "{{ tr.olimp.rep_empty|escapejs }}"
         },
         onlayn: {
-            title: 'Onlayn fan olimpiadalari',
-            subtitle: 'Iqtidorli talabalar uchun onlayn fan olimpiadalari, qisqacha ma\'lumot, axborot xati va ro\'yxatdan o\'tish havolalari.',
+            title: "{{ tr.olimp.onl_title|escapejs }}",
+            subtitle: "{{ tr.olimp.onl_sub|escapejs }}",
             icon: '<i class="fas fa-laptop"></i>',
-            badge: 'Onlayn imkoniyatlar',
-            sectionTitle: 'Faol onlayn fan olimpiadalari',
-            emptyMessage: 'Hozircha onlayn olimpiadalar ro\'yxati bo\'sh'
+            badge: "{{ tr.olimp.onl_badge|escapejs }}",
+            sectionTitle: "{{ tr.olimp.onl_section|escapejs }}",
+            emptyMessage: "{{ tr.olimp.onl_empty|escapejs }}"
         }
     };
 

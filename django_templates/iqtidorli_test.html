@@ -21,16 +21,15 @@
         <div class="subpage-hero-inner">
             <div class="subpage-hero-text">
                 <div class="subpage-breadcrumb">
-                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                     <span>//</span>
-                    <span>Iqtidorli talabamisiz?</span>
+                    <span>{{ tr.nav.talent }}</span>
                     <span>//</span>
-                    <span>Saralash testi</span>
+                    <span>{{ tr.nav.assessment }}</span>
                 </div>
-                <h1 class="title subpage-title">Iqtidorli talabalar uchun saralash testi</h1>
+                <h1 class="title subpage-title">{{ tr.assess_ui.h1 }}</h1>
                 <p class="subtitle subpage-subtitle">
-                    60 bal va undan yuqori natija olganlar "Iqtidorli talaba" statusiga ega bo'ladi. Past ball olganlar esa
-                    faqat umumiy test topshiruvchilar ro'yxatida qayd etiladi.
+                    {{ tr.assess_ui.sub }}
                 </p>
             </div>
             <div class="subpage-hero-illustration">

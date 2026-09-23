@@ -30,28 +30,26 @@
         <div class="subpage-hero-inner">
             <div class="subpage-hero-text">
                 <div class="subpage-breadcrumb">
-                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                     <span>//</span>
-                    <span>Xizmatlar</span>
+                    <span>{{ tr.nav.services }}</span>
                     <span>//</span>
-                    <span>Ilmiy tadqiqotchilar uchun nizomlar</span>
+                    <span>{{ tr.nav.regulations }}</span>
                 </div>
-                <h1 class="title subpage-title">Ilmiy tadqiqotchilar uchun NIZOMLAR</h1>
+                <h1 class="title subpage-title">{{ tr.svc.reg_h1 }}</h1>
                 <p class="subtitle subpage-subtitle">
-                    Ilmiy daraja olish, nashr talablari, iqtidorli talabalar, stipendiyalar va boshqa tartib-taomillar bo'yicha asosiy
-                    nizomlar va yo'riqnomalar. Foydalanuvchilar bu yerda hech narsa yuklamaydi, faqat tayyor hujjatlarni
-                    ko'rib tanishib chiqadi.
+                    {{ tr.svc.reg_sub }}
                 </p>
             </div>
             <div class="subpage-hero-illustration">
                 <div class="subpage-hero-pill">
                     <span class="badge" style="margin-bottom: 0;">
                         <i class="fas fa-scale-balanced"></i>
-                        <span>Normativ hujjatlar</span>
+                        <span>{{ tr.svc.reg_badge }}</span>
                     </span>
                 </div>
                 <div class="subpage-hero-image-wrapper">
-                    <img src="{% static 'assets/OAK.jpg' %}" alt="Ilmiy nizomlar" class="subpage-hero-image" />
+                    <img src="{% static 'assets/OAK.jpg' %}" alt="{{ tr.nav.regulations }}" class="subpage-hero-image" />
                 </div>
             </div>
         </div>
@@ -61,18 +59,18 @@
         <div class="stipendiya-container">
             <div class="card stipendiya-table-card">
                 <div class="stipendiya-table-header">
-                    <h2 class="subtitle">Asosiy nizomlar ro'yxati</h2>
+                    <h2 class="subtitle">{{ tr.svc.reg_list }}</h2>
                     <p class="text-muted">
-                        Quyidagi jadvalda nizom nomi va unga mos havola keltirilgan. Havola orqali rasmiy nizom sahifasiga o'tib tanishishingiz mumkin.
+                        {{ tr.svc.reg_sub }}
                     </p>
                 </div>
                 <div class="stipendiya-table-wrapper">
                     <table class="stipendiya-table">
                         <thead>
                             <tr>
-                                <th style="width: 60px;">T/r</th>
-                                <th>Nizom nomi</th>
-                                <th style="text-align: right;">Nizom</th>
+                                <th style="width: 60px;">{{ tr.ui.nr }}</th>
+                                <th>{{ tr.svc.reg_name }}</th>
+                                <th style="text-align: right;">{{ tr.ui.statute }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,7 +81,7 @@
                                 <td class="stipendiya-table-action">
                                     {% if regulation.get_document_url %}
                                         <a href="{{ regulation.get_document_url }}" target="_blank" rel="noopener" class="btn-gradient stipendiya-action-btn">
-                                            {% if regulation.is_external_link %}Nizomni ko'rish{% else %}Nizom faylini ochish{% endif %}
+                                            {% if regulation.is_external_link %}{{ tr.ui.view_statute }}{% else %}{{ tr.ui.open_statute }}{% endif %}
                                         </a>
                                     {% else %}
                                         <span style="color: #999;">—</span>
@@ -94,7 +92,7 @@
                             <tr>
                                 <td colspan="3" style="text-align: center; padding: 40px;">
                                     <i class="fas fa-scale-balanced" style="font-size: 48px; color: #ccc; margin-bottom: 15px;"></i>
-                                    <p style="color: #999; font-size: 16px;">Hozircha ilmiy nizomlar ma'lumotlari mavjud emas.</p>
+                                    <p style="color: #999; font-size: 16px;">{{ tr.svc.reg_empty }}</p>
                                 </td>
                             </tr>
                             {% endfor %}

@@ -1,23 +1,23 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ course.name }} - Test{% endblock %}
+{% block title %}{{ course.name }} - {{ tr.courses.test }}{% endblock %}
 
 {% block content %}
 <section class="subpage-hero stipendiya-hero">
     <div class="subpage-hero-inner">
         <div class="subpage-hero-text">
             <div class="subpage-breadcrumb">
-                <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                 <span>//</span>
-                <a href="{% url 'main:courses' %}">Kurslar</a>
+                <a href="{% url 'main:courses' %}">{{ tr.nav.courses }}</a>
                 <span>//</span>
                 <a href="{% url 'main:course_detail' course.id %}">{{ course.name }}</a>
                 <span>//</span>
-                <span>Test</span>
+                <span>{{ tr.courses.test }}</span>
             </div>
-            <h1 class="title subpage-title">Yakuniy test</h1>
-            <p class="subtitle subpage-subtitle">{{ course.name }} - O'tish bali: {{ course.passing_score }}%</p>
+            <h1 class="title subpage-title">{{ tr.cp.final_test }}</h1>
+            <p class="subtitle subpage-subtitle">{{ course.name }} - {{ tr.cp.pass_score }}: {{ course.passing_score }}%</p>
         </div>
     </div>
 </section>
@@ -29,9 +29,9 @@
             <div style="padding: 24px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <h3 style="color: white; margin: 0 0 8px 0; font-size: 20px; font-weight: 600;">
-                        <i class="fas fa-clock"></i> Qolgan vaqt
+                        <i class="fas fa-clock"></i> {{ tr.cp.time_left }}
                     </h3>
-                    <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 14px;">Vaqt tugagach test avtomatik yuboriladi</p>
+                    <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 14px;">{{ tr.cp.auto_submit }}</p>
                 </div>
                 <div id="timer" style="font-size: 48px; font-weight: 700; color: white; font-family: 'Courier New', monospace;">
                     {{ total_time_minutes }}:00
@@ -42,8 +42,8 @@
         <!-- Questions -->
         <div class="card stipendiya-table-card">
             <div class="stipendiya-table-header">
-                <h2 class="subtitle">Test savollari</h2>
-                <p class="text-muted">Jami {{ questions.count }} ta savol. Har bir savolga javob bering.</p>
+                <h2 class="subtitle">{{ tr.cp.questions }}</h2>
+                <p class="text-muted">{{ tr.cp.total_q }}: {{ questions.count }}</p>
             </div>
 
             <form id="testForm" style="padding: 24px;">
@@ -72,10 +72,10 @@
 
                 <div style="display: flex; justify-content: center; gap: 16px; margin-top: 32px; padding-top: 32px; border-top: 2px solid #e5e7eb;">
                     <button type="button" onclick="window.history.back()" style="padding: 14px 32px; background: #6b7280; color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 16px; cursor: pointer;">
-                        <i class="fas fa-arrow-left"></i> Bekor qilish
+                        <i class="fas fa-arrow-left"></i> {{ tr.form.cancel }}
                     </button>
                     <button type="submit" id="submitBtn" style="padding: 14px 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 16px; cursor: pointer; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
-                        <i class="fas fa-paper-plane"></i> Testni yuborish
+                        <i class="fas fa-paper-plane"></i> {{ tr.cp.submit }}
                     </button>
                 </div>
             </form>
@@ -92,17 +92,17 @@
         
         <div style="display: flex; gap: 16px; margin-bottom: 24px; padding: 20px; background: #f9fafb; border-radius: 12px;">
             <div style="flex: 1; text-align: center;">
-                <div style="font-size: 14px; color: #6b7280; margin-bottom: 4px;">To'g'ri javoblar</div>
+                <div style="font-size: 14px; color: #6b7280; margin-bottom: 4px;">{{ tr.cp.correct }}</div>
                 <div id="correctAnswers" style="font-size: 28px; font-weight: 700; color: #10b981;"></div>
             </div>
             <div style="flex: 1; text-align: center;">
-                <div style="font-size: 14px; color: #6b7280; margin-bottom: 4px;">Natija</div>
+                <div style="font-size: 14px; color: #6b7280; margin-bottom: 4px;">{{ tr.cp.result }}</div>
                 <div id="percentage" style="font-size: 28px; font-weight: 700; color: #3b82f6;"></div>
             </div>
         </div>
         
         <button onclick="window.location.href='{% url 'main:course_detail' course.id %}'" style="width: 100%; padding: 16px; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 16px; cursor: pointer;">
-            Kursga qaytish
+            {{ tr.cp.back_course }}
         </button>
     </div>
 </div>
@@ -205,14 +205,14 @@ function submitTest(autoSubmit) {
         } else {
             alert('Xatolik yuz berdi: ' + (data.error || 'Noma\'lum xatolik'));
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Testni yuborish';
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> {{ tr.cp.submit|escapejs }}';
         }
     })
     .catch(error => {
         console.error('Error:', error);
         alert('Xatolik yuz berdi. Iltimos qayta urinib ko\'ring.');
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Testni yuborish';
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> {{ tr.cp.submit|escapejs }}';
     });
 }
 
@@ -226,7 +226,7 @@ function showResult(data) {
     
     if (data.passed) {
         icon.innerHTML = '<i class="fas fa-trophy" style="color: #f59e0b;"></i>';
-        title.textContent = 'Tabriklaymiz!';
+        title.textContent = '{{ tr.cp.congrats|escapejs }}';
         title.style.color = '#10b981';
         message.textContent = 'Siz testdan muvaffaqiyatli o\'tdingiz!';
     } else {

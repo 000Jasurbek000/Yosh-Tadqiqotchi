@@ -231,27 +231,26 @@
         <div class="subpage-hero-inner">
             <div class="subpage-hero-text">
                 <div class="subpage-breadcrumb">
-                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                     <span>//</span>
-                    <span>Ilmiy nashrlar va bazalar</span>
+                    <span>{{ tr.sci.crumb }}</span>
                     <span>//</span>
-                    <span>Adabiyotlar</span>
+                    <span>{{ tr.nav.literature }}</span>
                 </div>
-                <h1 class="title subpage-title">Adabiyotlar</h1>
+                <h1 class="title subpage-title">{{ tr.pages.literature }}</h1>
                 <p class="subtitle subpage-subtitle">
-                    Ilmiy va o'quv adabiyotlari to'plami — darsliklar, o'quv qo'llanmalar, ilmiy maqolalar va tadqiqot materiallarini jamlagan elektron kutubxona.
-
+                    {{ tr.sci.lit_sub }}
                 </p>
             </div>
             <div class="subpage-hero-illustration">
                 <div class="subpage-hero-pill">
                     <span class="badge" style="margin-bottom: 0;">
                         <i class="fas fa-book"></i>
-                        <span>Adabiyotlar</span>
+                        <span>{{ tr.pages.literature }}</span>
                     </span>
                 </div>
                 <div class="subpage-hero-image-wrapper">
-                    <img src="{% static 'assets/stipendia.jpg' %}" alt="Adabiyotlar" class="subpage-hero-image" />
+                    <img src="{% static 'assets/stipendia.jpg' %}" alt="{{ tr.pages.literature }}" class="subpage-hero-image" />
                 </div>
             </div>
         </div>
@@ -266,27 +265,27 @@
                     type="text"
                     name="q"
                     class="lit-search"
-                    placeholder="Kitob nomi yoki muallif bo'yicha qidirish..."
+                    placeholder="{{ tr.sci.lit_search }}"
                     value="{{ search_query|default:'' }}"
                 >
                 <select name="field" class="lit-filter-select">
-                    <option value="">Barcha sohalar</option>
+                    <option value="">{{ tr.ui.all_fields }}</option>
                     {% for val, label in field_choices %}
                         {% if val %}
                             <option value="{{ val }}" {% if active_field == val %}selected{% endif %}>{{ label }}</option>
                         {% endif %}
                     {% endfor %}
                 </select>
-                <button type="submit" class="lit-filter-btn">Qidirish</button>
+                <button type="submit" class="lit-filter-btn">{{ tr.ui.search }}</button>
                 {% if search_query or active_field %}
-                    <a href="{% url 'main:adabiyotlar' %}" class="lit-clear">Tozalash ✕</a>
+                    <a href="{% url 'main:adabiyotlar' %}" class="lit-clear">{{ tr.ui.clear }} ✕</a>
                 {% endif %}
             </form>
 
             <!-- Results info -->
             {% if search_query or active_field %}
             <p class="lit-results-info">
-                <strong>{{ books|length }}</strong> ta natija topildi
+                <strong>{{ books|length }}</strong> {{ tr.ui.results_found }}
                 {% if search_query %} — "<em>{{ search_query }}</em>"{% endif %}
             </p>
             {% endif %}
@@ -302,7 +301,7 @@
                     {% endif %}
                     <div class="lit-body">
                         <h3 class="lit-title">{{ book.title }}</h3>
-                        <p class="lit-author">Muallif: <span>{{ book.author }}</span></p>
+                        <p class="lit-author">{{ tr.ui.author }}: <span>{{ book.author }}</span></p>
                         {% if book.field %}
                             <span class="lit-field-badge">{{ book.get_field_display }}</span>
                         {% endif %}
@@ -318,11 +317,11 @@
                             >
                                 {% if book.file %}
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 10v6m0 0-3-3m3 3 3-3M3 17a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2H7l-4 4v6z"/></svg>
-                                    O'qish
+                                    {{ tr.ui.read }}
                                     <span class="lit-type-icon">{{ book.file.name|slice:"-3:"|upper }}</span>
                                 {% else %}
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                                    O'qish
+                                    {{ tr.ui.read }}
                                 {% endif %}
                             </a>
                         {% endif %}
@@ -331,7 +330,7 @@
                 {% empty %}
                 <div class="lit-empty">
                     <div class="lit-empty-icon"><i class="fas fa-book-open"></i></div>
-                    <p>Hozircha adabiyotlar qo'shilmagan.</p>
+                    <p>{{ tr.sci.lit_empty }}</p>
                 </div>
                 {% endfor %}
             </div>

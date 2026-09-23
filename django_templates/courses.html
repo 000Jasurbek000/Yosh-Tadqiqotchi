@@ -94,25 +94,24 @@
         <div class="subpage-hero-inner">
             <div class="subpage-hero-text">
                 <div class="subpage-breadcrumb">
-                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                     <span>//</span>
-                    <span>Online kurslar</span>
+                    <span>{{ tr.nav.courses }}</span>
                 </div>
-                <h1 class="title subpage-title">Online kurslar markazi</h1>
+                <h1 class="title subpage-title">{{ tr.cp.courses_title }}</h1>
                 <p class="subtitle subpage-subtitle">
-                    Ilmiy faoliyatingizni rivojlantirish uchun mo'ljallangan zamonaviy onlayn kurslar.
-                    Hozircha birinchi kurs sifatida "Ilmiy tadqiqot metodologiyasi" yo'lga qo'yilgan.
+                    {{ tr.cp.courses_sub }}
                 </p>
             </div>
             <div class="subpage-hero-illustration">
                 <div class="subpage-hero-pill">
                     <span class="badge" style="margin-bottom: 0;">
                         <i class="fas fa-graduation-cap"></i>
-                        <span>Online ta'lim platformasi</span>
+                        <span>{{ tr.cp.courses_badge }}</span>
                     </span>
                 </div>
                 <div class="subpage-hero-image-wrapper">
-                    <img src="{% static 'assets/online_courses.jpg' %}" alt="Online kurslar" class="subpage-hero-image" />
+                    <img src="{% static 'assets/online_courses.jpg' %}" alt="{{ tr.nav.courses }}" class="subpage-hero-image" />
                 </div>
             </div>
         </div>
@@ -123,8 +122,8 @@
         <div class="stipendiya-container">
             <div class="card stipendiya-table-card">
                 <div class="stipendiya-table-header">
-                    <h2 class="subtitle">Mavjud kurslar</h2>
-                    <p class="text-muted">Kurslarni boshlash uchun "Boshlash" tugmasini bosing</p>
+                    <h2 class="subtitle">{{ tr.cp.available }}</h2>
+                    <p class="text-muted">{{ tr.cp.hint }}</p>
                 </div>
 
                 {% if courses %}
@@ -151,13 +150,13 @@
                                 
                                 <div style="display: flex; gap: 16px; margin-bottom: 16px; padding-top: 12px; border-top: 1px solid var(--border-color);">
                                     <div style="flex: 1;">
-                                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Modullar</div>
+                                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">{{ tr.ui.modules }}</div>
                                         <div style="font-size: 16px; font-weight: 600; color: var(--accent-primary);">
-                                            <i class="fas fa-book"></i> {{ course.module_count }} ta
+                                            <i class="fas fa-book"></i> {{ course.module_count }} {{ tr.ui.count_suffix }}
                                         </div>
                                     </div>
                                     <div style="flex: 1;">
-                                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Yaratilgan</div>
+                                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">{{ tr.ui.created }}</div>
                                         <div style="font-size: 14px; font-weight: 500; color: var(--text-secondary);">
                                             {{ course.created_at|date:"d.m.Y" }}
                                         </div>
@@ -165,7 +164,7 @@
                                 </div>
                                 
                                 <a href="{% url 'main:course_detail' course.id %}" class="btn-gradient" style="display: block; width: 100%; text-align: center; padding: 12px; text-decoration: none; border-radius: 8px; font-weight: 600; color: white;">
-                                    <i class="fas fa-play-circle"></i> Boshlash
+                                    <i class="fas fa-play-circle"></i> {{ tr.ui.start }}
                                 </a>
                             </div>
                         </div>
@@ -174,7 +173,7 @@
                 {% else %}
                     <div style="display: flex; flex-direction: column; gap: 16px; padding: 48px; text-align: center;">
                         <i class="fas fa-graduation-cap" style="font-size: 64px; color: #9CA3AF;"></i>
-                        <p class="text-muted" style="font-size: 18px;">Hozircha kurslar ro'yxati bo'sh</p>
+                        <p class="text-muted" style="font-size: 18px;">{{ tr.cp.empty }}</p>
                     </div>
                 {% endif %}
             </div>

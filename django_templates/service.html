@@ -632,23 +632,22 @@
     <div class="subpage-hero-inner">
       <div class="subpage-hero-text">
         <div class="subpage-breadcrumb">
-          <a href="{% url 'main:home' %}">Bosh sahifa</a>
+          <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
           <span>//</span>
-          <a href="{% url 'main:service' %}">Xizmatlar</a>
+          <a href="{% url 'main:service' %}">{{ tr.nav.services }}</a>
           <span>//</span>
-          <span>Maqola tahriri va tarjima</span>
+          <span>{{ tr.pages.service }}</span>
         </div>
-        <h1 class="title subpage-title">Maqola tahriri va tarjima xizmati</h1>
+        <h1 class="title subpage-title">{{ tr.pages.service }}</h1>
         <p class="subtitle subpage-subtitle">
-          Maqolangizni OAK / Scopus / Google Scholar talablariga moslab tayyorlang.
-          Tahrirchi kamchiliklarni ko'rsatib beradi yoki maqolani professional tarzda tarjima qiladi.
+          {{ tr.svc.sub }}
         </p>
       </div>
       <div class="subpage-hero-illustration">
         <div class="subpage-hero-pill">
           <span class="badge" style="margin-bottom: 0;">
             <i class="fa-solid fa-pen-nib"></i>
-            <span>Ilmiy maqolalar uchun xizmatlar</span>
+            <span>{{ tr.svc.badge }}</span>
           </span>
         </div>
         <div class="subpage-hero-image-wrapper">
@@ -671,7 +670,7 @@
                 <article class="card" aria-labelledby="service-card-title">
                     <div class="card-body">
                         <p id="service-card-title" class="card-title">1-qadam</p>
-                        <h2 class="card-heading">Xizmat turini va standartni tanlang</h2>
+                        <h2 class="card-heading">{{ tr.svc.step1 }}</h2>
                         <p class="card-subtext">
                             Avval qaysi xizmat kerakligini tanlang, so'ng nashriyot standartini va maqola turini belgilang.
                         </p>
@@ -691,7 +690,7 @@
                                         <span class="service-pill">Tahrir uchun tavsiyalar</span>
                                     </div>
                                     <div>
-                                        <p class="service-title">Tahrirlash</p>
+                                        <p class="service-title">{{ tr.svc.edit }}</p>
                                         <p class="service-desc">
                                             Tahrirchi grammatik va uslubiy xatolarni ko'rsatib beradi, yaxshilash bo'yicha izohlar beradi.
                                         </p>
@@ -712,7 +711,7 @@
                                         <span class="service-pill">UZ ↔ EN, RU ↔ EN</span>
                                     </div>
                                     <div>
-                                        <p class="service-title">Tarjima</p>
+                                        <p class="service-title">{{ tr.svc.translate }}</p>
                                         <p class="service-desc">
                                             Ilmiy uslubga mos, semantik jihatdan aniq va nashriyot talablariga mos tarjima xizmati.
                                         </p>
@@ -797,7 +796,7 @@
                 <article class="card">
                     <div class="card-body">
                         <p class="card-title">2-qadam</p>
-                        <h2 class="card-heading">Tarifni tanlang</h2>
+                        <h2 class="card-heading">{{ tr.svc.step2 }}</h2>
                         <p class="card-subtext">
                             Muddat va chuqurlik bo'yicha sizga mos tarifni belgilang.
                             Narx tarif ko'paytmasi (multiplier) orqali hisoblanadi.
@@ -844,7 +843,7 @@
                 <article class="card summary-card" aria-live="polite">
                     <div class="card-body">
                         <p class="card-title">3-qadam</p>
-                        <h2 class="card-heading">Hisob-kitob paneli</h2>
+                        <h2 class="card-heading">{{ tr.svc.step3 }}</h2>
                         <p class="card-subtext">
                             Tanlovlaringizga qarab jami narx avtomatik yangilanadi.
                             Real shartnomada narx o'zgarishi mumkin.
@@ -852,7 +851,7 @@
 
                         <div class="summary-row">
                             <span class="summary-label">Xizmat turi</span>
-                            <span id="summary-service" class="summary-value">Tahrirlash</span>
+                            <span id="summary-service" class="summary-value">{{ tr.svc.edit }}</span>
                         </div>
                         <div class="summary-row">
                             <span class="summary-label">Standart</span>
@@ -889,7 +888,7 @@
                 <article class="card">
                     <div class="card-body">
                         <p class="card-title">4-qadam</p>
-                        <h2 class="card-heading">To'lov va buyurtma</h2>
+                        <h2 class="card-heading">{{ tr.svc.step4 }}</h2>
                         <p class="card-subtext">
                             To'lov onlayn amalga oshirilmaydi. Buyurtma qoldirilgach,
                             siz bilan alohida bog'laniladi.
@@ -1058,7 +1057,7 @@
       const total = Math.round(base * tariff.multiplier + extrasCost);
 
       // Summary text
-      if (summaryService) summaryService.textContent = service === "translate" ? "Tarjima" : "Tahrirlash";
+      if (summaryService) summaryService.textContent = service === "translate" ? "{{ tr.svc.translate|escapejs }}" : "{{ tr.svc.edit|escapejs }}";
       if (summaryStandard) summaryStandard.textContent = getPublisherLabel(publisher);
       if (summaryTariff) summaryTariff.textContent = tariff.label;
 

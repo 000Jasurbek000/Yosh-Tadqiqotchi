@@ -21,27 +21,26 @@
         <div class="subpage-hero-inner">
             <div class="subpage-hero-text">
                 <div class="subpage-breadcrumb">
-                    <a href="{% url 'main:home' %}">Bosh sahifa</a>
+                    <a href="{% url 'main:home' %}">{{ tr.ui.home }}</a>
                     <span>//</span>
-                    <span>Iqtidorli talabamisiz?</span>
+                    <span>{{ tr.nav.talent }}</span>
                     <span>//</span>
-                    <span>Iqtidorli talabalar bazasi</span>
+                    <span>{{ tr.nav.talent_db }}</span>
                 </div>
-                <h1 class="title subpage-title">Iqtidorli talabalar bazasi</h1>
+                <h1 class="title subpage-title">{{ tr.pages.talent_db }}</h1>
                 <p class="subtitle subpage-subtitle">
-                    Har bir o'quv yili bo'yicha "Iqtidorli talaba" maqomini olgan talabalar ro'yxati. Fayllarni istalgan
-                    foydalanuvchi yuklab olishi mumkin.
+                    {{ tr.iy.db_sub }}
                 </p>
             </div>
             <div class="subpage-hero-illustration">
                 <div class="subpage-hero-pill">
                     <span class="badge" style="margin-bottom: 0;">
                         <i class="fas fa-database"></i>
-                        <span>Ochiq ma'lumotlar</span>
+                        <span>{{ tr.ui.open_data }}</span>
                     </span>
                 </div>
                 <div class="subpage-hero-image-wrapper">
-                    <img src="{% static 'assets/iqtidorlilar.jpg' %}" alt="Iqtidorli talabalar bazasi" class="subpage-hero-image" />
+                    <img src="{% static 'assets/iqtidorlilar.jpg' %}" alt="{{ tr.pages.talent_db }}" class="subpage-hero-image" />
                 </div>
             </div>
         </div>
@@ -51,10 +50,9 @@
         <div class="stipendiya-container">
             <div class="card stipendiya-table-card">
                 <div class="stipendiya-table-header">
-                    <h2 class="subtitle">Yillar bo'yicha ro'yxatlar</h2>
+                    <h2 class="subtitle">{{ tr.iy.db_list }}</h2>
                     <p class="text-muted">
-                        Har bir faylda tegishli yil uchun "Iqtidorli talaba" maqomini olgan talabalar F.I.Sh., yo'nalishi va
-                        boshqa zarur ma'lumotlar keltiriladi.
+                        {{ tr.iy.db_sub }}
                     </p>
                 </div>
                 {% if databases %}
@@ -62,11 +60,11 @@
                         <table class="stipendiya-table">
                             <thead>
                                 <tr>
-                                    <th style="width: 60px;">T/r</th>
-                                    <th>O'quv yili</th>
-                                    <th>Fayl nomi</th>
-                                    <th>Format</th>
-                                    <th style="text-align: right;">Fayl</th>
+                                    <th style="width: 60px;">{{ tr.ui.nr }}</th>
+                                    <th>{{ tr.ui.academic_year }}</th>
+                                    <th>{{ tr.ui.filename }}</th>
+                                    <th>{{ tr.ui.format }}</th>
+                                    <th style="text-align: right;">{{ tr.ui.file }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -79,7 +77,7 @@
                                     <td class="stipendiya-table-action">
                                         {% if db.get_file_url %}
                                             <a href="{{ db.get_file_url }}" class="btn-gradient stipendiya-action-btn" {% if db.is_external_file_link %}target="_blank" rel="noopener"{% endif %}>
-                                                {% if db.is_external_file_link %}Faylni ko'rish{% else %}Yuklab olish{% endif %}
+                                                {% if db.is_external_file_link %}{{ tr.ui.view_file }}{% else %}{{ tr.ui.download }}{% endif %}
                                             </a>
                                         {% else %}
                                             <span class="text-muted">—</span>
@@ -93,7 +91,7 @@
                 {% else %}
                     <div style="display: flex; flex-direction: column; gap: 16px; padding: 32px; text-align: center;">
                         <i class="fas fa-database" style="font-size: 48px; color: #9CA3AF;"></i>
-                        <p class="text-muted">Hozircha ma'lumotlar bazasi bo'sh</p>
+                        <p class="text-muted">{{ tr.iy.db_empty }}</p>
                     </div>
                 {% endif %}
             </div>

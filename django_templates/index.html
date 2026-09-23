@@ -117,8 +117,8 @@
         <!-- Badge -->
         <div class="fade-in delay-100" style="text-align: center; margin-bottom: 32px;">
             <a href="{% url 'main:service' %}" style="display: inline-flex; align-items: center; gap: 12px; padding: 12px 24px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 999px; text-decoration: none; transition: all 0.3s; backdrop-filter: blur(10px);">
-                <span style="padding: 4px 12px; background: #8b5cf6; color: white; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;">YANGI</span>
-                <span style="color: #e0e0e0; font-size: 15px; font-weight: 500;">Maqola tahririyati xizmati ishga tushdi</span>
+                <span style="padding: 4px 12px; background: #8b5cf6; color: white; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;">{{ tr.home.new }}</span>
+                <span style="color: #e0e0e0; font-size: 15px; font-weight: 500;">{{ tr.home.badge_service }}</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" stroke-width="2.5">
                     <path d="m9 18 6-6-6-6"/>
                 </svg>
@@ -127,28 +127,28 @@
         
         <!-- Main Heading -->
         <h1 class="fade-in delay-200" style="text-align: center; font-size: clamp(42px, 5vw, 72px); font-weight: 800; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.02em;">
-            <span style="background: linear-gradient(135deg, #8b5cf6, #d946ef); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: block;">Yosh tadqiqotchilar</span>
-            <span style="color: #e0e0e0; display: block; margin-top: 8px;">uchun</span>
+            <span style="background: linear-gradient(135deg, #8b5cf6, #d946ef); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: block;">{{ tr.home.hero }}</span>
+            <span style="color: #e0e0e0; display: block; margin-top: 8px;">{{ tr.home.hero_for }}</span>
             <span id="typingText" style="background: linear-gradient(135deg, #6366f1, #8b5cf6, #d946ef); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;"></span>
         </h1>
         
         <!-- Description -->
         <p class="fade-in delay-300" style="text-align: center; font-size: 20px; line-height: 1.7; color: #b0b0b0; max-width: 800px; margin: 0 auto 48px; font-weight: 400;">
-            Xalqaro olimpiadalar, nufuzli stipendiyalar va professional kurslar - barchasi bir platformada. Ilmiy faoliyatingizni yangi bosqichga olib chiqing.
+            {{ tr.home.desc }}
         </p>
         
         <!-- CTA Buttons -->
         <div class="fade-in delay-400" style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 64px; flex-wrap: wrap;">
             {% if user.is_authenticated %}
             <a href="{% url 'main:courses' %}" class="btn-primary" style="padding: 18px 40px; font-size: 17px; font-weight: 600; border-radius: 12px; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3); transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 10px;">
-                <span>Boshlash</span>
+                <span>{{ tr.home.start }}</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
             </a>
             {% else %}
             <a href="{% url 'main:login' %}" class="btn-primary" style="padding: 18px 40px; font-size: 17px; font-weight: 600; border-radius: 12px; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3); transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 10px;">
-                <span>Boshlash</span>
+                <span>{{ tr.home.start }}</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
@@ -164,21 +164,21 @@
                 <div style="width: 48px; height: 48px; background: rgba(139, 92, 246, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
                     <i class="fas fa-check" style="color: #8b5cf6; font-size: 20px;"></i>
                 </div>
-                <span style="color: #b0b0b0; font-size: 15px; font-weight: 500;">Professional tahrir xizmati</span>
+                <span style="color: #b0b0b0; font-size: 15px; font-weight: 500;">{{ tr.home.feat_edit }}</span>
             </div>
             
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div style="width: 48px; height: 48px; background: rgba(139, 92, 246, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
                     <i class="fas fa-check" style="color: #8b5cf6; font-size: 20px;"></i>
                 </div>
-                <span style="color: #b0b0b0; font-size: 15px; font-weight: 500;">Ekspert ko'rib chiqishi</span>
+                <span style="color: #b0b0b0; font-size: 15px; font-weight: 500;">{{ tr.home.feat_review }}</span>
             </div>
             
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div style="width: 48px; height: 48px; background: rgba(139, 92, 246, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
                     <i class="fas fa-check" style="color: #8b5cf6; font-size: 20px;"></i>
                 </div>
-                <span style="color: #b0b0b0; font-size: 15px; font-weight: 500;">Tezkor onlayn jarayon</span>
+                <span style="color: #b0b0b0; font-size: 15px; font-weight: 500;">{{ tr.home.feat_fast }}</span>
             </div>
         </div>
     </div>
@@ -189,15 +189,15 @@
     <div style="max-width: 1400px; margin: 0 auto;">
         <div class="fade-in" style="text-align: center; margin-bottom: 48px;">
             <div class="badge" style="margin-bottom: 20px;">
-                <i class="fas fa-trophy"></i> Yoshlar Uchun Imkoniyatlar
+                <i class="fas fa-trophy"></i> {{ tr.home.opp_badge }}
             </div>
             
             <h2 style="font-size: clamp(28px, 3.5vw, 42px); font-weight: 800; line-height: 1.2; margin-bottom: 20px; letter-spacing: -0.02em; color: var(--text-primary);">
-                Xalqaro fan olimpiadalari va nifuzli stipendiyalar
+                {{ tr.home.opp_title }}
             </h2>
             
             <p style="font-size: 16px; line-height: 1.6; color: var(--text-secondary); max-width: 700px; margin: 0 auto;">
-                Talabalar va yosh tadqiqotchilar uchun eng yaxshi imkoniyatlar
+                {{ tr.home.opp_sub }}
             </p>
         </div>
         
@@ -213,8 +213,8 @@
                             </svg>
                         </div>
                     </div>
-                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary);">Xalqaro Fan Olimpiadalari</div>
-                    <div style="font-size: 13px; color: var(--text-muted);">Faol olimpiadalar va tanlovlar</div>
+                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary);">{{ tr.home.card_olimp }}</div>
+                    <div style="font-size: 13px; color: var(--text-muted);">{{ tr.home.card_olimp_sub }}</div>
                 </div>
             </a>
             
@@ -229,8 +229,8 @@
                             </svg>
                         </div>
                     </div>
-                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary);">Imtiyozli Stipendiyalar</div>
-                    <div style="font-size: 13px; color: var(--text-muted);">Davlat va universitet dasturlari</div>
+                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary);">{{ tr.home.card_stip }}</div>
+                    <div style="font-size: 13px; color: var(--text-muted);">{{ tr.home.card_stip_sub }}</div>
                 </div>
             </a>
             
@@ -245,8 +245,8 @@
                             </svg>
                         </div>
                     </div>
-                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary);">Online Kurslar</div>
-                    <div style="font-size: 13px; color: var(--text-muted);">Professional treyninglar</div>
+                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary);">{{ tr.home.card_courses }}</div>
+                    <div style="font-size: 13px; color: var(--text-muted);">{{ tr.home.card_courses_sub }}</div>
                 </div>
                 </a>
                 
@@ -260,8 +260,8 @@
                                 </svg>
                             </div>
                         </div>
-                        <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary);">Ilmiy Nashrlar</div>
-                        <div style="font-size: 13px; color: var(--text-muted);">Maqola tahririyati</div>
+                        <div style="font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary);">{{ tr.home.card_pub }}</div>
+                        <div style="font-size: 13px; color: var(--text-muted);">{{ tr.home.card_pub_sub }}</div>
                     </div>
                 </a>
             </div>
@@ -272,11 +272,11 @@
 <section class="section section-2 scroll-section" style="padding: 100px 40px;">
     <div style="text-align: center; margin-bottom: 64px;">
         <div class="badge fade-in" style="margin-bottom: 20px;">
-            <i class="fas fa-bullhorn"></i> E'lonlar
+            <i class="fas fa-bullhorn"></i> {{ tr.home.announcements }}
         </div>
-        <h2 class="fade-in delay-100" style="font-size: clamp(36px, 4vw, 52px); font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; color: var(--text-primary); margin-bottom: 16px;">Faol tanlovlar va e'lonlari</h2>
+        <h2 class="fade-in delay-100" style="font-size: clamp(36px, 4vw, 52px); font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; color: var(--text-primary); margin-bottom: 16px;">{{ tr.home.ann_title }}</h2>
         <p class="fade-in delay-200" style="font-size: 18px; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
-            Eng so'nggi stipendiyalar, olimpiadalar va ilmiy tadbirlar haqida xabardor bo'ling
+            {{ tr.home.ann_sub }}
         </p>
     </div>
     
@@ -287,7 +287,7 @@
             <div style="position: relative; height: 280px; overflow: hidden;">
                 <img src="{{ announcement.get_image_url }}" alt="{{ announcement.title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s;">
                 <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding: 24px;">
-                    <div style="font-size: 14px; font-weight: 700; color: white; letter-spacing: 2px; opacity: 0.9;">E'LON</div>
+                    <div style="font-size: 14px; font-weight: 700; color: white; letter-spacing: 2px; opacity: 0.9;">{{ tr.home.ann_badge }}</div>
                 </div>
             </div>
             {% else %}
@@ -302,7 +302,7 @@
                     <circle cx="60" cy="42" r="4" fill="var(--accent-tertiary)"/>
                     <line x1="60" y1="46" x2="60" y2="48" stroke="#94A3B8" stroke-width="2"/>
                 </svg>
-                <div style="font-size: 14px; font-weight: 700; color: white; letter-spacing: 2px;">E'LON</div>
+                <div style="font-size: 14px; font-weight: 700; color: white; letter-spacing: 2px;">{{ tr.home.ann_badge }}</div>
             </div>
             {% endif %}
             <div style="padding: 32px;">
@@ -320,14 +320,14 @@
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" opacity="0.5">
                             <circle cx="12" cy="12" r="10"/>
                         </svg>
-                        {{ announcement.date|date:"d-F, Y" }}-yil
+                        {{ announcement.date|date:"d-F, Y" }}{{ tr.ui.year }}
                     </div>
                 </div>
                 <a href="{% url 'main:announcement_detail' announcement.pk %}" class="btn-gradient" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M5 12h14M12 5l7 7-7 7"/>
                     </svg>
-                    Batafsil
+                    {{ tr.ui.more }}
                 </a>
                 
             </div>
@@ -335,8 +335,8 @@
         {% empty %}
         <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
             <div style="font-size: 48px; margin-bottom: 16px;">📢</div>
-            <h3 class="subtitle" style="font-size: 24px; margin-bottom: 12px;">Hozircha e'lon yo'q</h3>
-            <p class="text-muted">Yangi e'lonlar tez orada qo'shiladi</p>
+            <h3 class="subtitle" style="font-size: 24px; margin-bottom: 12px;">{{ tr.home.ann_empty }}</h3>
+            <p class="text-muted">{{ tr.home.ann_empty_sub }}</p>
         </div>
         {% endfor %}
     </div>
@@ -365,13 +365,13 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                 </svg>
-                Fan Olimpiadalari
+                {{ tr.home.olimp_badge }}
             </div>
             <h2 style="font-size: clamp(28px, 3.5vw, 42px); font-weight: 800; line-height: 1.3; margin-bottom: 20px; color: var(--text-primary);">
-                Xalqaro va respublika darajasidagi tanlovlar g'oliblari
+                {{ tr.home.olimp_title }}
             </h2>
             <p style="font-size: 16px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 20px;">
-                Stipendiya imkoniyatlarini ko'rib chiqing va akademik muvaffaqiyatingiz sari qadam qo'ying. Xalqaro va respublika miqyosidagi olimpiadalar, tanlovlar va musobaqalarda qatnashib, o'z bilimingizni sinab ko'ring. Muvaffaqiyatli ishtirokchilar maxsus sertifikat va mukofotlarga sazovor bo'ladilar.
+                {{ tr.home.olimp_text }}
             </p>
             <a href="{% url 'main:olimpiadalar' %}" style="display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary)); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 15px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(139, 92, 246, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(139, 92, 246, 0.3)'">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -379,7 +379,7 @@
                     <path d="M2 17l10 5 10-5"/>
                     <path d="M2 12l10 5 10-5"/>
                 </svg>
-                Batafsil ko'rish
+                {{ tr.ui.more_view }}
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
@@ -392,11 +392,11 @@
 <section class="section section-2 scroll-section" style="padding: 100px 40px;">
     <div style="text-align: center; margin-bottom: 64px;">
         <div class="badge fade-in" style="margin-bottom: 20px;">
-            <i class="fas fa-users"></i> Talabalar
+            <i class="fas fa-users"></i> {{ tr.home.students_badge }}
         </div>
-        <h2 class="fade-in delay-100" style="font-size: clamp(32px, 4vw, 48px); font-weight: 800; color: var(--text-primary); margin-bottom: 16px;">Bizning iqtidorli talabalarimiz</h2>
+        <h2 class="fade-in delay-100" style="font-size: clamp(32px, 4vw, 48px); font-weight: 800; color: var(--text-primary); margin-bottom: 16px;">{{ tr.home.students_title }}</h2>
         <p class="fade-in delay-200" style="font-size: 16px; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
-            Muvaffaqiyatli talabalar va ularning yutuqlari
+            {{ tr.home.students_sub }}
         </p>
     </div>
     
@@ -454,8 +454,8 @@
         {% empty %}
         <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
             <div style="font-size: 48px; margin-bottom: 16px;">👨‍🎓</div>
-            <h3 class="subtitle" style="font-size: 24px; margin-bottom: 12px;">Hozircha iqtidorli talabalar yo'q</h3>
-            <p class="text-muted">Iqtidorli talabalar tez orada qo'shiladi</p>
+            <h3 class="subtitle" style="font-size: 24px; margin-bottom: 12px;">{{ tr.home.students_empty }}</h3>
+            <p class="text-muted">{{ tr.home.students_empty_sub }}</p>
         </div>
         {% endfor %}
     </div>
@@ -465,9 +465,9 @@
 <section class="section section-1 scroll-section" style="padding: 80px 40px;">
     <div style="text-align: center; margin-bottom: 48px;">
         <div class="badge fade-in">
-            <i class="fas fa-comments"></i> Sinovchilar
+            <i class="fas fa-comments"></i> {{ tr.home.reviews_badge }}
         </div>
-        <h2 class="fade-in delay-100" style="font-size: clamp(28px, 3.5vw, 42px); font-weight: 800; color: var(--text-primary); margin-bottom: 12px;">Bizning sinovchilarimizning fikrlari</h2>
+        <h2 class="fade-in delay-100" style="font-size: clamp(28px, 3.5vw, 42px); font-weight: 800; color: var(--text-primary); margin-bottom: 12px;">{{ tr.home.reviews_title }}</h2>
     </div>
     
     <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center; max-width: 1400px; margin: 0 auto;">
@@ -493,9 +493,9 @@
         
         <div class="fade-in delay-200">
             <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">Anvar Baoyev</h2>
-            <h3 style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">Magistr</h3>
+            <h3 style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">{{ tr.home.review_role }}</h3>
             <p style="font-size: 16px; line-height: 1.7; font-style: italic; margin-bottom: 20px; color: var(--text-secondary);">
-                "Bu platforma orqali o'zimga mos stipendiyani topdim va ariza topshirish jarayoni juda oson bo'ldi. Barcha ma'lumotlar aniq va tushunarli berilgan. Haqiqatan ham iqtidorli talabalar uchun katta imkoniyat!"
+                "{{ tr.home.review_quote }}"
             </p>
 
             <div style="display: flex; gap: 4px;">
@@ -524,18 +524,7 @@
 <script>
 (function() {
     // Typing effect with gradient animation
-    const words = [
-        "katta imkoniyatlar!",
-        "stipendiyalar va grantlar!",
-        "xalqaro dasturlar!",
-        "Scopus sari qadam!",
-        "OAK tayyorgarligi!",
-        "ilmiy yuksalish!",
-        "nufuzli nashrlar!",
-        "maqola ekspertizasi!",
-        "global muvaffaqiyat!",
-        "yorqin kelajak!"
-    ];
+    const words = {{ home_typing_words_json|safe }};
     
     const typingText = document.getElementById('typingText');
     let wordIndex = 0;
