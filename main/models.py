@@ -1262,3 +1262,44 @@ class StudentActivityLink(models.Model):
             link='https://example.com',
             is_active=False,
         )
+
+
+# ─── Bosh sahifa banner e'lonlari (hero yon bannerlari) ──────────────────────
+class HomeBanner(models.Model):
+    """
+    Bosh sahifa hero bo'limining yon tomonlarida chiqadigan reklama/e'lon
+    bannerlari. Admin faqat rasm, havola va faollikni boshqaradi.
+    Faol bannerlar soniga qarab sahifa maketi o'zgaradi (2 ta — ikki yonda,
+    1 ta — sahifa teng ikkiga bo'linadi, 0 ta — oddiy bosh sahifa).
+    """
+    image = models.ImageField(
+        upload_to='home_banners/',
+        verbose_name='Rasm',
+        help_text='Banner rasmi (tavsiya etilgan nisbat: 4:3 yoki shunga yaqin)',
+    )
+    link = models.CharField(
+        max_length=500,
+        verbose_name='Havola',
+        help_text='"Batafsil" tugmasi shu havolaga olib boradi (https://... yoki /ichki-sahifa/)',
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='Faol',
+        help_text='O‘chirilsa, banner saytda ko‘rinmaydi',
+    )
+    order = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Tartib',
+        help_text='Kichik raqam oldinroq (chapda) chiqadi',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'home_banners'
+        verbose_name = 'Bosh sahifa banneri'
+        verbose_name_plural = 'Bosh sahifa bannerlari'
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return f'Banner #{self.pk}' + ('' if self.is_active else ' (nofaol)')

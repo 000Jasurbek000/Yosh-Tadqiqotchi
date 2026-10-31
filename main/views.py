@@ -15,11 +15,12 @@ from django.views.decorators.csrf import csrf_exempt
 import json as json_module
 from .chat_api import call_chat_api
 from .forms import UserRegisterForm, UserLoginForm, UserUpdateForm
-from .models import (Olympiad, StateScholarship, BuxduScholarship, Course, ArticleBank, Announcement, User, 
+from .models import (Olympiad, StateScholarship, BuxduScholarship, Course, ArticleBank, Announcement, User,
                      Survey, TalentedStudentDatabase, BuxduWinnerDatabase, BuxduOlympiadWinner, BuxduOlympiad,
-                     OakDatabase, Conference, DissertationBank, ResearcherRegulation, UserCourseProgress, 
+                     OakDatabase, Conference, DissertationBank, ResearcherRegulation, UserCourseProgress,
                      UserModuleProgress, UserTestResult, Question, AssessmentTest, AssessmentTestResult,
-                     Literature, ScientificSupervisor, SupervisorRequest, OlympiadProgram, OlympiadApplication)
+                     Literature, ScientificSupervisor, SupervisorRequest, OlympiadProgram, OlympiadApplication,
+                     HomeBanner)
 from django.utils import timezone
 from .i18n import t
 from .language import set_language  # noqa: F401
@@ -32,6 +33,7 @@ from .test_utils import (
 def index_view(request):
     announcements = Announcement.objects.order_by('-created_at')[:3]
     talented_students = User.objects.filter(status='iqtidorli').order_by('-created_at')[:4]
+    home_banners = list(HomeBanner.objects.filter(is_active=True))
     context = {
         'olympiad_count': Olympiad.objects.count(),
         'scholarship_count': StateScholarship.objects.count() + BuxduScholarship.objects.count(),
@@ -39,6 +41,7 @@ def index_view(request):
         'article_count': ArticleBank.objects.count(),
         'announcements': announcements,
         'talented_students': talented_students,
+        'home_banners': home_banners,
     }
     return render(request, 'index.html', context)
 

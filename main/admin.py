@@ -16,7 +16,7 @@ from .models import (
     UserModuleProgress, UserTestResult, Certificate, TestSet,
     AssessmentTest, AssessmentTestResult, Literature, ScientificSupervisor,
     SupervisorRequest, OlympiadProgram, OlympiadApplication, KnowledgeChunk,
-    StudentActivityLink, OlympiadProgramCode,
+    StudentActivityLink, OlympiadProgramCode, HomeBanner,
 )
 from . import admin_db
 from . import admin_stats
@@ -119,6 +119,20 @@ class AnnouncementAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
     search_fields = ('title', 'short_text', 'author')
     date_hierarchy = 'date'
     fields = ('author', 'title', 'date', 'short_text', 'detailed_text', 'image', 'image_url')
+
+
+@admin.register(HomeBanner)
+class HomeBannerAdmin(ClearableFileAdminMixin, admin.ModelAdmin):
+    clearable_file_fields = ('image',)
+    list_display = ('preview', 'link', 'is_active', 'order', 'created_at')
+    list_editable = ('is_active', 'order')
+    fields = ('image', 'link', 'is_active', 'order')
+
+    def preview(self, obj):
+        if obj.image:
+            return mark_safe(f'<img src="{obj.image.url}" style="height:60px;border-radius:8px;" />')
+        return '—'
+    preview.short_description = 'Rasm'
 
 
 class ModuleInline(admin.TabularInline):

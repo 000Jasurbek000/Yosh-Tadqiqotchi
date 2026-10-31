@@ -103,12 +103,70 @@
     left: -150px;
     animation-delay: 2s;
 }
+
+/* Bosh sahifa banner aylanishi: header doim ko'rinadi, faqat hero joyi almashadi
+   (sayt -> 1-banner -> 2-banner -> sayt ...) */
+.site-banner-section {
+    display: none;
+    position: relative;
+    min-height: 85vh;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #05050a;
+}
+.site-banner-section.is-active {
+    display: flex;
+}
+.site-banner-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.site-banner-btn {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: auto;
+    margin-bottom: 7vh;
+    align-self: flex-end;
+    margin-right: 7vw;
+    padding: 16px 40px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 17px;
+    text-decoration: none;
+    color: #fff;
+    background: linear-gradient(135deg, #8b5cf6, #d946ef);
+    box-shadow: 0 10px 34px rgba(139, 92, 246, 0.55);
+    animation: bannerPulse 2.2s ease-in-out infinite;
+    white-space: nowrap;
+}
+.site-banner-btn:hover {
+    animation-play-state: paused;
+    transform: scale(1.08);
+}
+@keyframes bannerPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 10px 34px rgba(139, 92, 246, 0.55); }
+    50% { transform: scale(1.08); box-shadow: 0 16px 46px rgba(217, 70, 239, 0.65); }
+}
+@media (max-width: 768px) {
+    .site-banner-btn {
+        margin-right: 0;
+        align-self: center;
+    }
+}
 </style>
 {% endblock %}
 
 {% block content %}
 <!-- Hero Section - Elegant Themes Style -->
-<section class="hero-section fade-in" style="position: relative; overflow: hidden; min-height: 85vh; display: flex; align-items: center; background: #0a0a0f;">
+<section class="hero-section fade-in" id="siteHeroSection" style="position: relative; overflow: hidden; min-height: 85vh; display: flex; align-items: center; background: #0a0a0f;">
     <!-- Animated gradient blobs -->
     <div class="gradient-blob blob-1"></div>
     <div class="gradient-blob blob-2"></div>
@@ -183,6 +241,36 @@
         </div>
     </div>
 </section>
+
+{% if home_banners %}
+<div id="siteBannerStates">
+    {% for b in home_banners %}
+    <section class="site-banner-section" id="bannerSection{{ forloop.counter0 }}">
+        <img src="{{ b.image.url }}" alt="{{ tr.home.banner_details }}" class="site-banner-img">
+        <a href="{{ b.link }}" class="site-banner-btn" target="_blank" rel="noopener">{{ tr.home.banner_details }}</a>
+    </section>
+    {% endfor %}
+</div>
+<script>
+(function() {
+    var site = document.getElementById('siteHeroSection');
+    var sections = Array.prototype.slice.call(document.querySelectorAll('#siteBannerStates .site-banner-section'));
+    if (!site || !sections.length) return;
+    var step = 0; // 0 = sayt sahifasi, 1..N = bannerlar
+    var total = sections.length + 1;
+    function render() {
+        site.style.display = step === 0 ? 'flex' : 'none';
+        sections.forEach(function(el, i) {
+            el.classList.toggle('is-active', step === i + 1);
+        });
+    }
+    setInterval(function() {
+        step = (step + 1) % total;
+        render();
+    }, 5000);
+})();
+</script>
+{% endif %}
 
 <!-- Statistika Section - Elegant Style -->
 <section id="features" class="section section-1 scroll-section" style="padding: 100px 40px; position: relative; overflow: hidden;">
